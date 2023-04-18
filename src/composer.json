@@ -1,0 +1,21 @@
+{
+	"name": "juniwalk/calendar",
+	"description": "Nette integration for FullCalendar.",
+	"type": "library",
+	"keywords": ["nette","nettefw","calendar","fullcalendar"],
+	"license": "MIT",
+
+	"authors": [{
+		"name": "Martin Procházka",
+		"email": "juniwalk@outlook.cz",
+		"role": "Developer"
+	}],
+
+	"autoload": {
+		"psr-4": {"JuniWalk\\Calendar\\": "src/"}
+	},
+
+	"require": {
+		"php": ">=8.1"
+	}
+}
