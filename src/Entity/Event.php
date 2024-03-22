@@ -1,0 +1,114 @@
+<?php declare(strict_types=1);
+
+/**
+ * @copyright Martin Procházka (c) 2023
+ * @license   MIT License
+ */
+
+namespace JuniWalk\Calendar\Entity;
+
+use BackedEnum;
+use JuniWalk\Calendar\Event as EventInterface;
+use JuniWalk\Calendar\EventProvider;
+use DateTimeInterface as DateTime;
+use JuniWalk\Utils\Html;
+use JuniWalk\Utils\Strings;
+
+class Event implements EventInterface
+{
+	private readonly ?EventProvider $provider;
+
+	public mixed $id;
+	public mixed $groupId;
+	public BackedEnum $type;
+	public bool $allDay;
+	public ?DateTime $start;
+	public ?DateTime $end;
+	public string $title;
+	public Html $titleHtml;
+	public Html $content;
+	public Html $label;
+	public string $url;
+	public array $classNames;
+	public bool $editable;
+	public string $display;
+
+	// Recurrence
+	public array $daysOfWeek;
+	public ?DateTime $startRecur;
+	public ?DateTime $endRecur;
+	public string $startTime;
+	public string $endTime;
+
+	public function __construct(array $params, ?EventProvider $provider = null)
+	{
+		$this->provider = $provider;
+
+		foreach ($params as $key => $value) {
+			if (!property_exists($this, $key)) {
+				continue;
+			}
+
+			if ($value instanceof DateTime) {
+				$value = clone $value;
+			}
+
+			$this->$key = $value;
+		}
+
+		if (isset($this->end) && $this->allDay && $this->end->format('H:i') <> '00:00') {
+			$this->end->modify('midnight next day');
+		}
+	}
+
+
+	public function jsonSerialize(): array
+	{
+		$params = (array) $this;
+		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
+
+		foreach ($params as $key => $value) {
+			if ($value instanceof Html && !$value->getText()) {
+				$value = null;
+			}
+
+			$params[$key] = match(true) {
+				$value instanceof DateTime => $value->format(DateTime::ATOM),
+				$value instanceof Html => $value->render(),
+				default => $value,
+			};
+		}
+
+		return array_filter($params);
+	}
+
+
+	public function getUniqueId(): string
+	{
+		return $this->type->value.'-'.spl_object_id($this);
+	}
+
+
+	public function getProvider(): ?EventProvider
+	{
+		return $this->provider;
+	}
+
+
+	public function getStart(): DateTime
+	{
+		return $this->start;
+	}
+
+
+	public function getEnd(): ?DateTime
+	{
+		return $this->end;
+	}
+
+
+	public function isAllDay(): bool
+	{
+		return $this->allDay;
+	}
+}

@@ -5,10 +5,9 @@
  * @license   MIT License
  */
 
-namespace JuniWalk\Calendar\Exceptions;
+namespace JuniWalk\Calendar;
 
-use RuntimeException;
-
-class CalendarException extends RuntimeException
+interface Config
 {
+	public function isVisible(Event $event): bool;
 }

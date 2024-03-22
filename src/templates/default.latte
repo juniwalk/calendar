@@ -1,0 +1,39 @@
+<div class="card card-primary card-outline" n:snippet="calendar">
+
+	<div class="card-header border-0 pb-0">
+		Calendar
+	</div>
+
+	<div class="card-body p-0" id="{$control->getName()}-calendar"></div>
+
+</div>
+
+<script type="text/javascript" defer="defer">
+document.addEventListener('DOMContentLoaded', function() {
+
+	let calendarView = null;
+	let calendarEl = document.getElementById({$control->getName()} + '-calendar');
+
+	let calendar = new FullCalendar.Calendar(calendarEl, {
+		themeSystem: 'bootstrap',
+		timeZone: 'Europe/Prague',
+		height: 'auto',
+		firstDay: 1,
+		expandRows: true,
+		nowIndicator: true,
+		weekends: true,
+		longPressDelay: 200,
+		lazyFetching: false,
+		eventSources: [{link fetch!}],
+
+		// Events
+		eventsSet: () => { naja.uiHandler.bindUI(calendarEl) },
+		dateClick: ({ dateStr }) => naja.makeRequest('GET', {link click!}, {
+			start: dateStr
+		}),
+	});
+
+	calendar.render();
+
+}, false);
+</script>
