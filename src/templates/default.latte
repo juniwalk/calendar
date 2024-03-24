@@ -1,22 +1,53 @@
-<div class="card card-primary card-outline" n:snippet="calendar">
+<div class="card card-primary card-outline" id="{$control->getName()}">
+<div n:snippet="calendar">
 
 	<div class="card-header border-0 pb-0">
-		Calendar
+
+		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
+
+			<div class="btn-group mr-2 mb-2" role="group">
+				<a role="button" class="btn btn-primary" data-today>{_web.calendar.today|noescape}</a>
+			</div>
+
+			<div class="btn-group mr-2 mb-2" role="group">
+				<a role="button" class="btn btn-primary" data-prev>{_web.calendar.prev|noescape}</a>
+				<a role="button" class="btn btn-primary" data-next>{_web.calendar.next|noescape}</a>
+			</div>
+
+			<div class="flex-fill align-self-center mb-2 order-0">
+				<h1 class="text-capitalize card-title float-none ml-3" data-title></h1>
+			</div>
+
+			<div class="btn-group mb-2" role="group">
+				<a role="button" class="btn btn-primary dropdown-toggle" data-view-name data-toggle="dropdown" aria-expanded="false"></a>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="#" data-view="dayGridMonth">{_web.calendar.view.dayGridMonth}</a>
+					<a class="dropdown-item" href="#" data-view="timeGridWeek">{_web.calendar.view.timeGridWeek}</a>
+					<a class="dropdown-item" href="#" data-view="timeGridDay">{_web.calendar.view.timeGridDay}</a>
+				</div>
+			</div>
+
+		</div>
+
 	</div>
 
 	<div class="card-body p-0" id="{$control->getName()}-calendar"></div>
 
 </div>
+</div>
 
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
-	let calendarView = null;
-	let calendarEl = document.getElementById({$control->getName()} + '-calendar');
+	let element = document.getElementById({$control->getName()} + '-calendar');
+	let control = document.getElementById({$control->getName()});
 
-	let calendar = new FullCalendar.Calendar(calendarEl, {
+	let calendarView = null;
+	let calendar = new FullCalendar.Calendar(element, {
 		themeSystem: 'bootstrap',
+		headerToolbar: false,
 		timeZone: 'Europe/Prague',
+		locale: {$locale},
 		height: 'auto',
 		firstDay: 1,
 		expandRows: true,
@@ -27,13 +58,40 @@ document.addEventListener('DOMContentLoaded', function() {
 		eventSources: [{link fetch!}],
 
 		// Events
-		eventsSet: () => { naja.uiHandler.bindUI(calendarEl) },
+		eventsSet: () => { naja.uiHandler.bindUI(element) },
 		dateClick: ({ dateStr }) => naja.makeRequest('GET', {link click!}, {
 			start: dateStr
 		}),
+
+		datesSet: function({ view }) {
+			let url = new URL(document.location);
+
+			if (url.searchParams.has('date')) {
+				url.searchParams.delete('date');
+				window.history.replaceState(null, '', url);
+			}
+
+			$('[data-title]', control).text(view.title);
+			$('[data-view]', control).removeClass('active');
+			$('[data-view="'+ view.type +'"]', control).addClass('active');
+
+			$('[data-view-name]', control).html($('[data-view].active', control).html());
+		},
 	});
 
 	calendar.render();
+
+
+	$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+	$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+	$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
+	$('[data-view]', control).off('click').on('click', ({ target }) => {
+		// Set cookie with new view before calling changeView so refetching has actual value
+		//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
+
+		calendar.changeView(target.dataset.view);
+		calendarView = null;
+	});
 
 }, false);
 </script>
