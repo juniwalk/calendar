@@ -38,6 +38,12 @@ class Calendar extends Control
 	}
 
 
+	public function setConfig(Config $config): void
+	{
+		$this->config = $config;
+	}
+
+
 	/**
 	 * @throws SourceTypeHandledException
 	 */
