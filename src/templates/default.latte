@@ -33,6 +33,14 @@
 
 	<div class="card-body p-0" id="{$control->getName()}-calendar"></div>
 
+	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
+		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
+			{continueIf !$type instanceof $legend}
+			<small class="text-muted pr-2" n:ifchanged>{_web.calendar.legend}:</small>
+			{$type->createBadge()}
+		</div>
+	</div>
+
 </div>
 </div>
 

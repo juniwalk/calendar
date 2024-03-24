@@ -8,6 +8,7 @@
 namespace JuniWalk\Calendar;
 
 use DateTime;
+use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
@@ -108,6 +109,7 @@ class Calendar extends Control
 			// 'reload' => $this->isReload,					// ? take from config
 			'sources' => $this->sources,
 			'config' => $this->config,						// ! was named branch
+			'legend' => Legend::class,
 
 			// 'initialView' => $this->initialView,			// ? take from config
 			// 'initialDate' => $this->initialDate,			// ? take from config
