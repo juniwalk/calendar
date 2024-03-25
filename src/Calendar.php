@@ -10,6 +10,7 @@ namespace JuniWalk\Calendar;
 use DateTime;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Parameters;
+use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
@@ -46,6 +47,19 @@ class Calendar extends Control
 	public function setConfig(Config $config): void
 	{
 		$this->config = $config;
+	}
+
+
+	/**
+	 * @throws ConfigParamNotFoundException
+	 */
+	public function setParam(string $param, mixed $value): void
+	{
+		if (!property_exists($this->config, $param)) {
+			throw ConfigParamNotFoundException::fromParam($param, $this->config);
+		}
+
+		$this->config->$param = $value;
 	}
 
 
