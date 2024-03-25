@@ -7,7 +7,10 @@
 
 namespace JuniWalk\Calendar;
 
-interface Config
+use JsonSerializable;
+
+interface Config extends JsonSerializable
 {
+	public function hasCustomToolbar(): bool;
 	public function isVisible(Event $event): bool;
 }

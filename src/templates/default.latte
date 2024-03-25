@@ -1,7 +1,7 @@
 <div class="card card-primary card-outline" id="{$control->getName()}">
 <div n:snippet="calendar">
 
-	<div class="card-header border-0 pb-0">
+	<div class="card-header border-0 pb-0" n:if="$config->hasCustomToolbar()">
 
 		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
 
@@ -47,22 +47,12 @@
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
-	let element = document.getElementById({$control->getName()} + '-calendar');
-	let control = document.getElementById({$control->getName()});
-
+	const config = {$config};
 	let calendarView = null;
-	let calendar = new FullCalendar.Calendar(element, {
-		themeSystem: 'bootstrap',
-		headerToolbar: false,
-		timeZone: 'Europe/Prague',
-		locale: {$locale},
-		height: 'auto',
-		firstDay: 1,
-		expandRows: true,
-		nowIndicator: true,
-		weekends: true,
-		longPressDelay: 200,
-		lazyFetching: false,
+
+	let control = document.getElementById({$control->getName()});
+	let element = document.getElementById({$control->getName()} + '-calendar');
+	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
 		eventSources: [{link fetch!}],
 
 		// Events
@@ -85,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			$('[data-view-name]', control).html($('[data-view].active', control).html());
 		},
-	});
+	}));
 
 	calendar.render();
 

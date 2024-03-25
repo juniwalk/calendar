@@ -9,6 +9,7 @@ namespace JuniWalk\Calendar;
 
 use DateTime;
 use JuniWalk\Calendar\Entity\Legend;
+use JuniWalk\Calendar\Entity\Parameters;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
@@ -33,10 +34,12 @@ class Calendar extends Control
 	public array $onRender = [];
 
 	public function __construct(
-		private readonly Config $config,
+		private readonly Parameters $parameters,
 		private readonly Translator $translator,
 		private readonly HttpRequest $httpRequest,
+		private ?Config $config = null,
 	) {
+		$this->config ??= $parameters;
 	}
 
 

@@ -29,14 +29,19 @@
 		"juniwalk/utils": "^3.0",
 		"nette/application": "^3.0",
 		"nette/di": "^3.0",
-		"nette/http": "^3.0"
+		"nette/http": "^3.0",
+		"tracy/tracy": "^2.0"
 	},
 
 	"require-dev": {
+		"contributte/translation": "^2.0",
 		"phpstan/extension-installer": "^1.0",
 		"phpstan/phpstan": "^1.0",
 		"phpstan/phpstan-nette": "^1.0",
-		"staabm/phpstan-todo-by": "^0.1",
-		"tracy/tracy": "^2.0"
+		"staabm/phpstan-todo-by": "^0.1"
+	},
+
+	"suggest": {
+		"contributte/translation": "Needed for locale autodetection"
 	}
 }

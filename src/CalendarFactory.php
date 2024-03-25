@@ -12,5 +12,5 @@ use JuniWalk\Calendar\Calendar;
 
 interface CalendarFactory
 {
-	public function create(Config $config): Calendar;
+	public function create(?Config $config = null): Calendar;
 }
