@@ -38,7 +38,7 @@ final class CzechHolidaysSource implements Source
 
 	public function createEvents(DateTimeInterface $start, DateTimeInterface $end): array
 	{
-		$start = new DateTime($start->format('U'));
+		$start = new DateTime($start->format(DateTime::ATOM));
 		$events = [];
 
 		foreach ($this->getHolidays($start) as $date => $name) {

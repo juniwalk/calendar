@@ -79,6 +79,19 @@ class Calendar extends Control
 	}
 
 
+	/**
+	 * @throws SourceNotFoundException
+	 */
+	public function removeSource(string $type): void
+	{
+		if (!isset($this->sources[$type])) {
+			throw SourceNotFoundException::fromType($type);
+		}
+
+		unset($this->sources[$type]);
+	}
+
+
 	public function handleClick(?string $start): void
 	{
 		$start = $this->httpRequest->getQuery('start');
