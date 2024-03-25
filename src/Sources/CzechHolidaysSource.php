@@ -7,7 +7,8 @@
 
 namespace JuniWalk\Calendar\Sources;
 
-use DateTimeInterface as DateTime;
+use DateTime;
+use DateTimeInterface;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Event;
 use JuniWalk\Calendar\Enums\Type;
@@ -35,8 +36,9 @@ final class CzechHolidaysSource implements Source
 	}
 
 
-	public function createEvents(DateTime $start, DateTime $end): array
+	public function createEvents(DateTimeInterface $start, DateTimeInterface $end): array
 	{
+		$start = new DateTime($start->format('U'));
 		$events = [];
 
 		foreach ($this->getHolidays($start) as $date => $name) {
@@ -69,19 +71,19 @@ final class CzechHolidaysSource implements Source
 		$easterMonday = (clone $easter)->modify('+1 day')->format('Y-m-d');
 
 		return [
-			$year.'-01-01' => 'Nový rok',
-			$goodFriday => 'Velký pátek',
-			$easterMonday => 'Velikonoční pondělí',
-			$year.'-05-01' => 'Svátek práce',
-			$year.'-05-08' => 'Den vítězství',
-			$year.'-07-05' => 'Den slovanských věrozvěstů Cyrila a Metoděje',
-			$year.'-07-06' => 'Den upálení mistra Jana Husa',
-			$year.'-09-28' => 'Den české státnosti',
-			$year.'-10-28' => 'Den vzniku samostatného československého státu',
-			$year.'-11-17' => 'Den boje za svobodu a demokracii',
-			$year.'-12-24' => 'Štědrý den',
-			$year.'-12-25' => '1. svátek vánoční',
-			$year.'-12-26' => '2. svátek vánoční',
+			$year.'-01-01'	=> 'Nový rok',
+			$goodFriday		=> 'Velký pátek',
+			$easterMonday	=> 'Velikonoční pondělí',
+			$year.'-05-01'	=> 'Svátek práce',
+			$year.'-05-08'	=> 'Den vítězství',
+			$year.'-07-05'	=> 'Den slovanských věrozvěstů Cyrila a Metoděje',
+			$year.'-07-06'	=> 'Den upálení mistra Jana Husa',
+			$year.'-09-28'	=> 'Den české státnosti',
+			$year.'-10-28'	=> 'Den vzniku samostatného československého státu',
+			$year.'-11-17'	=> 'Den boje za svobodu a demokracii',
+			$year.'-12-24'	=> 'Štědrý den',
+			$year.'-12-25'	=> '1. svátek vánoční',
+			$year.'-12-26'	=> '2. svátek vánoční',
 		];
 	}
 }

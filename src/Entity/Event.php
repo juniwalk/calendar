@@ -8,9 +8,9 @@
 namespace JuniWalk\Calendar\Entity;
 
 use BackedEnum;
+use DateTime;
 use JuniWalk\Calendar\Event as EventInterface;
 use JuniWalk\Calendar\EventProvider;
-use DateTimeInterface as DateTime;
 use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Strings;
 
@@ -104,6 +104,12 @@ class Event implements EventInterface
 	public function getEnd(): ?DateTime
 	{
 		return $this->end;
+	}
+
+
+	public function setAllDay(bool $allDay): void
+	{
+		$this->allDay = $allDay;
 	}
 
 

@@ -21,9 +21,6 @@ final class CalendarExtension extends CompilerExtension
 	}
 
 
-	/**
-	 * @throws RecordNotValidException
-	 */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
@@ -34,6 +31,6 @@ final class CalendarExtension extends CompilerExtension
 		// TODO: Send to instance of Calendar
 
 		$builder->addFactoryDefinition($this->prefix('calendar'))
-			->setImplement(CalendarFactory::class, []);
+			->setImplement(CalendarFactory::class);
 	}
 }

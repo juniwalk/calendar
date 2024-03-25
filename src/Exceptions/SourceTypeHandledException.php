@@ -9,8 +9,8 @@ namespace JuniWalk\Calendar\Exceptions;
 
 final class SourceTypeHandledException extends CalendarException
 {
-	public static function fromType(string $type): static
+	public static function fromHandler(string $handler): static
 	{
-		return new static('Source for type '.$type.' has already been handled.');
+		return new static('Source handler "'.$handler.'" has already been added.');
 	}
 }

@@ -20,7 +20,7 @@ use Throwable;
 use Tracy\Debugger;
 
 /**
- * @method void onCreate(self $self, string $view, DateTime $start)
+ * @method void onCreate(self $self, DateTime $start)
  * @method void onRender(self $self, Template $template)
  */
 class Calendar extends Control
@@ -157,7 +157,7 @@ class Calendar extends Control
 				}
 
 				if (!$this->config->isVisible($event)) {
-					$event->allDay = true;
+					$event->setAllDay(true);
 				}
 
 				$events[$event->getUniqueId()] = $event;

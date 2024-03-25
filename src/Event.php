@@ -15,5 +15,6 @@ interface Event extends JsonSerializable
 	public function getUniqueId(): string;
 	public function getStart(): DateTime;
 	public function getEnd(): ?DateTime;
+	public function setAllDay(bool $allDay): void;
 	public function isAllDay(): bool;
 }
