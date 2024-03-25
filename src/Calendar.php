@@ -16,6 +16,8 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Template;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
+use Throwable;
+use Tracy\Debugger;
 
 /**
  * @method void onCreate(self $self, string $view, DateTime $start)
@@ -89,10 +91,16 @@ class Calendar extends Control
 		$start = $this->httpRequest->getQuery('start');
 		$end = $this->httpRequest->getQuery('end');
 
-		$events = $this->fetchEvents(
-			new DateTime($start),
-			new DateTime($end),
-		);
+		try {
+			$events = $this->fetchEvents(
+				new DateTime($start),
+				new DateTime($end),
+			);
+
+		} catch (Throwable $e) {
+			Debugger::log($e);
+			$events = [];
+		}
 
 		$this->getPresenter()->sendJson($events);
 	}
