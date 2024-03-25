@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
+use Closure;
 use DateTime;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Parameters;
@@ -22,7 +23,6 @@ use Throwable;
 use Tracy\Debugger;
 
 /**
- * @method void onCreate(self $self, DateTime $start)
  * @method void onRender(self $self, Template $template)
  */
 class Calendar extends Control
@@ -30,8 +30,9 @@ class Calendar extends Control
 	/** @var Source[] */
 	private array $sources = [];
 
+	private ?Closure $onClick = null;
+
 	/** @var callable[] */
-	public array $onCreate = [];
 	public array $onRender = [];
 
 	public function __construct(
@@ -106,13 +107,28 @@ class Calendar extends Control
 	}
 
 
+	public function setClickHandle(?Closure $callback): void
+	{
+		$this->onClick = $callback;
+	}
+
+
+	public function isClickHandled(): bool
+	{
+		return $this->onClick <> null;
+	}
+
+
 	public function handleClick(?string $start): void
 	{
 		$start = $this->httpRequest->getQuery('start');
 
-		// TODO if there is no time, use time from bussiness hours
+		if (!$this->isClickHandled()) {
+			return;
+		}
 
-		$this->onCreate($this, new DateTime($start));
+		// TODO if there is no time, use time from bussiness hours
+		call_user_func($this->onClick, $this, new DateTime($start));
 	}
 
 

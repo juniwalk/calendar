@@ -57,9 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Events
 		eventsSet: () => { naja.uiHandler.bindUI(element) },
-		dateClick: ({ dateStr }) => naja.makeRequest('GET', {link click!}, {
-			start: dateStr
-		}),
 
 		datesSet: function({ view }) {
 			let url = new URL(document.location);
@@ -76,6 +73,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('[data-view-name]', control).html($('[data-view].active', control).html());
 		},
 	}));
+
+	if ({$control->isClickHandled()}) {
+		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, {
+			start: dateStr
+		}));
+	}
 
 	calendar.render();
 
