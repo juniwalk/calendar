@@ -141,7 +141,6 @@ class Calendar extends Control
 
 			foreach ($source->createEvents($start, $end) as $event) {
 				if ($event instanceof EventProvider) {
-					// $event = $event->createEvent($source, $this->config);
 					$event = $event->createEvent($this->translator);
 				}
 

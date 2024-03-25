@@ -11,6 +11,5 @@ use Nette\Localization\Translator;
 
 interface EventProvider
 {
-	// public function createEvent(Source $source, Config $config): Event;
 	public function createEvent(Translator $translator): Event;
 }
