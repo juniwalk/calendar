@@ -15,30 +15,22 @@ use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
+use JuniWalk\Utils\Traits\Events;
 use JuniWalk\Utils\UI\Actions\LinkProvider;
 use JuniWalk\Utils\UI\Actions\Traits\Actions;
 use JuniWalk\Utils\UI\Actions\Traits\Links;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Template;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
 use Throwable;
 use Tracy\Debugger;
 
-/**
- * @method void onRender(self $self, Template $template)
- */
 class Calendar extends Control implements LinkProvider
 {
-	use Actions, Links;
+	use Actions, Links, Events;
 
 	/** @var Source[] */
 	private array $sources = [];
-
-	private ?Closure $onClick = null;
-
-	/** @var callable[] */
-	public array $onRender = [];
 
 	public function __construct(
 		private readonly Parameters $parameters,
@@ -47,6 +39,8 @@ class Calendar extends Control implements LinkProvider
 		private ?Config $config = null,
 	) {
 		$this->config ??= $parameters;
+
+		$this->watch('render');
 	}
 
 
@@ -119,13 +113,14 @@ class Calendar extends Control implements LinkProvider
 
 	public function setClickHandle(?Closure $callback): void
 	{
-		$this->onClick = $callback;
+		$this->watch('click', true);
+		$this->on('click', $callback);
 	}
 
 
 	public function isClickHandled(): bool
 	{
-		return $this->onClick <> null;
+		return $this->isWatched(('click'));
 	}
 
 
@@ -138,7 +133,7 @@ class Calendar extends Control implements LinkProvider
 		}
 
 		// TODO if there is no time, use time from bussiness hours
-		call_user_func($this->onClick, $this, new DateTime($start));
+		$this->trigger('click', $this, new DateTime($start));
 	}
 
 
@@ -168,7 +163,7 @@ class Calendar extends Control implements LinkProvider
 		$template->setFile(__DIR__.'/templates/default.latte');
 		$template->setTranslator($this->translator);
 
-		$this->onRender($this, $template);
+		$this->trigger('render', $this, $template);
 
 		$template->setParameters([
 			'actions' => $this->getActions(),
