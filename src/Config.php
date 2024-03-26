@@ -11,6 +11,8 @@ use JsonSerializable;
 
 interface Config extends JsonSerializable
 {
+	public function setParam(string $param, mixed $value): void;
+	public function getParam(string $param): mixed;
 	public function isHeaderCustom(): bool;
 	public function isVisible(Event $event): bool;
 }

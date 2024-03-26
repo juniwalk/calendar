@@ -56,11 +56,16 @@ class Calendar extends Control
 	 */
 	public function setParam(string $param, mixed $value): void
 	{
-		if (!property_exists($this->config, $param)) {
-			throw ConfigParamNotFoundException::fromParam($param, $this->config);
-		}
+		$this->config->setParam($param, $value);
+	}
 
-		$this->config->$param = $value;
+
+	/**
+	 * @throws ConfigParamNotFoundException
+	 */
+	public function getParam(string $param): mixed
+	{
+		return $this->config->getParam($param);
 	}
 
 

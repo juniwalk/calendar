@@ -11,6 +11,8 @@ use DateTime;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidException;
+use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
+use JuniWalk\Utils\Arrays;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
@@ -30,17 +32,6 @@ class Parameters implements Config
 	public ?int $longPressDelay = 200;
 	public ?bool $lazyFetching = false;
 
-	public static function createSchema(): Schema
-	{
-		return Expect::from(new self, [
-			'headerToolbar'	=> Expect::anyOf(null, false, Expect::structure([
-				'start'		=> Expect::string(),
-				'center'	=> Expect::string(),
-				'end'		=> Expect::string(),
-			])),
-		]);
-	}
-
 
 	public function isHeaderCustom(): bool
 	{
@@ -52,6 +43,47 @@ class Parameters implements Config
 	{
 		// TODO: Use business hours to check visibility
 		return $event->getStart() < (new DateTime)->modify('18:00');
+	}
+
+
+	public function setLocale(?string $locale): void
+	{
+		$this->locale = $locale;
+	}
+
+
+	/**
+	 * @throws ConfigParamNotFoundException
+	 */
+	public function setParams(self|array $params): void
+	{
+		Arrays::map($params, fn($value, $param) => $this->setParam($param, $value));
+	}
+
+
+	/**
+	 * @throws ConfigParamNotFoundException
+	 */
+	public function setParam(string $param, mixed $value): void
+	{
+		if (!property_exists($this, $param)) {
+			throw ConfigParamNotFoundException::fromParam($param, $this);
+		}
+
+		$this->$param = $value;
+	}
+
+
+	/**
+	 * @throws ConfigParamNotFoundException
+	 */
+	public function getParam(string $param): mixed
+	{
+		if (!property_exists($this, $param)) {
+			throw ConfigParamNotFoundException::fromParam($param, $this);
+		}
+
+		return $this->$param;
 	}
 
 
@@ -74,16 +106,14 @@ class Parameters implements Config
 	}
 
 
-	public function setParams(self|array $params): void
+	public static function createSchema(): Schema
 	{
-		foreach ($params as $key => $value) {
-			$this->$key = $value;
-		}
-	}
-
-
-	public function setLocale(?string $locale): void
-	{
-		$this->locale = $locale;
+		return Expect::from(new self, [
+			'headerToolbar'	=> Expect::anyOf(null, false, Expect::structure([
+				'start'		=> Expect::string(),
+				'center'	=> Expect::string(),
+				'end'		=> Expect::string(),
+			])),
+		]);
 	}
 }
