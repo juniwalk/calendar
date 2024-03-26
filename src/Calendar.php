@@ -15,6 +15,9 @@ use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
+use JuniWalk\Utils\UI\Actions\LinkProvider;
+use JuniWalk\Utils\UI\Actions\Traits\Actions;
+use JuniWalk\Utils\UI\Actions\Traits\Links;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Template;
 use Nette\Http\IRequest as HttpRequest;
@@ -25,8 +28,10 @@ use Tracy\Debugger;
 /**
  * @method void onRender(self $self, Template $template)
  */
-class Calendar extends Control
+class Calendar extends Control implements LinkProvider
 {
+	use Actions, Links;
+
 	/** @var Source[] */
 	private array $sources = [];
 
@@ -166,6 +171,7 @@ class Calendar extends Control
 		$this->onRender($this, $template);
 
 		$template->setParameters([
+			'actions' => $this->getActions(),
 			'sources' => $this->sources,
 			'config' => $this->config,
 			'legend' => Legend::class,

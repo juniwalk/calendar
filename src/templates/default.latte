@@ -27,6 +27,12 @@
 				</div>
 			</div>
 
+			<div n:ifcontent n:inner-foreach="$actions as $action">
+				{control $action}
+			</div>
+
+			{* TODO Add settings dropdown *}
+
 		</div>
 
 	</div>
