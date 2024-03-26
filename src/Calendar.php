@@ -161,18 +161,17 @@ class Calendar extends Control
 		$this->onRender($this, $template);
 
 		$template->setParameters([
-			'locale' => $this->translator?->getLocale(),	// ? take from config
-			// 'refresh' => $this->isAutoRefresh,			// ? take from config
-			// 'responsive' => $this->isResponsive,			// ? take from config
-			// 'editable' => $this->isEditable,				// ? take from config
-			// 'popover' => $this->hasPopover,				// ? take from config
-			// 'reload' => $this->isReload,					// ? take from config
 			'sources' => $this->sources,
-			'config' => $this->config,						// ! was named branch
+			'config' => $this->config,
 			'legend' => Legend::class,
 
-			// 'initialView' => $this->initialView,			// ? take from config
-			// 'initialDate' => $this->initialDate,			// ? take from config
+			// 'initialView' => $this->initialView,	// ? take from config
+			// 'initialDate' => $this->initialDate,	// ? take from config
+			// 'refresh' => $this->isAutoRefresh,	// ? take from config
+			// 'responsive' => $this->isResponsive,	// ? take from config
+			// 'editable' => $this->isEditable,		// ? take from config
+			// 'popover' => $this->hasPopover,		// ? take from config
+			// 'reload' => $this->isReload,			// ? take from config
 		]);
 
 		$template->render();

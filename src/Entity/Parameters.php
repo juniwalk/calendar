@@ -42,7 +42,7 @@ class Parameters implements Config
 	}
 
 
-	public function hasCustomToolbar(): bool
+	public function isHeaderCustom(): bool
 	{
 		return !($this->headerToolbar ?? true);
 	}

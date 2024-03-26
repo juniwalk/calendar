@@ -11,6 +11,6 @@ use JsonSerializable;
 
 interface Config extends JsonSerializable
 {
-	public function hasCustomToolbar(): bool;
+	public function isHeaderCustom(): bool;
 	public function isVisible(Event $event): bool;
 }

@@ -1,7 +1,7 @@
 <div class="card card-primary card-outline" id="{$control->getName()}">
 <div n:snippet="calendar">
 
-	<div class="card-header border-0 pb-0" n:if="$config->hasCustomToolbar()">
+	<div class="card-header border-0 pb-0" n:if="$config->isHeaderCustom()">
 
 		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
 
