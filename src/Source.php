@@ -8,8 +8,11 @@
 namespace JuniWalk\Calendar;
 
 use DateTimeInterface as DateTime;
+use Nette\Application\UI\SignalReceiver;
+use Nette\Application\UI\StatePersistent;
+use Nette\ComponentModel\IComponent as Component;
 
-interface Source
+interface Source extends Component, SignalReceiver, StatePersistent
 {
 	public function setConfig(Config $config): void;
 	public function getHandlers(): array;
@@ -24,5 +27,7 @@ interface Source
 	 * @return Event[]|EventProvider[]
 	 */
 	public function fetchEvents(DateTime $start, DateTime $end): array;
-	public function createControls(Calendar $calendar): void;
+
+	public function attachControls(Calendar $calendar): void;
+	public function detachControls(Calendar $calendar): void;
 }

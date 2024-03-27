@@ -11,7 +11,7 @@ use DateTime;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidException;
-use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
+use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Utils\Arrays;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
@@ -53,7 +53,7 @@ class Parameters implements Config
 
 
 	/**
-	 * @throws ConfigParamNotFoundException
+	 * @throws ConfigInvalidParamException
 	 */
 	public function setParams(self|array $params): void
 	{
@@ -62,12 +62,12 @@ class Parameters implements Config
 
 
 	/**
-	 * @throws ConfigParamNotFoundException
+	 * @throws ConfigInvalidParamException
 	 */
 	public function setParam(string $param, mixed $value): void
 	{
 		if (!property_exists($this, $param)) {
-			throw ConfigParamNotFoundException::fromParam($param, $this);
+			throw ConfigInvalidParamException::fromParam($param, $this);
 		}
 
 		$this->$param = $value;
@@ -75,12 +75,12 @@ class Parameters implements Config
 
 
 	/**
-	 * @throws ConfigParamNotFoundException
+	 * @throws ConfigInvalidParamException
 	 */
 	public function getParam(string $param): mixed
 	{
 		if (!property_exists($this, $param)) {
-			throw ConfigParamNotFoundException::fromParam($param, $this);
+			throw ConfigInvalidParamException::fromParam($param, $this);
 		}
 
 		return $this->$param;

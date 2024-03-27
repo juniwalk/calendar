@@ -9,7 +9,7 @@ namespace JuniWalk\Calendar\Exceptions;
 
 use JuniWalk\Calendar\Config;
 
-final class ConfigParamNotFoundException extends CalendarException
+final class ConfigInvalidParamException extends CalendarException
 {
 	public static function fromParam(string $param, Config $config): static
 	{

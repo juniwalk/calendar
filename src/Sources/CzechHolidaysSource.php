@@ -14,8 +14,9 @@ use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Event;
 use JuniWalk\Calendar\Enums\Type;
 use JuniWalk\Calendar\Source;
+use Nette\Application\UI\Component;
 
-final class CzechHolidaysSource implements Source
+final class CzechHolidaysSource extends Component implements Source
 {
 	private Config $config;
 
@@ -64,7 +65,13 @@ final class CzechHolidaysSource implements Source
 	}
 
 
-	public function createControls(Calendar $calendar): void
+	public function attachControls(Calendar $calendar): void
+	{
+		// No controls for this source
+	}
+
+
+	public function detachControls(Calendar $calendar): void
 	{
 		// No controls for this source
 	}

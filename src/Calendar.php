@@ -11,15 +11,19 @@ use Closure;
 use DateTime;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Parameters;
-use JuniWalk\Calendar\Exceptions\ConfigParamNotFoundException;
+use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
-use JuniWalk\Calendar\Exceptions\SourceNotFoundException;
-use JuniWalk\Calendar\Exceptions\SourceTypeHandledException;
+use JuniWalk\Calendar\Exceptions\SourceAttachedException;
+use JuniWalk\Calendar\Exceptions\SourceHandledException;
+use JuniWalk\Utils\Enums\Casing;
+use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Traits\Events;
 use JuniWalk\Utils\UI\Actions\LinkProvider;
 use JuniWalk\Utils\UI\Actions\Traits\Actions;
 use JuniWalk\Utils\UI\Actions\Traits\Links;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Presenter;
+use Nette\InvalidArgumentException;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
 use Throwable;
@@ -29,13 +33,12 @@ class Calendar extends Control implements LinkProvider
 {
 	use Actions, Links, Events;
 
-	/** @var Source[] */
-	private array $sources = [];
+	private array $handlers = [];
 
 	public function __construct(
+		private readonly HttpRequest $httpRequest,
 		private readonly Parameters $parameters,
 		private readonly Translator $translator,
-		private readonly HttpRequest $httpRequest,
 		private ?Config $config = null,
 	) {
 		$this->config ??= $parameters;
@@ -51,7 +54,7 @@ class Calendar extends Control implements LinkProvider
 
 
 	/**
-	 * @throws ConfigParamNotFoundException
+	 * @throws ConfigInvalidParamException
 	 */
 	public function setParam(string $param, mixed $value): void
 	{
@@ -60,7 +63,7 @@ class Calendar extends Control implements LinkProvider
 
 
 	/**
-	 * @throws ConfigParamNotFoundException
+	 * @throws ConfigInvalidParamException
 	 */
 	public function getParam(string $param): mixed
 	{
@@ -69,53 +72,66 @@ class Calendar extends Control implements LinkProvider
 
 
 	/**
-	 * @throws SourceTypeHandledException
+	 * @throws SourceAttachedException
+	 * @throws SourceHandledException
 	 */
-	public function addSource(Source $source): void
+	public function addSource(Source $source, ?string $name = null): void
 	{
-		$source->setConfig($this->config);
-		$source->createControls($this);
+		$name ??= Format::className($source, Casing::Camel, 'Source');
+		$handlers = [];
+
+		if ($parent = $source->getParent()) {
+			throw SourceAttachedException::fromName($name, $parent);
+		}
 
 		foreach ($source->getHandlers() as $handler) {
-			if ($this->sources[$handler->value] ?? null) {
-				throw SourceTypeHandledException::fromHandler($handler->value);
+			$handler = Format::scalarize($handler);
+
+			if ($clash = $this->findSourceByHandler($handler)) {
+				throw SourceHandledException::fromHandler($handler, $clash);
 			}
 
-			$this->sources[$handler->value] = $source;
+			$handlers[$handler] = $name;
 		}
+
+		$source->setConfig($this->config);
+		$source->monitor(Presenter::class, function() use ($source) {
+			$source->monitor($this::class, attached: fn() => $source->attachControls($this));
+			$source->monitor($this::class, detached: fn() => $source->detachControls($this));
+		});
+
+		$this->addComponent($source, $name);
+		$this->handlers += $handlers;
+	}
+
+
+	public function findSourceByHandler(mixed $handler): ?Source
+	{
+		$handler = Format::scalarize($handler);
+		$name = $this->handlers[$handler] ?? '';
+
+		return $this->getComponent($name, false);
 	}
 
 
 	/**
-	 * @throws SourceNotFoundException
+	 * @throws InvalidArgumentException
 	 */
-	public function getSource(string $type): Source
+	public function getSource(string $name): Source
 	{
-		if (!isset($this->sources[$type])) {
-			throw SourceNotFoundException::fromType($type);
-		}
-
-		return $this->sources[$type];
+		return $this->getComponent($name);
 	}
 
 
-	/**
-	 * @throws SourceNotFoundException
-	 */
-	public function removeSource(string $type): void
+	public function getSources(): iterable
 	{
-		if (!isset($this->sources[$type])) {
-			throw SourceNotFoundException::fromType($type);
-		}
-
-		unset($this->sources[$type]);
+		return $this->getComponents(false, Source::class);
 	}
 
 
 	public function setClickHandle(?Closure $callback): void
 	{
-		$this->watch('click', true);
-		$this->on('click', $callback);
+		$this->watch('click', true)->when('click', $callback);
 	}
 
 
@@ -168,7 +184,7 @@ class Calendar extends Control implements LinkProvider
 
 		$template->setParameters([
 			'actions' => $this->getActions(),
-			'sources' => $this->sources,
+			'sources' => $this->getSources(),
 			'config' => $this->config,
 			'legend' => Legend::class,
 
@@ -192,7 +208,7 @@ class Calendar extends Control implements LinkProvider
 	{
 		$sources = $events = [];
 
-		foreach ($this->sources as $source) {
+		foreach ($this->getSources() as $source) {
 			if (in_array($source, $sources)) {
 				continue;
 			}
@@ -211,6 +227,8 @@ class Calendar extends Control implements LinkProvider
 				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
+
+				// TODO: Check that event type is handled and is handled by this source
 
 				$events[$event->getUniqueId()] = $event;
 			}
