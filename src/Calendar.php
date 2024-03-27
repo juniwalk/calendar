@@ -74,6 +74,7 @@ class Calendar extends Control implements LinkProvider
 	public function addSource(Source $source): void
 	{
 		$source->setConfig($this->config);
+		$source->createControls($this);
 
 		foreach ($source->getHandlers() as $handler) {
 			if ($this->sources[$handler->value] ?? null) {
@@ -198,7 +199,7 @@ class Calendar extends Control implements LinkProvider
 
 			// TODO Call some event on the source
 
-			foreach ($source->createEvents($start, $end) as $event) {
+			foreach ($source->fetchEvents($start, $end) as $event) {
 				if ($event instanceof EventProvider) {
 					$event = $event->createEvent($this->translator);
 				}

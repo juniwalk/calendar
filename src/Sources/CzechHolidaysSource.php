@@ -9,6 +9,7 @@ namespace JuniWalk\Calendar\Sources;
 
 use DateTime;
 use DateTimeInterface;
+use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Event;
 use JuniWalk\Calendar\Enums\Type;
@@ -36,7 +37,7 @@ final class CzechHolidaysSource implements Source
 	}
 
 
-	public function createEvents(DateTimeInterface $start, DateTimeInterface $end): array
+	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end): array
 	{
 		$start = new DateTime($start->format(DateTime::ATOM));
 		$events = [];
@@ -60,6 +61,12 @@ final class CzechHolidaysSource implements Source
 		}
 
 		return $events;
+	}
+
+
+	public function createControls(Calendar $calendar): void
+	{
+		// No controls for this source
 	}
 
 

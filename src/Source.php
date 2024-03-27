@@ -20,5 +20,9 @@ interface Source
 	// public function resize(int $id, DateTime $end, bool $allDay): void;
 	// public function createLink(Event $event, Calendar $calendar): void;
 
-	public function createEvents(DateTime $start, DateTime $end): array;
+	/**
+	 * @return Event[]|EventProvider[]
+	 */
+	public function fetchEvents(DateTime $start, DateTime $end): array;
+	public function createControls(Calendar $calendar): void;
 }

@@ -24,10 +24,15 @@ class Event implements EventInterface
 	public bool $allDay;
 	public ?DateTime $start;
 	public ?DateTime $end;
+
+	// TODO: Try to simplify by generating title from titleHtml
 	public string $title;
 	public Html $titleHtml;
-	public Html $content;
-	public Html $label;
+
+	// TODO: Create Popover entity
+	// public Html $content;
+	// public Html $label;
+
 	public string $url;
 	public array $classNames;
 	public bool $editable;
@@ -116,5 +121,19 @@ class Event implements EventInterface
 	public function isAllDay(): bool
 	{
 		return $this->allDay;
+	}
+
+
+	public function createTime(bool $fullDate = null): Html
+	{
+		$fullDate ??= $this->allDay || isset($this->groupId);
+		$format = $fullDate ? 'j.n. G:i' : 'G:i';
+		$time = $this->provider?->getStart()->format($format);
+
+		if ($end = $this->provider?->getEnd()) {
+			$time .= ' - '.$end->format($format);
+		}
+
+		return Html::el('small', $time);
 	}
 }
