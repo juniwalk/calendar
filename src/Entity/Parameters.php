@@ -53,6 +53,13 @@ class Parameters implements Config
 	}
 
 
+	public function isOutOfBounds(Event $event): bool
+	{
+		// TODO: Use business hours to check strict hours (bounds)
+		return false;
+	}
+
+
 	public function setLocale(?string $locale): void
 	{
 		$this->locale = $locale;
