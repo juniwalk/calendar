@@ -7,9 +7,6 @@
 
 namespace JuniWalk\Calendar;
 
-use JuniWalk\Calendar\Config;
-use JuniWalk\Calendar\Calendar;
-
 interface CalendarFactory
 {
 	public function create(?Config $config = null): Calendar;
