@@ -248,10 +248,10 @@ class Calendar extends Control implements LinkProvider
 					$event->setAllDay(true);
 				}
 
+				$eventId = $type.spl_object_id($event);
 				$event->type = $type;
 
-				// TODO: Is $event->__toString() enough? Maybe build custom Id from available values?
-				$events[(string) $event] = $event;
+				$events[$eventId] = $event;
 			}
 		}
 

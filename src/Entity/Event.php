@@ -67,12 +67,6 @@ class Event implements EventInterface
 	}
 
 
-	public function __toString(): string
-	{
-		return $this->type.'-'.spl_object_id($this);
-	}
-
-
 	public function jsonSerialize(): array
 	{
 		$params = get_object_vars($this);

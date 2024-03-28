@@ -9,9 +9,8 @@ namespace JuniWalk\Calendar;
 
 use DateTimeInterface as DateTime;
 use JsonSerializable;
-use Stringable;
 
-interface Event extends JsonSerializable, Stringable
+interface Event extends JsonSerializable
 {
 	public function getStart(): DateTime;
 	public function getEnd(): ?DateTime;
