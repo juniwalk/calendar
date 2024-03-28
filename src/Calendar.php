@@ -181,8 +181,10 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	public function handleFetch(?string $start, ?string $end): void
+	public function handleFetch(?string $start, ?string $end, ?string $timeZone): void
 	{
+		// TODO: Try to fetch events with prefixed query parameters
+		$timeZone = $this->httpRequest->getQuery('timeZone');
 		$start = $this->httpRequest->getQuery('start');
 		$end = $this->httpRequest->getQuery('end');
 
