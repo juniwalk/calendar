@@ -15,9 +15,6 @@ use Nette\ComponentModel\IComponent as Component;
 
 interface Source extends Component, SignalReceiver, StatePersistent
 {
-	// public function setEditable(bool $isEditable): void;
-	// public function createLink(Event $event, Calendar $calendar): void;
-
 	public function setConfig(Config $config): void;
 	public function getLegend(): array;
 

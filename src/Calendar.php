@@ -246,6 +246,10 @@ class Calendar extends Control implements LinkProvider
 					throw EventInvalidException::fromValue($event);
 				}
 
+				if ($source instanceof SourceLinkable) {
+					$event->url = $source->eventLink($event, $this);
+				}
+
 				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
