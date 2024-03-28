@@ -7,7 +7,6 @@
 
 namespace JuniWalk\Calendar;
 
-use Closure;
 use DateTime;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
@@ -107,7 +106,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	public function setClickHandle(?Closure $callback): void
+	public function setClickHandle(?callable $callback): void
 	{
 		$this->watch('click', true)->when('click', $callback);
 	}
