@@ -117,16 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
 	naja.addEventListener('complete', () => calendar.refetchEvents());
 
 
-	$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-	$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-	$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
-	$('[data-view]', control).off('click').on('click', ({ target }) => {
-		// Set cookie with new view before calling changeView so refetching has actual value
-		//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
+	if ({$config->isHeaderCustom()}) {
+		$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+		$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+		$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
+		$('[data-view]', control).off('click').on('click', ({ target }) => {
+			// Set cookie with new view before calling changeView so refetching has actual value
+			//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
 
-		calendar.changeView(target.dataset.view);
-		calendarView = null;
-	});
+			calendar.changeView(target.dataset.view);
+			calendarView = null;
+		});
+	}
 
 }, false);
 </script>
