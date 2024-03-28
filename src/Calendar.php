@@ -241,7 +241,7 @@ class Calendar extends Control implements LinkProvider
 	{
 		$events = [];
 
-		foreach ($this->getSources() as $sourceName => $source) {
+		foreach ($this->getSources() as $type => $source) {
 			$this->trigger('fetch', $this, $source);
 
 			foreach ($source->fetchEvents($start, $end) as $event) {
@@ -257,7 +257,7 @@ class Calendar extends Control implements LinkProvider
 					$event->setAllDay(true);
 				}
 
-				$event->type = $sourceName;
+				$event->type = $type;
 
 				$events[(string) $event] = $event;
 			}
