@@ -12,7 +12,6 @@ use DateTimeInterface;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Event;
-use JuniWalk\Calendar\Enums\Type;
 use JuniWalk\Calendar\Source;
 use Nette\Application\UI\Component;
 
@@ -23,12 +22,6 @@ final class CzechHolidaysSource extends Component implements Source
 	public function setConfig(Config $config): void
 	{
 		$this->config = $config;
-	}
-
-
-	public function getHandlers(): array
-	{
-		return [Type::Holiday];
 	}
 
 
@@ -52,7 +45,6 @@ final class CzechHolidaysSource extends Component implements Source
 
 			$events[] = new Event([
 				'id' => $date->format('U'),
-				'type' => Type::Holiday,
 				'title' => $name,
 				'start' => $date,
 				'display' => 'background',

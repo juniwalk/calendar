@@ -18,7 +18,6 @@ interface Source extends Component, SignalReceiver, StatePersistent
 	// public function createLink(Event $event, Calendar $calendar): void;
 
 	public function setConfig(Config $config): void;
-	public function getHandlers(): array;
 	public function getLegend(): array;
 
 	/**

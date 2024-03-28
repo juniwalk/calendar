@@ -7,7 +7,6 @@
 
 namespace JuniWalk\Calendar\Entity;
 
-use BackedEnum;
 use DateTime;
 use JuniWalk\Calendar\Event as EventInterface;
 use JuniWalk\Calendar\EventProvider;
@@ -20,7 +19,7 @@ class Event implements EventInterface
 
 	public mixed $id;
 	public mixed $groupId;
-	public BackedEnum $type;
+	public string $type;
 	public bool $allDay;
 	public ?DateTime $start;
 	public ?DateTime $end;
@@ -90,7 +89,7 @@ class Event implements EventInterface
 
 	public function getUniqueId(): string
 	{
-		return $this->type->value.'-'.spl_object_id($this);
+		return $this->type.'-'.spl_object_id($this);
 	}
 
 

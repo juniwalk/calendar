@@ -14,7 +14,7 @@ use JuniWalk\Calendar\Entity\Parameters;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceAttachedException;
-use JuniWalk\Calendar\Exceptions\SourceHandledException;
+use JuniWalk\Calendar\Exceptions\SourceNotEditableException;
 use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Traits\Events;
@@ -32,8 +32,6 @@ use Tracy\Debugger;
 class Calendar extends Control implements LinkProvider
 {
 	use Actions, Links, Events;
-
-	private array $handlers = [];
 
 	public function __construct(
 		private readonly HttpRequest $httpRequest,
@@ -73,25 +71,13 @@ class Calendar extends Control implements LinkProvider
 
 	/**
 	 * @throws SourceAttachedException
-	 * @throws SourceHandledException
 	 */
 	public function addSource(Source $source, ?string $name = null): void
 	{
 		$name ??= Format::className($source, Casing::Camel, 'Source');
-		$handlers = [];
 
 		if ($parent = $source->getParent()) {
 			throw SourceAttachedException::fromName($name, $parent);
-		}
-
-		foreach ($source->getHandlers() as $handler) {
-			$handler = Format::scalarize($handler);
-
-			if ($clash = $this->findSourceByHandler($handler)) {
-				throw SourceHandledException::fromHandler($handler, $clash);
-			}
-
-			$handlers[$handler] = $name;
 		}
 
 		$source->setConfig($this->config);
@@ -101,16 +87,6 @@ class Calendar extends Control implements LinkProvider
 		});
 
 		$this->addComponent($source, $name);
-		$this->handlers += $handlers;
-	}
-
-
-	public function findSourceByHandler(mixed $handler): ?Source
-	{
-		$handler = Format::scalarize($handler);
-		$name = $this->handlers[$handler] ?? '';
-
-		return $this->getComponent($name, false);
 	}
 
 
@@ -157,10 +133,10 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
-			$source = $this->findSourceByHandler($type);
+			$source = $this->getSource($type);
 
-			if (!$source || !$source instanceof SourceEditable) {
-				// throw new FeatureNotAllowedException
+			if (!$source instanceof SourceEditable) {
+				throw SourceNotEditableException::fromSource($source);
 			}
 
 			$source->eventDrop($itemId, new DateTime($start), $allDay);
@@ -168,7 +144,7 @@ class Calendar extends Control implements LinkProvider
 		// } catch (EventInvalidException $e) {
 		// 	$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
 
-		} catch (FeatureNotAllowedException) {
+		} catch (SourceNotEditableException) {
 			// Ignore ?
 
 		} catch (Throwable $e) {
@@ -186,10 +162,10 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
-			$source = $this->findSourceByHandler($type);
+			$source = $this->getSource($type);
 
-			if (!$source || !$source instanceof SourceEditable) {
-				// throw new FeatureNotAllowedException
+			if (!$source instanceof SourceEditable) {
+				throw SourceNotEditableException::fromSource($source);
 			}
 
 			$source->eventResize($itemId, new DateTime($end), $allDay);
@@ -197,7 +173,7 @@ class Calendar extends Control implements LinkProvider
 		} catch (EventInvalidException $e) {
 			// $presenter->flashMessage('web.message.'.Format::className($e), 'warning');
 
-		} catch (FeatureNotAllowedException) {
+		} catch (SourceNotEditableException) {
 			// Ignore ?
 
 		} catch (Throwable $e) {
@@ -262,13 +238,9 @@ class Calendar extends Control implements LinkProvider
 	 */
 	private function fetchEvents(DateTime $start, DateTime $end): array
 	{
-		$sources = $events = [];
+		$events = [];
 
-		foreach ($this->getSources() as $source) {
-			if (in_array($source, $sources)) {
-				continue;
-			}
-
+		foreach ($this->getSources() as $sourceName => $source) {
 			// TODO Call some event on the source
 
 			foreach ($source->fetchEvents($start, $end) as $event) {
@@ -284,12 +256,10 @@ class Calendar extends Control implements LinkProvider
 					$event->setAllDay(true);
 				}
 
-				// TODO: Check that event type is handled and is handled by this source
+				$event->type = $sourceName;
 
 				$events[$event->getUniqueId()] = $event;
 			}
-
-			$sources[] = $source;
 		}
 
 		return array_values($events);
