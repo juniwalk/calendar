@@ -18,14 +18,7 @@ use Nette\Application\UI\Component;
 
 final class CzechHolidaysSource extends Component implements Source
 {
-	private Config $config;
-
-	public function setConfig(Config $config): void
-	{
-		$this->config = $config;
-	}
-
-
+	public function setConfig(Config $config): void { }
 	public function getLegend(): array
 	{
 		return [];
@@ -58,16 +51,8 @@ final class CzechHolidaysSource extends Component implements Source
 	}
 
 
-	public function attachControls(Calendar $calendar): void
-	{
-		// No controls for this source
-	}
-
-
-	public function detachControls(Calendar $calendar): void
-	{
-		// No controls for this source
-	}
+	public function attachControls(Calendar $calendar): void { }
+	public function detachControls(Calendar $calendar): void { }
 
 
 	private function getHolidays(DateTime $start): array
