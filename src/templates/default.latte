@@ -55,16 +55,20 @@
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
-	let calendarView = null;
-
-	const config = {$config};
-	const prefix = (obj) => Object.fromEntries(
-		Object.entries(obj).map(([k, v]) => [{$control->getName()}+"-"+k, v])
+	const prefix = (key) => {$control->getName()}+"-"+key;
+	const prefixObj = (obj) => Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => [prefix(k), v])
 	);
 
+	let calendarView = null;
+	const config = {$config};
+
 	let control = document.getElementById({$control->getName()});
-	let element = document.getElementById({$control->getName()} + "-calendar");
+	let element = document.getElementById(prefix('calendar'));
 	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
+		endParam: prefix('end'),
+		startParam: prefix('start'),
+		timeZoneParam: prefix('timeZone'),
 		eventSources: [{link fetch!}],
 
 		// Events
@@ -87,20 +91,20 @@ document.addEventListener('DOMContentLoaded', function() {
 	}));
 
 	if ({$control->isClickHandled()}) {
-		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefix({
+		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
 			start: dateStr,
 		})));
 	}
 
 	if ({$config->isEditable()}) {
-		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefix({
+		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
 			type: event.extendedProps.type,
 			id: event.id,
 			start: event.startStr,
 			allDay: event.allDay,
 		})));
 
-		calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefix({
+		calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
 			type: event.extendedProps.type,
 			id: event.id,
 			end: event.endStr,
