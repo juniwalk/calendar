@@ -9,7 +9,7 @@ namespace JuniWalk\Calendar;
 
 use Nette\Localization\Translator;
 
-interface EventProvider
+interface EventProvider extends Event
 {
 	public function createEvent(Translator $translator): Event;
 }

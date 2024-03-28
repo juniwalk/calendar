@@ -258,7 +258,7 @@ class Calendar extends Control implements LinkProvider
 
 				$event->type = $sourceName;
 
-				$events[$event->getUniqueId()] = $event;
+				$events[(string) $event] = $event;
 			}
 		}
 

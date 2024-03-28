@@ -11,6 +11,7 @@ use DateTime;
 use JuniWalk\Calendar\Event as EventInterface;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Utils\Html;
+use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 
 class Event implements EventInterface
@@ -66,30 +67,25 @@ class Event implements EventInterface
 	}
 
 
+	public function __toString(): string
+	{
+		return $this->type.'-'.spl_object_id($this);
+	}
+
+
 	public function jsonSerialize(): array
 	{
-		$params = (array) $this;
+		$params = get_object_vars($this);
 		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
 
 		foreach ($params as $key => $value) {
-			if ($value instanceof Html && !$value->getText()) {
-				$value = null;
-			}
-
-			$params[$key] = match(true) {
-				$value instanceof DateTime => $value->format(DateTime::ATOM),
-				$value instanceof Html => $value->render(),
-				default => $value,
+			$params[$key] = match (true) {
+				$value instanceof EventProvider => null,
+				default => Format::scalarize($value) ?? $value,
 			};
 		}
 
 		return array_filter($params);
-	}
-
-
-	public function getUniqueId(): string
-	{
-		return $this->type.'-'.spl_object_id($this);
 	}
 
 

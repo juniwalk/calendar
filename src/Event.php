@@ -9,10 +9,10 @@ namespace JuniWalk\Calendar;
 
 use DateTimeInterface as DateTime;
 use JsonSerializable;
+use Stringable;
 
-interface Event extends JsonSerializable
+interface Event extends JsonSerializable, Stringable
 {
-	public function getUniqueId(): string;
 	public function getStart(): DateTime;
 	public function getEnd(): ?DateTime;
 	public function setAllDay(bool $allDay): void;
