@@ -142,11 +142,8 @@ class Calendar extends Control implements LinkProvider
 
 			$source->eventDrop($id, new DateTime($start), $allDay);
 
-		// } catch (EventInvalidException $e) {
-		// 	$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
-
-		} catch (SourceNotEditableException) {
-			// Ignore ?
+		} catch (EventInvalidException $e) {
+			$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
 
 		} catch (Throwable $e) {
 			$presenter->flashMessage('web.message.something-went-wrong', 'danger');
@@ -172,10 +169,7 @@ class Calendar extends Control implements LinkProvider
 			$source->eventResize($id, new DateTime($end), $allDay);
 
 		} catch (EventInvalidException $e) {
-			// $presenter->flashMessage('web.message.'.Format::className($e), 'warning');
-
-		} catch (SourceNotEditableException) {
-			// Ignore ?
+			$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
 
 		} catch (Throwable $e) {
 			$presenter->flashMessage('web.message.something-went-wrong', 'danger');

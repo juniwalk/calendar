@@ -9,7 +9,7 @@ namespace JuniWalk\Calendar\Exceptions;
 
 use JuniWalk\Calendar\Event;
 
-final class EventInvalidException extends CalendarException
+class EventInvalidException extends CalendarException
 {
 	public static function fromValue(mixed $event): static
 	{
