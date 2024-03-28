@@ -39,7 +39,7 @@
 
 	</div>
 
-	<div class="card-body p-0" id="{$control->getName()}-calendar"></div>
+	<div class="card-body p-0" id="{$control->getName()}-timeGrid"></div>
 
 	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const config = {$config};
 
 	let control = document.getElementById({$control->getName()});
-	let element = document.getElementById(prefix('calendar'));
+	let element = document.getElementById(prefix('timeGrid'));
 	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
 		endParam: prefix('end'),
 		startParam: prefix('start'),
@@ -113,6 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	calendar.render();
+
+	naja.addEventListener('complete', () => calendar.refetchEvents());
 
 
 	$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
