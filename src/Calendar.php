@@ -143,14 +143,70 @@ class Calendar extends Control implements LinkProvider
 
 	public function handleClick(?string $start): void
 	{
-		$start = $this->httpRequest->getQuery('start');
-
 		if (!$this->isClickHandled()) {
 			return;
 		}
 
 		// TODO if there is no time, use time from bussiness hours
 		$this->trigger('click', $this, new DateTime($start));
+	}
+
+
+	public function handleDrop(?string $type, ?int $itemId, ?string $start, ?bool $allDay): void
+	{
+		$presenter = $this->getPresenter();
+
+		try {
+			$source = $this->findSourceByHandler($type);
+
+			if (!$source || !$source instanceof SourceEditable) {
+				// throw new FeatureNotAllowedException
+			}
+
+			$source->eventDrop($itemId, new DateTime($start), $allDay);
+
+		// } catch (EventInvalidException $e) {
+		// 	$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
+
+		} catch (FeatureNotAllowedException) {
+			// Ignore ?
+
+		} catch (Throwable $e) {
+			$presenter->flashMessage('web.message.something-went-wrong', 'danger');
+			Debugger::log($e);
+		}
+
+		$presenter->redirectAjax('this');
+		$presenter->sendPayload();
+	}
+
+
+	public function handleResize(?string $type, ?int $itemId, ?string $end, ?bool $allDay): void
+	{
+		$presenter = $this->getPresenter();
+
+		try {
+			$source = $this->findSourceByHandler($type);
+
+			if (!$source || !$source instanceof SourceEditable) {
+				// throw new FeatureNotAllowedException
+			}
+
+			$source->eventResize($itemId, new DateTime($end), $allDay);
+
+		} catch (EventInvalidException $e) {
+			// $presenter->flashMessage('web.message.'.Format::className($e), 'warning');
+
+		} catch (FeatureNotAllowedException) {
+			// Ignore ?
+
+		} catch (Throwable $e) {
+			$presenter->flashMessage('web.message.something-went-wrong', 'danger');
+			Debugger::log($e);
+		}
+
+		$presenter->redirectAjax('this');
+		$presenter->sendPayload();
 	}
 
 

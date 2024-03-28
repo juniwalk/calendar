@@ -29,6 +29,7 @@ class Parameters implements Config
 	public ?bool $expandRows = true;
 	public ?bool $nowIndicator = true;
 	public ?bool $weekends = true;
+	public ?bool $editable = null;
 	public ?int $longPressDelay = 200;
 	public ?bool $lazyFetching = false;
 
@@ -36,6 +37,12 @@ class Parameters implements Config
 	public function isHeaderCustom(): bool
 	{
 		return !($this->headerToolbar ?? true);
+	}
+
+
+	public function isEditable(): bool
+	{
+		return (bool) $this->editable;
 	}
 
 

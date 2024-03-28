@@ -27,8 +27,10 @@
 				</div>
 			</div>
 
-			<div n:snippet="actions" n:inner-foreach="$actions as $action">
-				{control $action}
+			<div n:snippet="actions">
+				<div n:ifcontent n:inner-foreach="$actions as $action">
+					{control $action}
+				</div>
 			</div>
 
 			{* TODO Add settings dropdown *}
@@ -53,11 +55,15 @@
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
-	const config = {$config};
 	let calendarView = null;
 
+	const config = {$config};
+	const prefix = (obj) => Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => [{$control->getName()}+"-"+k, v])
+	);
+
 	let control = document.getElementById({$control->getName()});
-	let element = document.getElementById({$control->getName()} + '-calendar');
+	let element = document.getElementById({$control->getName()} + "-calendar");
 	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
 		eventSources: [{link fetch!}],
 
@@ -81,9 +87,25 @@ document.addEventListener('DOMContentLoaded', function() {
 	}));
 
 	if ({$control->isClickHandled()}) {
-		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, {
+		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefix({
 			start: dateStr
-		}));
+		})));
+	}
+
+	if ({$config->isEditable()}) {
+		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefix({
+			type: event.extendedProps.type,
+			itemId: event.id,
+			start: event.startStr,
+			allDay: event.allDay ? 1 : 0
+		})));
+
+		calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefix({
+			type: event.extendedProps.type,
+			itemId: event.id,
+			end: event.endStr,
+			allDay: event.allDay ? 1 : 0
+		})));
 	}
 
 	calendar.render();
