@@ -42,6 +42,7 @@ class Calendar extends Control implements LinkProvider
 		$this->config ??= $parameters;
 
 		$this->watch('render');
+		$this->watch('fetch');
 	}
 
 
@@ -241,7 +242,7 @@ class Calendar extends Control implements LinkProvider
 		$events = [];
 
 		foreach ($this->getSources() as $sourceName => $source) {
-			// TODO Call some event on the source
+			$this->trigger('fetch', $this, $source);
 
 			foreach ($source->fetchEvents($start, $end) as $event) {
 				if ($event instanceof EventProvider) {
