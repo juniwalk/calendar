@@ -88,23 +88,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	if ({$control->isClickHandled()}) {
 		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefix({
-			start: dateStr
+			start: dateStr,
 		})));
 	}
 
 	if ({$config->isEditable()}) {
 		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefix({
 			type: event.extendedProps.type,
-			itemId: event.id,
+			id: event.id,
 			start: event.startStr,
-			allDay: event.allDay ? 1 : 0
+			allDay: event.allDay,
 		})));
 
 		calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefix({
 			type: event.extendedProps.type,
-			itemId: event.id,
+			id: event.id,
 			end: event.endStr,
-			allDay: event.allDay ? 1 : 0
+			allDay: event.allDay,
 		})));
 	}
 

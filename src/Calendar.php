@@ -129,7 +129,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	public function handleDrop(?string $type, ?int $itemId, ?string $start, ?bool $allDay): void
+	public function handleDrop(?string $type, ?int $id, ?string $start, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
 
@@ -140,7 +140,7 @@ class Calendar extends Control implements LinkProvider
 				throw SourceNotEditableException::fromSource($source);
 			}
 
-			$source->eventDrop($itemId, new DateTime($start), $allDay);
+			$source->eventDrop($id, new DateTime($start), $allDay);
 
 		// } catch (EventInvalidException $e) {
 		// 	$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
@@ -158,7 +158,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	public function handleResize(?string $type, ?int $itemId, ?string $end, ?bool $allDay): void
+	public function handleResize(?string $type, ?int $id, ?string $end, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
 
@@ -169,7 +169,7 @@ class Calendar extends Control implements LinkProvider
 				throw SourceNotEditableException::fromSource($source);
 			}
 
-			$source->eventResize($itemId, new DateTime($end), $allDay);
+			$source->eventResize($id, new DateTime($end), $allDay);
 
 		} catch (EventInvalidException $e) {
 			// $presenter->flashMessage('web.message.'.Format::className($e), 'warning');
@@ -259,6 +259,7 @@ class Calendar extends Control implements LinkProvider
 
 				$event->type = $type;
 
+				// TODO: Is $event->__toString() enough? Maybe build custom Id from available values?
 				$events[(string) $event] = $event;
 			}
 		}
