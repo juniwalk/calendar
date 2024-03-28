@@ -9,6 +9,7 @@ namespace JuniWalk\Calendar\Sources;
 
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Event;
@@ -31,7 +32,7 @@ final class CzechHolidaysSource extends Component implements Source
 	}
 
 
-	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end): array
+	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone): array
 	{
 		$start = new DateTime($start->format(DateTime::ATOM));
 		$events = [];

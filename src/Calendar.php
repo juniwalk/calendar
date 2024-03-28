@@ -9,6 +9,7 @@ namespace JuniWalk\Calendar;
 
 use Closure;
 use DateTime;
+use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Parameters;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
@@ -187,6 +188,7 @@ class Calendar extends Control implements LinkProvider
 			$events = $this->fetchEvents(
 				new DateTime($start),
 				new DateTime($end),
+				new DateTimeZone($timeZone),
 			);
 
 		} catch (Throwable $e) {
@@ -228,14 +230,14 @@ class Calendar extends Control implements LinkProvider
 	/**
 	 * @throws EventInvalidException
 	 */
-	private function fetchEvents(DateTime $start, DateTime $end): array
+	private function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
 	{
 		$events = [];
 
 		foreach ($this->getSources() as $type => $source) {
 			$this->trigger('fetch', $this, $source);
 
-			foreach ($source->fetchEvents($start, $end) as $event) {
+			foreach ($source->fetchEvents($start, $end, $timeZone) as $event) {
 				if ($event instanceof EventProvider) {
 					$event = $event->createEvent($this->translator);
 				}
