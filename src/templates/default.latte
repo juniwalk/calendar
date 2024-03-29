@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		Object.entries(obj).map(([k, v]) => [prefix(k), v])
 	);
 
-	let calendarView = null;
 	const config = {$config};
+	let calendarView = null;
 
 	let control = document.getElementById({$control->getName()});
 	let element = document.getElementById(prefix('timeGrid'));
@@ -73,29 +73,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Events
 		eventsSet: () => { naja.uiHandler.bindUI(element) },
-
-		datesSet: function({ view }) {
-			let url = new URL(document.location);
-
-			if (url.searchParams.has('date')) {
-				url.searchParams.delete('date');
-				window.history.replaceState(null, '', url);
-			}
-
-			$('[data-title]', control).text(view.title);
-			$('[data-view]', control).removeClass('active');
-			$('[data-view="'+ view.type +'"]', control).addClass('active');
-
-			$('[data-view-name]', control).html($('[data-view].active', control).html());
-		},
 	}));
 
+	// TODO: Try to move this whole block into separate <script> tag with n:if
 	if ({$control->isClickHandled()}) {
 		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
 			start: dateStr,
 		})));
 	}
 
+	// TODO: Try to move this whole block into separate <script> tag with n:if
 	if ({$config->isEditable()}) {
 		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
 			type: event.extendedProps.type,
@@ -117,7 +104,16 @@ document.addEventListener('DOMContentLoaded', function() {
 	naja.addEventListener('complete', () => calendar.refetchEvents());
 
 
+	// TODO: Try to move this whole block into separate <script> tag with n:if
 	if ({$config->isHeaderCustom()}) {
+		calendar.setOption('datesSet', function({ view }) {
+			$('[data-title]', control).text(view.title);
+			$('[data-view]', control).removeClass('active');
+			$('[data-view="'+ view.type +'"]', control).addClass('active');
+
+			$('[data-view-name]', control).html($('[data-view].active', control).html());
+		});
+
 		$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
 		$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
 		$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
