@@ -208,6 +208,7 @@ class Calendar extends Control implements LinkProvider
 		$this->trigger('render', $this, $template);
 
 		$template->setParameters([
+			'controlName' => $this->getName(),
 			'actions' => $this->getActions(),
 			'sources' => $this->getSources(),
 			'config' => $this->config,

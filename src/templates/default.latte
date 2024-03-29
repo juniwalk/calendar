@@ -1,4 +1,4 @@
-<div class="card card-primary card-outline" id="{$control->getName()}">
+<div class="card card-primary card-outline" id="{$controlName}">
 <div n:snippet="calendar">
 
 	<div class="card-header border-0 pb-0" n:if="$config->isHeaderCustom()">
@@ -39,7 +39,7 @@
 
 	</div>
 
-	<div class="card-body p-0" id="{$control->getName()}-timeGrid"></div>
+	<div class="card-body p-0" id="{$controlName}-timeGrid"></div>
 
 	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
@@ -52,18 +52,21 @@
 </div>
 </div>
 
+<script type="text/javascript">
+	window.storage ??= {};
+</script>
+
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
-	const prefix = (key) => {$control->getName()}+"-"+key;
+	const prefix = (key) => {$controlName}+"-"+key;
 	const prefixObj = (obj) => Object.fromEntries(
 		Object.entries(obj).map(([k, v]) => [prefix(k), v])
 	);
 
-	const config = {$config};
-	let calendarView = null;
+	const config = {$config}
 
-	let control = document.getElementById({$control->getName()});
+	let control = document.getElementById({$controlName});
 	let element = document.getElementById(prefix('timeGrid'));
 	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
 		endParam: prefix('end'),
@@ -75,56 +78,97 @@ document.addEventListener('DOMContentLoaded', function() {
 		eventsSet: () => { naja.uiHandler.bindUI(element) },
 	}));
 
-	// TODO: Try to move this whole block into separate <script> tag with n:if
-	if ({$control->isClickHandled()}) {
-		calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
-			start: dateStr,
-		})));
-	}
-
-	// TODO: Try to move this whole block into separate <script> tag with n:if
-	if ({$config->isEditable()}) {
-		calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
-			type: event.extendedProps.type,
-			id: event.id,
-			start: event.startStr,
-			allDay: event.allDay,
-		})));
-
-		calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
-			type: event.extendedProps.type,
-			id: event.id,
-			end: event.endStr,
-			allDay: event.allDay,
-		})));
-	}
-
-	calendar.render();
-
 	naja.addEventListener('complete', () => calendar.refetchEvents());
+	window.storage[control.id] = calendar;
 
+}, false);
+</script>
 
-	// TODO: Try to move this whole block into separate <script> tag with n:if
-	if ({$config->isHeaderCustom()}) {
-		calendar.setOption('datesSet', function({ view }) {
-			$('[data-title]', control).text(view.title);
-			$('[data-view]', control).removeClass('active');
-			$('[data-view="'+ view.type +'"]', control).addClass('active');
+<script type="text/javascript" defer="defer" n:if="$control->isClickHandled()">
+document.addEventListener('DOMContentLoaded', function() {
 
-			$('[data-view-name]', control).html($('[data-view].active', control).html());
-		});
+	const prefix = (key) => {$controlName}+"-"+key;
+	const prefixObj = (obj) => Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => [prefix(k), v])
+	);
 
-		$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-		$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-		$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
-		$('[data-view]', control).off('click').on('click', ({ target }) => {
-			// Set cookie with new view before calling changeView so refetching has actual value
-			//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
+	let control = document.getElementById({$controlName});
+	let calendar = window.storage[control.id];
 
-			calendar.changeView(target.dataset.view);
-			calendarView = null;
-		});
-	}
+	calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
+		start: dateStr,
+	})));
+
+}, false);
+</script>
+
+<script type="text/javascript" defer="defer" n:if="$config->isEditable()">
+document.addEventListener('DOMContentLoaded', function() {
+
+	const prefix = (key) => {$controlName}+"-"+key;
+	const prefixObj = (obj) => Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => [prefix(k), v])
+	);
+
+	let control = document.getElementById({$controlName});
+	let calendar = window.storage[control.id];
+
+	calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
+		type: event.extendedProps.type,
+		id: event.id,
+		start: event.startStr,
+		allDay: Number(event.allDay),
+	})));
+
+	calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
+		type: event.extendedProps.type,
+		id: event.id,
+		end: event.endStr,
+		allDay: Number(event.allDay),
+	})));
+
+}, false);
+</script>
+
+<script type="text/javascript" defer="defer" n:if="$config->isHeaderCustom()">
+document.addEventListener('DOMContentLoaded', function() {
+
+	const prefix = (key) => {$controlName}+"-"+key;
+	const prefixObj = (obj) => Object.fromEntries(
+		Object.entries(obj).map(([k, v]) => [prefix(k), v])
+	);
+
+	let control = document.getElementById({$controlName});
+	let calendar = window.storage[control.id];
+
+	calendar.setOption('datesSet', function({ view }) {
+		$('[data-title]', control).text(view.title);
+		$('[data-view]', control).removeClass('active');
+		$('[data-view="'+ view.type +'"]', control).addClass('active');
+
+		$('[data-view-name]', control).html($('[data-view].active', control).html());
+	});
+
+	$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+	$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
+	$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
+	$('[data-view]', control).off('click').on('click', ({ target }) => {
+		// Set cookie with new view before calling changeView so refetching has actual value
+		//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
+
+		calendar.changeView(target.dataset.view);
+		control.dataset.view = null;
+	});
+
+}, false);
+</script>
+
+<script type="text/javascript" defer="defer">
+document.addEventListener('DOMContentLoaded', function() {
+
+	let control = document.getElementById({$controlName});
+	let calendar = window.storage[control.id];
+	calendar.render();
 
 }, false);
 </script>
