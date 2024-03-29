@@ -34,21 +34,23 @@ class Calendar extends Control implements LinkProvider
 	use Actions, Links, Events;
 
 	public function __construct(
-		private readonly HttpRequest $httpRequest,
 		private readonly Parameters $parameters,
 		private readonly Translator $translator,
+		private HttpRequest $httpRequest,
 		private ?Config $config = null,
 	) {
-		$this->config ??= $parameters;
+		$config = $this->config ??= $parameters;
 
 		$this->watch('render');
 		$this->watch('fetch');
+
+		$this->monitor(Presenter::class, fn() => $config->loadState($this, $httpRequest));
 	}
 
 
-	public function setConfig(Config $config): void
+	public function getConfig(): Config
 	{
-		$this->config = $config;
+		return $this->config;
 	}
 
 
@@ -64,9 +66,9 @@ class Calendar extends Control implements LinkProvider
 	/**
 	 * @throws ConfigInvalidParamException
 	 */
-	public function getParam(string $param): mixed
+	public function getParam(string $param, bool $throw = true): mixed
 	{
-		return $this->config->getParam($param);
+		return $this->config->getParam($param, $throw);
 	}
 
 
@@ -208,19 +210,17 @@ class Calendar extends Control implements LinkProvider
 		$this->trigger('render', $this, $template);
 
 		$template->setParameters([
+			'config' => $config = $this->config,
 			'controlName' => $this->getName(),
 			'actions' => $this->getActions(),
 			'sources' => $this->getSources(),
-			'config' => $this->config,
 			'legend' => Legend::class,
 
-			// 'initialView' => $this->initialView,	// ? take from config
-			// 'initialDate' => $this->initialDate,	// ? take from config
-			// 'refresh' => $this->isAutoRefresh,	// ? take from config
-			// 'responsive' => $this->isResponsive,	// ? take from config
-			// 'editable' => $this->isEditable,		// ? take from config
-			// 'popover' => $this->hasPopover,		// ? take from config
-			// 'reload' => $this->isReload,			// ? take from config
+			'options' => [
+				'data-responsive' => $config->isResponsive(),
+				'data-refresh' => $config->isAutoRefresh(),
+				'data-details' => $config->isShowDetails(),
+			],
 		]);
 
 		$template->render();

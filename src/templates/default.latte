@@ -33,13 +33,46 @@
 				</div>
 			</div>
 
-			{* TODO Add settings dropdown *}
+			<div class="btn-group mb-2 ml-2" role="group">
+				<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" data-tooltip title="{_web.calendar.settings}"><i class="fa fa-cog fa-fw"></i></a>
+				<div class="dropdown-menu dropdown-menu-right stateful">
+					<a href="#" class="dropdown-item py-2" data-set-show-details>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_web.calendar.popover}</span>
+							<small class="text-muted">{_web.calendar.popover-description}</small>
+						</div>
+					</a>
+					<a href="#" class="dropdown-item py-2" data-set-auto-refresh>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_web.calendar.autoRefresh}</span>
+							<small class="text-muted">{_web.calendar.autoRefresh-description}</small>
+						</div>
+					</a>
+					<a href="#" class="dropdown-item py-2" data-set-editable>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_web.calendar.dragAndDrop}</span>
+							<small class="text-muted">{_web.calendar.dragAndDrop-description}</small>
+						</div>
+					</a>
+					<div class="dropdown-divider"></div>
+					<a href="#" class="dropdown-item py-2" data-set-responsive>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_web.calendar.responsive}</span>
+							<small class="text-muted">{_web.calendar.responsive-description}</small>
+						</div>
+					</a>
+				</div>
+			</div>
 
 		</div>
 
 	</div>
 
-	<div class="card-body p-0" id="{$controlName}-timeGrid"></div>
+	<div class="card-body p-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
 
 	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
@@ -52,10 +85,6 @@
 </div>
 </div>
 
-<script type="text/javascript">
-	window.storage ??= {};
-</script>
-
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -64,10 +93,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		Object.entries(obj).map(([k, v]) => [prefix(k), v])
 	);
 
-	const config = {$config}
-
-	let control = document.getElementById({$controlName});
+	let config = {$config}
 	let element = document.getElementById(prefix('timeGrid'));
+	let control = document.getElementById({$controlName});
+
+	let calendarView = null;
 	let calendar = new FullCalendar.Calendar(element, Object.assign({}, config, {
 		endParam: prefix('end'),
 		startParam: prefix('start'),
@@ -76,99 +106,136 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Events
 		eventsSet: () => { naja.uiHandler.bindUI(element) },
+		dateClick: ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
+			start: dateStr,
+		})),
+
+		datesSet: function({ view }) {
+			$('[data-title]', control).text(view.title);
+			$('[data-view]', control).removeClass('active');
+			$('[data-view="'+ view.type +'"]', control).addClass('active');
+
+			$('[data-view-name]', control).html($('[data-view].active', control).html());
+		},
+
+		eventDrop: ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
+			type: event.extendedProps.type,
+			id: event.id,
+			start: event.startStr,
+			allDay: Number(event.allDay),
+		})),
+		eventResize: ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
+			type: event.extendedProps.type,
+			id: event.id,
+			end: event.endStr,
+			allDay: Number(event.allDay),
+		})),
+
+		eventDragStart:		() => element.toggleAttribute('data-no-refresh'),
+		eventDragStop:		() => element.toggleAttribute('data-no-refresh'),
+		eventResizeStart:	() => element.toggleAttribute('data-no-refresh'),
+		eventResizeStop:	() => element.toggleAttribute('data-no-refresh'),
+
+		windowResize: function({ view }) {
+			let isLandscape = window.matchMedia('(orientation: landscape)').matches;
+			let isResponsive = (element.dataset.responsive !== undefined);
+			let windowWidth = window.innerWidth;
+			let targetWidth = 800;
+
+			if (!isResponsive) {
+				return;
+			}
+
+			if (!isLandscape && windowWidth < targetWidth && calendarView == null) {
+				calendarView = view.type;
+				calendar.changeView('timeGridDay');
+				return;
+			}
+
+			if (!calendarView || (!isLandscape && windowWidth < targetWidth && calendarView !== null)) {
+				return;
+			}
+
+			calendar.changeView(calendarView);
+			calendarView = null;
+		}
 	}));
 
+	calendar.render();
+
 	naja.addEventListener('complete', () => calendar.refetchEvents());
-	window.storage[control.id] = calendar;
+	window.dispatchEvent(new Event('resize'));
 
-}, false);
-</script>
 
-<script type="text/javascript" defer="defer" n:if="$control->isClickHandled()">
-document.addEventListener('DOMContentLoaded', function() {
-
-	const prefix = (key) => {$controlName}+"-"+key;
-	const prefixObj = (obj) => Object.fromEntries(
-		Object.entries(obj).map(([k, v]) => [prefix(k), v])
-	);
-
-	let control = document.getElementById({$controlName});
-	let calendar = window.storage[control.id];
-
-	calendar.setOption('dateClick', ({ dateStr }) => naja.makeRequest('GET', {link click!}, prefixObj({
-		start: dateStr,
-	})));
-
-}, false);
-</script>
-
-<script type="text/javascript" defer="defer" n:if="$config->isEditable()">
-document.addEventListener('DOMContentLoaded', function() {
-
-	const prefix = (key) => {$controlName}+"-"+key;
-	const prefixObj = (obj) => Object.fromEntries(
-		Object.entries(obj).map(([k, v]) => [prefix(k), v])
-	);
-
-	let control = document.getElementById({$controlName});
-	let calendar = window.storage[control.id];
-
-	calendar.setOption('eventDrop', ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
-		type: event.extendedProps.type,
-		id: event.id,
-		start: event.startStr,
-		allDay: Number(event.allDay),
-	})));
-
-	calendar.setOption('eventResize',  ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
-		type: event.extendedProps.type,
-		id: event.id,
-		end: event.endStr,
-		allDay: Number(event.allDay),
-	})));
-
-}, false);
-</script>
-
-<script type="text/javascript" defer="defer" n:if="$config->isHeaderCustom()">
-document.addEventListener('DOMContentLoaded', function() {
-
-	const prefix = (key) => {$controlName}+"-"+key;
-	const prefixObj = (obj) => Object.fromEntries(
-		Object.entries(obj).map(([k, v]) => [prefix(k), v])
-	);
-
-	let control = document.getElementById({$controlName});
-	let calendar = window.storage[control.id];
-
-	calendar.setOption('datesSet', function({ view }) {
-		$('[data-title]', control).text(view.title);
-		$('[data-view]', control).removeClass('active');
-		$('[data-view="'+ view.type +'"]', control).addClass('active');
-
-		$('[data-view-name]', control).html($('[data-view].active', control).html());
-	});
-
-	$('[data-prev]', control).off('click').on('click', () => { calendar.prev(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-	$('[data-next]', control).off('click').on('click', () => { calendar.next(); /*Cookies.set('calendar.date', calendar.view.currentStart.toISOString(), { expires: .1 });*/ });
-	$('[data-today]', control).off('click').on('click', () => { calendar.today(); /*Cookies.remove('calendar.date');*/ });
-	$('[data-view]', control).off('click').on('click', ({ target }) => {
+	$('[data-prev]', control).off('click').on('click',	() => { calendar.prev(); Cookies.set(prefix('date'), calendar.view.currentStart.toISOString(), { expires: .1 }); });
+	$('[data-next]', control).off('click').on('click',	() => { calendar.next(); Cookies.set(prefix('date'), calendar.view.currentStart.toISOString(), { expires: .1 }); });
+	$('[data-today]', control).off('click').on('click',	() => { calendar.today(); Cookies.remove(prefix('date')); });
+	$('[data-view]', control).off('click').on('click',	({ target }) => {
 		// Set cookie with new view before calling changeView so refetching has actual value
-		//Cookies.set('calendar.view', target.dataset.view, { expires: 365 });
+		Cookies.set(prefix('view'), target.dataset.view, { expires: 365 });
 
 		calendar.changeView(target.dataset.view);
 		control.dataset.view = null;
 	});
 
-}, false);
-</script>
 
-<script type="text/javascript" defer="defer">
-document.addEventListener('DOMContentLoaded', function() {
+	$('[data-set-show-details]', control).off('click').on('click', function() {
+		let isShowDetails = element.toggleAttribute('data-details');
+		$('.icon i', this).toggleClass('invisible');
 
-	let control = document.getElementById({$controlName});
-	let calendar = window.storage[control.id];
-	calendar.render();
+		if (!isShowDetails) {
+			$('.fc-event', control).popover('hide');
+		}
+
+		Cookies.set(prefix('showDetails'), isShowDetails ? 1 : 0, { expires: 365 });
+		return false;
+	});
+
+	$('[data-set-editable]', control).off('click').on('click', function() {
+		let isEditable = calendar.getOption('editable');
+		calendar.setOption('editable', !isEditable);
+		$('.icon i', this).toggleClass('invisible');
+
+		Cookies.set(prefix('editable'), isEditable ? 0 : 1, { expires: 365 });
+		return false;
+	});
+
+	$('[data-set-auto-refresh]', control).off('click').on('click', function() {
+		let isAutoRefresh = element.toggleAttribute('data-refresh');
+		element.removeAttribute('data-no-refresh');
+		$('.icon i', this).toggleClass('invisible');
+
+		Cookies.set(prefix('autoRefresh'), isAutoRefresh ? 1 : 0, { expires: 365 });
+		return refreshCalendar() ?? false;
+	});
+
+	$('[data-set-responsive]', control).off('click').on('click', function() {
+		let isResponsive = element.toggleAttribute('data-responsive');
+		$('.icon i', this).toggleClass('invisible');
+
+		Cookies.set(prefix('responsive'), isResponsive ? 1 : 0, { expires: 365 });
+		return false;
+	});
+
+
+	setInterval(refreshCalendar, 5000);
+
+	function refreshCalendar() {
+		let isAutoRefresh = (element.dataset.refresh !== undefined);
+		let isNoRefresh = (element.dataset.noRefresh !== undefined);
+
+		if (!isAutoRefresh || isNoRefresh) {
+			return;
+		}
+
+		// set min-height
+		$('.fc-daygrid-body', control).css('min-height', $('.fc-daygrid-body').css('height'));
+
+		calendar.refetchEvents();
+
+		// remove min height
+		$('.fc-daygrid-body', control).css('min-height', null);
+	}
 
 }, false);
 </script>
