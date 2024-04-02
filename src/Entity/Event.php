@@ -22,7 +22,7 @@ class Event implements EventInterface
 	public mixed $groupId;
 	public string $type;
 	public bool $allDay;
-	public ?DateTime $start;
+	public DateTime $start;
 	public ?DateTime $end;
 
 	// TODO: Try to simplify by generating title from titleHtml
@@ -97,7 +97,7 @@ class Event implements EventInterface
 
 	public function getEnd(): ?DateTime
 	{
-		return $this->end;
+		return $this->end ?? null;
 	}
 
 
