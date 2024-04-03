@@ -6,12 +6,12 @@
 		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
 
 			<div class="btn-group mr-2 mb-2" role="group">
-				<a role="button" class="btn btn-primary" data-today>{_web.calendar.today|noescape}</a>
+				<a role="button" class="btn btn-primary" data-today>{_calendar.toolbar.today|noescape}</a>
 			</div>
 
 			<div class="btn-group mr-2 mb-2" role="group">
-				<a role="button" class="btn btn-primary" data-prev>{_web.calendar.prev|noescape}</a>
-				<a role="button" class="btn btn-primary" data-next>{_web.calendar.next|noescape}</a>
+				<a role="button" class="btn btn-primary" data-prev>{_calendar.toolbar.prev|noescape}</a>
+				<a role="button" class="btn btn-primary" data-next>{_calendar.toolbar.next|noescape}</a>
 			</div>
 
 			<div class="flex-fill align-self-center mb-2 order-0">
@@ -21,9 +21,9 @@
 			<div class="btn-group mb-2" role="group">
 				<a role="button" class="btn btn-primary dropdown-toggle" data-view-name data-toggle="dropdown" aria-expanded="false"></a>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" href="#" data-view="dayGridMonth">{_web.calendar.view.dayGridMonth}</a>
-					<a class="dropdown-item" href="#" data-view="timeGridWeek">{_web.calendar.view.timeGridWeek}</a>
-					<a class="dropdown-item" href="#" data-view="timeGridDay">{_web.calendar.view.timeGridDay}</a>
+					<a class="dropdown-item" href="#" data-view="dayGridMonth">{_calendar.toolbar.view.month}</a>
+					<a class="dropdown-item" href="#" data-view="timeGridWeek">{_calendar.toolbar.view.week}</a>
+					<a class="dropdown-item" href="#" data-view="timeGridDay">{_calendar.toolbar.view.day}</a>
 				</div>
 			</div>
 
@@ -34,35 +34,35 @@
 			</div>
 
 			<div class="btn-group mb-2 ml-2" role="group">
-				<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" data-tooltip title="{_web.calendar.settings}"><i class="fa fa-cog fa-fw"></i></a>
+				<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" data-tooltip title="{_calendar.toolbar.settings}"><i class="fa fa-cog fa-fw"></i></a>
 				<div class="dropdown-menu dropdown-menu-right stateful">
 					<a href="#" class="dropdown-item py-2" data-set-show-details>
 						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_web.calendar.popover}</span>
-							<small class="text-muted">{_web.calendar.popover-description}</small>
+							<span class="h6 mb-0 d-block">{_calendar.settings.showDetails}</span>
+							<small class="text-muted">{_calendar.settings.showDetails-desc}</small>
 						</div>
 					</a>
 					<a href="#" class="dropdown-item py-2" data-set-auto-refresh>
 						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_web.calendar.autoRefresh}</span>
-							<small class="text-muted">{_web.calendar.autoRefresh-description}</small>
+							<span class="h6 mb-0 d-block">{_calendar.settings.autoRefresh}</span>
+							<small class="text-muted">{_calendar.settings.autoRefresh-desc}</small>
 						</div>
 					</a>
 					<a href="#" class="dropdown-item py-2" data-set-editable>
 						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_web.calendar.dragAndDrop}</span>
-							<small class="text-muted">{_web.calendar.dragAndDrop-description}</small>
+							<span class="h6 mb-0 d-block">{_calendar.settings.editable}</span>
+							<small class="text-muted">{_calendar.settings.editable-desc}</small>
 						</div>
 					</a>
 					<div class="dropdown-divider"></div>
 					<a href="#" class="dropdown-item py-2" data-set-responsive>
 						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_web.calendar.responsive}</span>
-							<small class="text-muted">{_web.calendar.responsive-description}</small>
+							<span class="h6 mb-0 d-block">{_calendar.settings.responsive}</span>
+							<small class="text-muted">{_calendar.settings.responsive-desc}</small>
 						</div>
 					</a>
 				</div>
@@ -77,7 +77,7 @@
 	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
 			{continueIf !$type instanceof $legend}
-			<small class="text-muted pr-2" n:ifchanged>{_web.calendar.legend}:</small>
+			<small class="text-muted pr-2" n:ifchanged>{_calendar.footer.legend}:</small>
 			{$type->createBadge()}
 		</div>
 	</div>

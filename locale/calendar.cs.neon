@@ -1,0 +1,29 @@
+
+#
+# @copyright Martin Procházka (c) 2024
+# @license   MIT License
+#
+
+toolbar:
+	today: 'Dnes'
+	prev: '<i class="fas fa-fw fa-chevron-left"></i>'
+	next: '<i class="fas fa-fw fa-chevron-right"></i>'
+	settings: 'Nastavení'
+
+	view:
+		month: 'Měsíc'
+		week: 'Týden'
+		day: 'Den'
+
+settings:
+	showDetails: 'Povolit stručný náhled události'
+	showDetails-desc: 'Povolit vyskakovací okénko se stručným náhledem události při najetí myší na událost.'
+	autoRefresh: 'Povolit automatický refresh'
+	autoRefresh-desc: 'Povolit automatické načítání změn událostí v kalendáři každých 5 sekund.'
+	editable: 'Povolit Drag&Drop a Resize'
+	editable-desc: 'Povolit přesunutí události "přetažením". Povolit změnu času dokončení události "roztažením za spodní hranu" pomocí myši.'
+	responsive: 'Přizpůsobit mobilním telefonům'
+	responsive-desc: 'Povolit automatické přepnutí kalendáře na zobrazení "Den", v případě užití malé obrazovky (mobilní telefon).'
+
+footer:
+	legend: 'Legenda'

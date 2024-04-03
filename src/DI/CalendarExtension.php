@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Calendar\DI;
 
+use Contributte\Translation\DI\TranslationProviderInterface as TranslationProvider;
 use Contributte\Translation\Translator;
 use JuniWalk\Calendar\CalendarFactory;
 use JuniWalk\Calendar\Entity\Parameters;
@@ -16,7 +17,7 @@ use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Throwable;
 
-final class CalendarExtension extends CompilerExtension
+final class CalendarExtension extends CompilerExtension implements TranslationProvider
 {
 	public function getConfigSchema(): Schema
 	{
@@ -29,6 +30,12 @@ final class CalendarExtension extends CompilerExtension
 				})
 			),
 		]);
+	}
+
+
+	public function getTranslationResources(): array
+	{
+		return [__DIR__.'/../../locale'];
 	}
 
 
@@ -62,7 +69,7 @@ final class CalendarExtension extends CompilerExtension
 				->addSetup('setLocale', [$locale]);
 
 		} catch (Throwable) {
-			// Contributte/Translation not installed, ignore
+			// Contributte/Translation not registered, ignore
 		}
 	}
 }
