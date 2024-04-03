@@ -74,11 +74,11 @@ class Parameters implements Config
 		}
 
 		if ($start && ($this->startsTooSoon($start) || $this->endsTooLate($start))) {
-			throw EventStartsTooSoonException::withTime($event, $this->calculateMinTime(false));
+			throw EventStartsTooSoonException::withEvent($event, $this);
 		}
 
 		if ($end && ($this->endsTooLate($end) || $this->startsTooSoon($end))) {
-			throw EventEndsTooLateException::withTime($event, $this->calculateMaxTime(false));
+			throw EventEndsTooLateException::withEvent($event, $this);
 		}
 
 		if (!$this->isVisible($event)) {
@@ -179,6 +179,54 @@ class Parameters implements Config
 	}
 
 
+	public function findMinTime(?int $dow, bool $padding = false): ?string
+	{
+		$times = $this->businessHours();
+		$times = array_filter(match ($dow) {
+			null => array_filter(array_column($times, 'start')),
+			default => [$times[$dow]['start'] ?? null],
+		});
+
+		if (empty($times)) {
+			return null;
+		}
+
+		$date = new DateTime(min($times));
+
+		if ($padding && ($date->format('G') - $this->paddingStart) >= 0) {
+			$date->modify("-{$this->paddingStart} hours");
+		}
+
+		return $date->format('H:i');
+	}
+
+
+	public function findMaxTime(?int $dow, bool $padding = false): ?string
+	{
+		$times = $this->businessHours();
+		$times = array_filter(match ($dow) {
+			null => array_filter(array_column($times, 'end')),
+			default => [$times[$dow]['end'] ?? null],
+		});
+
+		if (empty($times)) {
+			return null;
+		}
+
+		$date = new DateTime(max($times));
+
+		if ($padding && ($date->format('G') + $this->paddingEnd) <= 24) {
+			$date->modify("+{$this->paddingEnd} hours");
+		}
+
+		if ($date->format('H:i') === '00:00') {
+			return null;
+		}
+
+		return $date->format('H:i');
+	}
+
+
 	public function loadState(Calendar $calendar, HttpRequest $request): void
 	{
 		$getCookie = function(string $name, mixed $default = null, string $type = 'bool') use ($calendar, $request) {
@@ -194,15 +242,15 @@ class Parameters implements Config
 			};
 		};
 
-		$this->slotMinTime ??= $this->calculateMinTime();
-		$this->slotMaxTime ??= $this->calculateMaxTime();
-
 		$this->initialView = $getCookie('view', type: 'string');
 		$this->initialDate = $getCookie('date', type: 'string');
 		$this->autoRefresh = $getCookie('autoRefresh', $this->autoRefresh);
 		$this->showDetails = $getCookie('showDetails', $this->showDetails);
 		$this->responsive = $getCookie('responsive', $this->responsive);
 		$this->editable = $getCookie('editable', $this->editable);
+
+		$this->slotMinTime ??= $this->findMinTime(null, true);
+		$this->slotMaxTime ??= $this->findMaxTime(null, true);
 	}
 
 
@@ -261,48 +309,6 @@ class Parameters implements Config
 	}
 
 
-	protected function calculateMinTime(bool $padding = true): ?string
-	{
-		$times = $this->businessHours();
-		$times = array_filter(array_column($times, 'start'));
-
-		if (empty($times)) {
-			return null;
-		}
-
-		$date = new DateTime(min($times));
-
-		if ($padding && ($date->format('G') - $this->paddingStart) >= 0) {
-			$date->modify("-{$this->paddingStart} hours");
-		}
-
-		return $date->format('H:i');
-	}
-
-
-	protected function calculateMaxTime(bool $padding = true): ?string
-	{
-		$times = $this->businessHours();
-		$times = array_filter(array_column($times, 'end'));
-
-		if (empty($times)) {
-			return null;
-		}
-
-		$date = new DateTime(max($times));
-
-		if ($padding && ($date->format('G') + $this->paddingEnd) <= 24) {
-			$date->modify("+{$this->paddingEnd} hours");
-		}
-
-		if ($date->format('H:i') === '00:00') {
-			return null;
-		}
-
-		return $date->format('H:i');
-	}
-
-
 	protected function businessHours(): array
 	{
 		$times = Day::getBusinessHours();
@@ -332,10 +338,9 @@ class Parameters implements Config
 
 	protected function startsTooSoon(DateTime $start): bool
 	{
-		$businessHours = $this->businessHours();
-		$dow = $start->format('N');
+		$dow = (int) $start->format('N');
 
-		if (!$time = ($businessHours[$dow]['start'] ?? null)) {
+		if (!$time = $this->findMinTime($dow)) {
 			return true;
 		}
 
@@ -346,10 +351,9 @@ class Parameters implements Config
 
 	protected function endsTooLate(DateTime $end): bool
 	{
-		$businessHours = $this->businessHours();
-		$dow = $end->format('N');
+		$dow = (int) $end->format('N');
 
-		if (!$time = ($businessHours[$dow]['end'] ?? null)) {
+		if (!$time = $this->findMaxTime($dow)) {
 			return false;
 		}
 

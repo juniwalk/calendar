@@ -24,4 +24,6 @@ interface Config extends JsonSerializable
 	public function getParam(string $param, bool $throw = true): mixed;
 	public function setParam(string $param, mixed $value): void;
 	public function loadState(Calendar $calendar, HttpRequest $request): void;
+	public function findMinTime(?int $dow, bool $padding = false): ?string;
+	public function findMaxTime(?int $dow, bool $padding = false): ?string;
 }

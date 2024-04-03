@@ -122,12 +122,20 @@ class Calendar extends Control implements LinkProvider
 
 	public function handleClick(?string $start): void
 	{
+		$start = new DateTime($start);
+		$dow = (int) $start->format('N');
+
 		if (!$this->isClickHandled()) {
 			return;
 		}
 
-		// TODO if there is no time, use time from bussiness hours
-		$this->trigger('click', $this, new DateTime($start));
+		$time = $this->config->findMinTime($dow);
+
+		if ($time && $start->format('H:i') === '00:00') {
+			$start->modify($time);
+		}
+
+		$this->trigger('click', $this, $start);
 	}
 
 
