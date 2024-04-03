@@ -146,6 +146,37 @@ document.addEventListener('DOMContentLoaded', function() {
 		eventResizeStart:	() => element.toggleAttribute('data-no-refresh'),
 		eventResizeStop:	() => element.toggleAttribute('data-no-refresh'),
 
+		eventWillUnmount: ({ el }) => $(el).popover('dispose'),
+		eventDidMount: function({ el, event }) {
+			let title = event.extendedProps.label;
+			let content = event.extendedProps.content;
+
+			$(el).on('mouseenter', () => $('.fc-group-'+event.groupId).addClass('hover'));
+			$(el).on('mouseleave', () => $('.fc-group-'+event.groupId).removeClass('hover'));
+
+			if (!title || !content) {
+				return;
+			}
+
+			$(el).popover({
+				title: title,
+				content: content,
+				placement: 'right',
+				trigger: 'manual',
+				html: true
+			});
+
+			$(el).on('mousedown mouseup mouseleave', () => $(el).popover('hide'));
+			$(el).on('mouseenter', () => {
+				let isNoRefresh = (element.dataset.noRefresh !== undefined);
+				let isShowDetails = (element.dataset.details !== undefined);
+
+				if (isShowDetails && !isNoRefresh) {
+					$(el).popover('show');
+				}
+			});
+		},
+
 		windowResize: function({ view }) {
 			let isLandscape = window.matchMedia('(orientation: landscape)').matches;
 			let isResponsive = (element.dataset.responsive !== undefined);

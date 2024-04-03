@@ -28,8 +28,8 @@ class Event implements EventInterface
 	public Html $titleHtml;
 
 	// TODO: Create Popover entity
-	// public Html $content;
-	// public Html $label;
+	public Html $content;
+	public Html $label;
 
 	public string $url;
 	public array $classNames;
