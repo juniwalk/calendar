@@ -118,6 +118,16 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('[data-view-name]', control).html($('[data-view].active', control).html());
 		},
 
+		eventContent: function({ event, view }) {
+			let titleHtml = event.extendedProps.titleHtml;
+
+			if (!titleHtml || view.type == 'dayGridMonth') {
+				return true;
+			}
+
+			return { html: titleHtml };
+		},
+
 		eventDrop: ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
 			type: event.extendedProps.type,
 			id: event.id,

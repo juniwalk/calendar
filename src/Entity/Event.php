@@ -24,8 +24,6 @@ class Event implements EventInterface
 	public bool $allDay;
 	public DateTime $start;
 	public ?DateTime $end;
-
-	// TODO: Try to simplify by generating title from titleHtml
 	public string $title;
 	public Html $titleHtml;
 
