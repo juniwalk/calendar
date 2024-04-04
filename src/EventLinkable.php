@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
-interface SourceLinkable
+interface EventLinkable
 {
-	public function eventLink(EventLinkable $event, Calendar $calendar): string;
+	public function setUrl(string $url): void;
 }

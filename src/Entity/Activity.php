@@ -10,29 +10,32 @@ namespace JuniWalk\Calendar\Entity;
 use DateTime;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
+use JuniWalk\Calendar\EventLinkable;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Calendar\EventRecurring;
 use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 
-class Activity implements Event, EventDetail, EventRecurring
+class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 {
 	private readonly ?EventProvider $provider;
 
 	// Event
 	public mixed $id;
 	public mixed $groupId;
-	public string $type;
+	public string $source;
 	public bool $allDay;
 	public DateTime $start;
 	public ?DateTime $end;
 	public string $title;
 	public Html $titleHtml;
-	public string $url;
 	public array $classNames;
 	public bool $editable;
 	public string $display;
+
+	// EventLinkable
+	public string $url;
 
 	// EventDetail
 	public Html $content;
@@ -89,6 +92,12 @@ class Activity implements Event, EventDetail, EventRecurring
 	}
 
 
+	public function setSource(string $source): void
+	{
+		$this->source = $source;
+	}
+
+
 	public function getStart(): DateTime
 	{
 		return $this->start;
@@ -110,6 +119,12 @@ class Activity implements Event, EventDetail, EventRecurring
 	public function isAllDay(): bool
 	{
 		return $this->allDay;
+	}
+
+
+	public function setUrl(string $url): void
+	{
+		$this->url = $url;
 	}
 
 

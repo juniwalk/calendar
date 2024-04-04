@@ -129,13 +129,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		},
 
 		eventDrop: ({ event }) => naja.makeRequest('GET', {link drop!}, prefixObj({
-			type: event.extendedProps.type,
+			type: event.extendedProps.source,
 			id: event.id,
 			start: event.startStr,
 			allDay: Number(event.allDay),
 		})),
 		eventResize: ({ event }) => naja.makeRequest('GET', {link resize!}, prefixObj({
-			type: event.extendedProps.type,
+			type: event.extendedProps.source,
 			id: event.id,
 			end: event.endStr,
 			allDay: Number(event.allDay),

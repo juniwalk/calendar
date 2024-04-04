@@ -263,34 +263,29 @@ class Calendar extends Control implements LinkProvider
 					throw EventInvalidException::fromValue($event);
 				}
 
-				// TODO: Check Event is instanceof EventLinkable
-				if ($source instanceof SourceLinkable) {
-					// TODO: Create setLink method (in EventLinkable interface?)
-					$event->url = $source->eventLink($event, $this);
+				if ($event instanceof EventLinkable &&
+					$source instanceof SourceLinkable) {
+					$event->setUrl($source->eventLink($event, $this));
 				}
 
 				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
 
-				$eventId = $type.$event->id;
-				// TODO: Create setType function in Event interface
-				$event->type = $type;
+				$event->setSource($type);
 
 				try {
 					$params = (new Processor)->process(
-						$this->eventSchema($event),
+						$this->eventSchema($event, $type),
 						$event->jsonSerialize(),
 					);
 
-					$events[$eventId] = $params;
+					$events[$type.$params->id] = $params;
 
 				} catch (Throwable $e) {
+					Debugger::log($e);
 					continue;
 				}
-
-				// TODO: Drop silent duplicity discarting?
-				// $events[$eventId] = $event;
 			}
 		}
 
@@ -299,7 +294,7 @@ class Calendar extends Control implements LinkProvider
 
 
 	// TODO: Move into EventValidator or SourceManager class
-	private function eventSchema(Event $event): Schema
+	private function eventSchema(Event $event, string $source): Schema
 	{
 		// TODO: Cache schema using $event::class as it will be the same for all instances
 
@@ -322,14 +317,12 @@ class Calendar extends Control implements LinkProvider
 		$schema = [
 			'id'			=> Expect::scalar(),
 			'groupId'		=> Expect::scalar(),
-			// TODO: Must be equal to name of the source
-			'type'			=> Expect::string()->required(),
+			'source'		=> Expect::string()->required()->assert(fn($s) => $s === $source, 'Event source must be name of the source'),
 			'allDay'		=> Expect::bool(),
 			'start'			=> (clone $date)->required(),
 			'end'			=> (clone $date)->nullable(),
 			'title'			=> Expect::string()->required(),
 			'titleHtml'		=> $html,
-			'url'			=> Expect::string(),
 			'classNames'	=> Expect::listOf(Expect::string()),
 			'editable'		=> Expect::bool(),
 			'display'		=> Expect::string(),
@@ -342,11 +335,11 @@ class Calendar extends Control implements LinkProvider
 			]);
 		}
 
-		// if ($event instanceof EventLinkable) {
-		// 	$schema = array_merge($schema, [
-		// 		'url'		=> Expect::string(),
-		// 	]);
-		// }
+		if ($event instanceof EventLinkable) {
+			$schema = array_merge($schema, [
+				'url'		=> Expect::string(),
+			]);
+		}
 
 		if ($event instanceof EventRecurring) {
 			$schema = array_merge($schema, [
