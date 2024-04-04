@@ -26,10 +26,6 @@ use Nette\Application\UI\Presenter;
 use Nette\InvalidArgumentException;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
-use Nette\Schema\Expect;
-use Nette\Schema\Processor;
-use Nette\Schema\Schema;
-use Nette\Utils\Html;
 use Throwable;
 use Tracy\Debugger;
 
@@ -38,6 +34,7 @@ class Calendar extends Control implements LinkProvider
 	use Actions, Links, Events;
 
 	public function __construct(
+		// TODO: Rename Parameters to Options
 		private readonly Parameters $parameters,
 		private readonly Translator $translator,
 		private HttpRequest $httpRequest,
@@ -247,6 +244,7 @@ class Calendar extends Control implements LinkProvider
 	 */
 	private function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
 	{
+		$validator = new EventValidator;
 		$events = [];
 
 		// TODO: Create SourceManager that would service all sources
@@ -275,11 +273,7 @@ class Calendar extends Control implements LinkProvider
 				}
 
 				try {
-					$params = (new Processor)->process(
-						$this->eventSchema($event, $type),
-						$event->jsonSerialize(),
-					);
-
+					$params = $validator->validate($event, $source);
 					$events[$type.$params->id] = $params;
 
 				} catch (Throwable $e) {
@@ -290,68 +284,5 @@ class Calendar extends Control implements LinkProvider
 		}
 
 		return array_values($events);
-	}
-
-
-	// TODO: Move into EventValidator or SourceManager class
-	private function eventSchema(Event $event, string $source): Schema
-	{
-		// TODO: Cache schema using $event::class as it will be the same for all instances
-
-		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($d) => $d->value),
-			Expect::int()->min(0)->max(6),
-		);
-
-		$date = Expect::anyOf(
-			Expect::type(DateTime::class)->transform(fn($d) => $d->format('c')),
-			Expect::string(),
-		);
-
-		$html = Expect::anyOf(
-			Expect::type(Html::class)->transform(fn($d) => $d->render()),
-			Expect::string(),
-			Expect::null(),
-		);
-
-		$schema = [
-			'id'			=> Expect::scalar(),
-			'groupId'		=> Expect::scalar(),
-			'source'		=> Expect::string()->required()->assert(fn($s) => $s === $source, 'Event source must be name of the source'),
-			'allDay'		=> Expect::bool(),
-			'start'			=> (clone $date)->required(),
-			'end'			=> (clone $date)->nullable(),
-			'title'			=> Expect::string()->required(),
-			'titleHtml'		=> $html,
-			'classNames'	=> Expect::listOf(Expect::string()),
-			'editable'		=> Expect::bool(),
-			'display'		=> Expect::string(),
-		];
-
-		if ($event instanceof EventDetail) {
-			$schema = array_merge($schema, [
-				'content'	=> $html,
-				'label'		=> $html,
-			]);
-		}
-
-		if ($event instanceof EventLinkable) {
-			$schema = array_merge($schema, [
-				'url'		=> Expect::string(),
-			]);
-		}
-
-		if ($event instanceof EventRecurring) {
-			$schema = array_merge($schema, [
-				'daysOfWeek' => Expect::listOf($day),
-				'startRecur' => (clone $date)->nullable(),
-				'endRecur'	 => (clone $date)->nullable(),
-				'startTime'	 => Expect::string(),
-				'endTime'	 => Expect::string(),
-			]);
-		}
-
-		return Expect::structure($schema)
-			->skipDefaults();
 	}
 }

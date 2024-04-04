@@ -8,9 +8,21 @@
 namespace JuniWalk\Calendar\Exceptions;
 
 use JuniWalk\Calendar\Event;
+use Throwable;
 
 class EventInvalidException extends CalendarException
 {
+	private mixed $event = null;
+
+	public static function fromEvent(Event $event, ?Throwable $previous = null): static
+	{
+		$self = new self('Event "'.$event::class.'" failed schema validation.', 500, $previous);
+		$self->event = $event;
+
+		return $self;
+	}
+
+
 	public static function fromValue(mixed $event): static
 	{
 		$value = match ($type = gettype($event)) {
@@ -18,6 +30,15 @@ class EventInvalidException extends CalendarException
 			default => $type,
 		};
 
-		return new self('Event has to implement "'.Event::class.'", type of "'.$value.'" given.');
+		$self = new self('Event has to implement "'.Event::class.'", type of "'.$value.'" given.');
+		$self->event = $event;
+
+		return $self;
+	}
+
+
+	public function getEvent(): mixed
+	{
+		return $this->event;
 	}
 }
