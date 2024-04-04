@@ -25,5 +25,14 @@ settings:
 	responsive: 'Přizpůsobit mobilním telefonům'
 	responsive-desc: 'Povolit automatické přepnutí kalendáře na zobrazení "Den", v případě užití malé obrazovky (mobilní telefon).'
 
+day:
+	monday: 'Po<span class="d-none d-xl-inline">ndělí</span>'
+	tuesday: 'Út<span class="d-none d-xl-inline">erý</span>'
+	wednesday: 'St<span class="d-none d-xl-inline">ředa</span>'
+	thursday: 'Čt<span class="d-none d-xl-inline">vrtek</span>'
+	friday: 'Pá<span class="d-none d-xl-inline">tek</span>'
+	saturday: 'So<span class="d-none d-xl-inline">bota</span>'
+	sunday: 'Ne<span class="d-none d-xl-inline">děle</span>'
+
 footer:
 	legend: 'Legenda'
