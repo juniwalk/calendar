@@ -12,6 +12,7 @@ use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Enums\Day;
+use JuniWalk\Calendar\Enums\Theme;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidException;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventEndsBeforeStartException;
@@ -29,7 +30,7 @@ class Options implements Config
 {
 	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showDetails', 'responsive'];
 
-	public ?string $themeSystem = 'bootstrap';
+	public Theme|string|null $themeSystem = Theme::Bootstrap4;
 	public array|false|null $headerToolbar = false;
 	public ?string $initialView = 'timeGridWeek';
 	public ?string $initialDate = null;
@@ -141,6 +142,12 @@ class Options implements Config
 	public function setLocale(?string $locale): void
 	{
 		$this->locale = $locale;
+	}
+
+
+	public function getTheme(): Theme
+	{
+		return Theme::make($this->themeSystem, false) ?? Theme::Bootstrap4;
 	}
 
 
@@ -283,7 +290,7 @@ class Options implements Config
 	public static function createSchema(): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($d) => $d->value),
+			Expect::type(Day::class)->transform(fn($i) => $i->value),
 			Expect::int()->min(0)->max(6),
 		);
 
@@ -295,6 +302,11 @@ class Options implements Config
 		])->castTo('array');
 
 		return Expect::from(new self, [
+			'themeSystem'	=> Expect::anyOf(
+				Expect::type(Theme::class)->transform(fn($i) => $i->value),
+				Expect::string(),
+				Expect::null(),
+			),
 			'firstDay'		=> (clone $day)->nullable(),
 			'hiddenDays'	=> Expect::listOf($day),
 			'slotMinTime'	=> (clone $time)->nullable(),

@@ -139,7 +139,6 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	// TODO: Move to SourceManager and link as source-drop!
 	public function handleDrop(?string $type, ?int $id, ?string $start, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
@@ -166,7 +165,6 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	// TODO: Move to SourceManager and link as source-resize!
 	public function handleResize(?string $type, ?int $id, ?string $end, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
@@ -193,7 +191,6 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	// TODO: Move to SourceManager and link as source-fetch!
 	public function handleFetch(?string $start, ?string $end, ?string $timeZone): void
 	{
 		try {
@@ -214,19 +211,20 @@ class Calendar extends Control implements LinkProvider
 
 	public function render(): void
 	{
+		$config = $this->getConfig();
+
 		$template = $this->createTemplate();
-		// TODO: Use $config->themeSystem as name of the template
-		$template->setFile(__DIR__.'/templates/default.latte');
+		$template->setFile(__DIR__.'/templates/'.$config->getTheme()->value.'.latte');
 		$template->setTranslator($this->translator);
 
 		$this->trigger('render', $this, $template);
 
 		$template->setParameters([
-			'config' => $config = $this->config,
 			'controlName' => $this->getName(),
 			'actions' => $this->getActions(),
 			'sources' => $this->getSources(),
 			'legend' => Legend::class,
+			'config' => $config,
 
 			'options' => [
 				'data-responsive' => $config->isResponsive(),
@@ -247,11 +245,9 @@ class Calendar extends Control implements LinkProvider
 		$validator = new EventValidator;
 		$events = [];
 
-		// TODO: Create SourceManager that would service all sources
 		foreach ($this->getSources() as $type => $source) {
 			$this->trigger('fetch', $this, $source);
 
-			// TODO: Create method createEvent in SourceManager and handle all of this cycle inside
 			foreach ($source->fetchEvents($start, $end, $timeZone) as $event) {
 				if ($event instanceof EventProvider) {
 					$event = $event->createEvent($this->translator);
@@ -273,8 +269,8 @@ class Calendar extends Control implements LinkProvider
 				}
 
 				try {
-					$params = $validator->validate($event, $source);
-					$events[$type.$params->id] = $params;
+					$event = $validator->validate($event, $source);
+					$events[$type.$event->id] = $event;
 
 				} catch (Throwable $e) {
 					Debugger::log($e);
