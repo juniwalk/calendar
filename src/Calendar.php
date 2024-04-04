@@ -34,9 +34,9 @@ class Calendar extends Control implements LinkProvider
 	use Actions, Links, Events;
 
 	public function __construct(
-		private readonly Options $options,
-		private readonly Translator $translator,
+		Options $options,
 		HttpRequest $httpRequest,
+		private readonly Translator $translator,
 		private ?Config $config = null,
 	) {
 		$config = $this->config ??= $options;
@@ -215,6 +215,7 @@ class Calendar extends Control implements LinkProvider
 	public function render(): void
 	{
 		$template = $this->createTemplate();
+		// TODO: Use $config->themeSystem as name of the template
 		$template->setFile(__DIR__.'/templates/default.latte');
 		$template->setTranslator($this->translator);
 
