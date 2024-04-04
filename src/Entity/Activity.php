@@ -19,8 +19,6 @@ use JuniWalk\Utils\Strings;
 
 class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 {
-	private readonly ?EventProvider $provider;
-
 	// Event
 	public mixed $id;
 	public mixed $groupId;
@@ -48,10 +46,10 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public string $startTime;
 	public string $endTime;
 
-	public function __construct(array $params, ?EventProvider $provider = null)
-	{
-		$this->provider = $provider;
-
+	public function __construct(
+		array $params,
+		private readonly ?EventProvider $provider = null,
+	) {
 		foreach ($params as $key => $value) {
 			if (!property_exists($this, $key)) {
 				continue;

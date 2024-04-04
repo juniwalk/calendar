@@ -259,6 +259,8 @@ class Calendar extends Control implements LinkProvider
 					$event = $event->createEvent($this->translator);
 				}
 
+				$event->setSource($type);
+
 				if (!$event instanceof Event) {
 					throw EventInvalidException::fromValue($event);
 				}
@@ -271,8 +273,6 @@ class Calendar extends Control implements LinkProvider
 				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
-
-				$event->setSource($type);
 
 				try {
 					$params = (new Processor)->process(
