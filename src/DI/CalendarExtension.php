@@ -10,7 +10,7 @@ namespace JuniWalk\Calendar\DI;
 use Contributte\Translation\DI\TranslationProviderInterface as TranslationProvider;
 use Contributte\Translation\Translator;
 use JuniWalk\Calendar\CalendarFactory;
-use JuniWalk\Calendar\Entity\Parameters;
+use JuniWalk\Calendar\Entity\Options;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\Expect;
@@ -22,7 +22,7 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'config' => Parameters::createSchema(),
+			'config' => Options::createSchema(),
 			'sources' => Expect::listOf(
 				Expect::string()->dynamic()->transform(fn($stmt) => match (true) {
 					$stmt instanceof Statement => $stmt,
@@ -46,7 +46,7 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 
 		$builder->addDefinition($this->prefix('config'))
 			->addSetup('setParams', [$config->config->jsonSerialize()])
-			->setClass(Parameters::class);
+			->setClass(Options::class);
 
 		$calendar = $builder->addFactoryDefinition($this->prefix('calendar'))
 			->setImplement(CalendarFactory::class);

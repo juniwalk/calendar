@@ -25,7 +25,7 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Throwable;
 
-class Parameters implements Config
+class Options implements Config
 {
 	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showDetails', 'responsive'];
 

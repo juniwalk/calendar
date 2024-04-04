@@ -10,7 +10,7 @@ namespace JuniWalk\Calendar;
 use DateTime;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
-use JuniWalk\Calendar\Entity\Parameters;
+use JuniWalk\Calendar\Entity\Options;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceAttachedException;
@@ -34,13 +34,12 @@ class Calendar extends Control implements LinkProvider
 	use Actions, Links, Events;
 
 	public function __construct(
-		// TODO: Rename Parameters to Options
-		private readonly Parameters $parameters,
+		private readonly Options $options,
 		private readonly Translator $translator,
 		private HttpRequest $httpRequest,
 		private ?Config $config = null,
 	) {
-		$config = $this->config ??= $parameters;
+		$config = $this->config ??= $options;
 
 		$this->watch('render');
 		$this->watch('fetch');
