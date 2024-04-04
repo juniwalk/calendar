@@ -36,7 +36,7 @@ class Calendar extends Control implements LinkProvider
 	public function __construct(
 		private readonly Options $options,
 		private readonly Translator $translator,
-		private HttpRequest $httpRequest,
+		HttpRequest $httpRequest,
 		private ?Config $config = null,
 	) {
 		$config = $this->config ??= $options;
