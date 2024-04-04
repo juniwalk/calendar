@@ -8,16 +8,19 @@
 namespace JuniWalk\Calendar\Entity;
 
 use DateTime;
-use JuniWalk\Calendar\Event as EventInterface;
+use JuniWalk\Calendar\Event;
+use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventProvider;
+use JuniWalk\Calendar\EventRecurring;
 use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 
-class Event implements EventInterface
+class Activity implements Event, EventDetail, EventRecurring
 {
 	private readonly ?EventProvider $provider;
 
+	// Event
 	public mixed $id;
 	public mixed $groupId;
 	public string $type;
@@ -26,17 +29,16 @@ class Event implements EventInterface
 	public ?DateTime $end;
 	public string $title;
 	public Html $titleHtml;
-
-	// TODO: Create Popover entity
-	public Html $content;
-	public Html $label;
-
 	public string $url;
 	public array $classNames;
 	public bool $editable;
 	public string $display;
 
-	// Recurrence
+	// EventDetail
+	public Html $content;
+	public Html $label;
+
+	// EventRecurring
 	public array $daysOfWeek;
 	public ?DateTime $startRecur;
 	public ?DateTime $endRecur;

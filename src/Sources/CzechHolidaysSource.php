@@ -12,7 +12,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
-use JuniWalk\Calendar\Entity\Event;
+use JuniWalk\Calendar\Entity\Activity;
 use JuniWalk\Calendar\Source;
 use Nette\Application\UI\Component;
 
@@ -37,7 +37,7 @@ final class CzechHolidaysSource extends Component implements Source
 				continue;
 			}
 
-			$events[] = new Event([
+			$events[] = new Activity([
 				'id' => $date->format('U'),
 				'title' => $name,
 				'start' => $date,

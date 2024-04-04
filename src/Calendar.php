@@ -26,6 +26,10 @@ use Nette\Application\UI\Presenter;
 use Nette\InvalidArgumentException;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
+use Nette\Schema\Expect;
+use Nette\Schema\Processor;
+use Nette\Schema\Schema;
+use Nette\Utils\Html;
 use Throwable;
 use Tracy\Debugger;
 
@@ -139,6 +143,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
+	// TODO: Move to SourceManager and link as source-drop!
 	public function handleDrop(?string $type, ?int $id, ?string $start, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
@@ -165,6 +170,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
+	// TODO: Move to SourceManager and link as source-resize!
 	public function handleResize(?string $type, ?int $id, ?string $end, ?bool $allDay): void
 	{
 		$presenter = $this->getPresenter();
@@ -191,6 +197,7 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
+	// TODO: Move to SourceManager and link as source-fetch!
 	public function handleFetch(?string $start, ?string $end, ?string $timeZone): void
 	{
 		try {
@@ -242,9 +249,11 @@ class Calendar extends Control implements LinkProvider
 	{
 		$events = [];
 
+		// TODO: Create SourceManager that would service all sources
 		foreach ($this->getSources() as $type => $source) {
 			$this->trigger('fetch', $this, $source);
 
+			// TODO: Create method createEvent in SourceManager and handle all of this cycle inside
 			foreach ($source->fetchEvents($start, $end, $timeZone) as $event) {
 				if ($event instanceof EventProvider) {
 					$event = $event->createEvent($this->translator);
@@ -254,7 +263,9 @@ class Calendar extends Control implements LinkProvider
 					throw EventInvalidException::fromValue($event);
 				}
 
+				// TODO: Check Event is instanceof EventLinkable
 				if ($source instanceof SourceLinkable) {
+					// TODO: Create setLink method (in EventLinkable interface?)
 					$event->url = $source->eventLink($event, $this);
 				}
 
@@ -262,13 +273,92 @@ class Calendar extends Control implements LinkProvider
 					$event->setAllDay(true);
 				}
 
-				$eventId = $type.spl_object_id($event);
+				$eventId = $type.$event->id;
+				// TODO: Create setType function in Event interface
 				$event->type = $type;
 
-				$events[$eventId] = $event;
+				try {
+					$params = (new Processor)->process(
+						$this->eventSchema($event),
+						$event->jsonSerialize(),
+					);
+
+					$events[$eventId] = $params;
+
+				} catch (Throwable $e) {
+					continue;
+				}
+
+				// TODO: Drop silent duplicity discarting?
+				// $events[$eventId] = $event;
 			}
 		}
 
 		return array_values($events);
+	}
+
+
+	// TODO: Move into EventValidator or SourceManager class
+	private function eventSchema(Event $event): Schema
+	{
+		// TODO: Cache schema using $event::class as it will be the same for all instances
+
+		$day = Expect::anyOf(
+			Expect::type(Day::class)->transform(fn($d) => $d->value),
+			Expect::int()->min(0)->max(6),
+		);
+
+		$date = Expect::anyOf(
+			Expect::type(DateTime::class)->transform(fn($d) => $d->format('c')),
+			Expect::string(),
+		);
+
+		$html = Expect::anyOf(
+			Expect::type(Html::class)->transform(fn($d) => $d->render()),
+			Expect::string(),
+			Expect::null(),
+		);
+
+		$schema = [
+			'id'			=> Expect::scalar(),
+			'groupId'		=> Expect::scalar(),
+			// TODO: Must be equal to name of the source
+			'type'			=> Expect::string()->required(),
+			'allDay'		=> Expect::bool(),
+			'start'			=> (clone $date)->required(),
+			'end'			=> (clone $date)->nullable(),
+			'title'			=> Expect::string()->required(),
+			'titleHtml'		=> $html,
+			'url'			=> Expect::string(),
+			'classNames'	=> Expect::listOf(Expect::string()),
+			'editable'		=> Expect::bool(),
+			'display'		=> Expect::string(),
+		];
+
+		if ($event instanceof EventDetail) {
+			$schema = array_merge($schema, [
+				'content'	=> $html,
+				'label'		=> $html,
+			]);
+		}
+
+		// if ($event instanceof EventLinkable) {
+		// 	$schema = array_merge($schema, [
+		// 		'url'		=> Expect::string(),
+		// 	]);
+		// }
+
+		if ($event instanceof EventRecurring) {
+			$schema = array_merge($schema, [
+				'daysOfWeek' => Expect::listOf($day),
+				'startRecur' => (clone $date)->nullable(),
+				'endRecur'	 => (clone $date)->nullable(),
+				'startTime'	 => Expect::string(),
+				'endTime'	 => Expect::string(),
+			]);
+		}
+
+		return Expect::structure($schema)
+			->skipDefaults();
 	}
 }
