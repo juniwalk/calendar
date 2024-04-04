@@ -22,7 +22,7 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'config' => Options::createSchema(),
+			'options' => Options::createSchema(),
 			'sources' => Expect::listOf(
 				Expect::string()->dynamic()->transform(fn($stmt) => match (true) {
 					$stmt instanceof Statement => $stmt,
@@ -45,7 +45,7 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 		$config = $this->getConfig();
 
 		$builder->addDefinition($this->prefix('config'))
-			->addSetup('setParams', [$config->config->jsonSerialize()])
+			->addSetup('setParams', [$config->options->jsonSerialize()])
 			->setClass(Options::class);
 
 		$calendar = $builder->addFactoryDefinition($this->prefix('calendar'))
