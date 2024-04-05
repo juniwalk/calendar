@@ -116,6 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			$('[data-view="'+ view.type +'"]', control).addClass('active');
 
 			$('[data-view-name]', control).html($('[data-view].active', control).html());
+
+			setSignalDates(view);
 		},
 
 		eventContent: function({ event, view }) {
@@ -276,6 +278,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// remove min height
 		$('.fc-daygrid-body', control).css('min-height', null);
+	}
+
+	function setSignalDates(view) {
+		let start = view.activeStart.toISOString();
+		let end = view.activeEnd.toISOString();
+
+		$('[data-signal-date]', control).each((i, target) => {
+			let url = new URL(target.href);
+			let prefix = '';
+
+			if (url.searchParams.has('do')) {
+				prefix = url.searchParams.get('do');
+				prefix = prefix.substr(0, prefix.lastIndexOf('-') +1);
+			}
+
+			url.searchParams.set(prefix+'start', start);
+			url.searchParams.set(prefix+'end', end);
+
+			target.href = url;
+		});
 	}
 
 }, false);
