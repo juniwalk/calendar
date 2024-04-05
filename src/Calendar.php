@@ -116,7 +116,7 @@ class Calendar extends Control implements LinkProvider
 
 	public function isClickHandled(): bool
 	{
-		return $this->isWatched(('click'));
+		return $this->isWatched('click');
 	}
 
 
