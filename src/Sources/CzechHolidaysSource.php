@@ -37,7 +37,7 @@ final class CzechHolidaysSource extends Component implements Source
 				continue;
 			}
 
-			$events[] = new Activity([
+			$events[] = new Activity(params: [
 				'id' => $date->format('U'),
 				'title' => $name,
 				'start' => $date,

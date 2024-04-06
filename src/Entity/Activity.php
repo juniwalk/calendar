@@ -47,8 +47,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public string $endTime;
 
 	public function __construct(
-		array $params,
 		private readonly ?EventProvider $provider = null,
+		array $params = [],
 	) {
 		foreach ($params as $key => $value) {
 			if (!property_exists($this, $key)) {
