@@ -8,6 +8,7 @@
 namespace JuniWalk\Calendar\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventLinkable;
@@ -96,7 +97,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function setStart(DateTime $start): void
+	public function setStart(DateTimeInterface $start): void
 	{
 		$this->start = clone $start;
 	}
@@ -108,7 +109,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function setEnd(?DateTime $end): void
+	public function setEnd(?DateTimeInterface $end): void
 	{
 		$this->end = match ($end) {
 			default => clone $end,
