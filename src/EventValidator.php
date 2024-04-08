@@ -46,6 +46,10 @@ class EventValidator
 				$event->jsonSerialize(),
 			);
 
+			if (isset($event->groupId)) {
+				$event->classNames[] = 'fc-group-'.$event->groupId;
+			}
+
 			if ($event->source <> $source->getName()) {
 				throw new EventInvalidException('Event\'s source property has to match its source name.');
 			}
