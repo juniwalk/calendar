@@ -318,11 +318,7 @@ class Calendar extends Control implements LinkProvider
 			}
 
 			$eventStart = $event->getStart();
-
-			if (!$eventEnd = $event->getEnd()) {
-				$eventEnd = (clone $eventStart)->modify('+1 hour');
-			}
-
+			$eventEnd = $event->getEnd() ?? (clone $eventStart)->modify('+1 hour');
 			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
 			$chunks = [];
 
