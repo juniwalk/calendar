@@ -96,9 +96,24 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
+	public function setStart(DateTime $start): void
+	{
+		$this->start = clone $start;
+	}
+
+
 	public function getStart(): DateTime
 	{
 		return $this->start;
+	}
+
+
+	public function setEnd(?DateTime $end): void
+	{
+		$this->end = match ($end) {
+			default => clone $end,
+			null => $end,
+		}
 	}
 
 
