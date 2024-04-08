@@ -28,7 +28,7 @@ use Throwable;
 
 class Options implements Config
 {
-	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showDetails', 'responsive'];
+	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showAllDayEvents', 'showDetails', 'responsive'];
 
 	public Theme|string|null $themeSystem = Theme::Bootstrap4;
 	public array|false|null $headerToolbar = false;
@@ -47,6 +47,7 @@ class Options implements Config
 	public ?bool $expandRows = true;
 	public ?bool $nowIndicator = true;
 	public ?bool $weekends = true;
+	public bool $showAllDayEvents = false;
 	public bool $autoRefresh = true;
 	public ?bool $editable = null;
 	public bool $showDetails = true;
@@ -106,6 +107,12 @@ class Options implements Config
 		}
 
 		return true;
+	}
+
+
+	public function isShowAllDayEvents(): bool
+	{
+		return $this->showAllDayEvents;
 	}
 
 

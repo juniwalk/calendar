@@ -7,6 +7,8 @@
 
 namespace JuniWalk\Calendar;
 
+use DateInterval;
+use DatePeriod;
 use DateTime;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
@@ -279,6 +281,78 @@ class Calendar extends Control implements LinkProvider
 			}
 		}
 
+		if (!$this->config->isShowAllDayEvents()) {
+			$events = $this->createAlldayEventsInTimeGrid($events);
+		}
+
 		return array_values($events);
+	}
+
+
+	private function createAlldayEventsInTimeGrid(array $events): array
+	{
+		$hours = $this->config->businessHours();
+		$interval = new DateInterval('PT30M');
+		$result = [];
+
+		foreach ($events as $event) {
+			$eventStart = $event->getStart();
+
+			if (!$eventEnd = $event->getEnd()) {
+				$eventEnd = (clone $eventStart)->modify('+1 hour');
+			}
+
+			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
+			$chunks = [];
+
+			try {
+				$this->config->checkOutOfBounds($event, true);
+
+				if (!$event->isAllday()) {
+					throw new EventInvalidException;
+				}
+
+			} catch (EventInvalidException) {
+				$result[] = $event;
+				continue;
+			}
+
+			foreach ($dateRange as $date) {
+				$dow = (int) $date->format('N');
+				$dateStart = $hours[$dow]['start'] ?? null;
+				$dateEnd = $hours[$dow]['end'] ?? null;
+
+				if (!$dateStart || !$dateEnd) {
+					continue;
+				}
+
+				$dateStart = (clone $date)->modify($dateStart);
+				$dateEnd = (clone $date)->modify($dateEnd);
+
+				if (!isset($chunks[$dow]['start']) && ($date >= $dateStart || $date == $eventStart)) {
+					$chunks[$dow]['start'] = clone $date;
+				}
+
+				if (!isset($chunks[$dow]['end']) && ($date >= $dateEnd || $date == $eventEnd)) {
+					$chunks[$dow]['end'] = clone $date;
+				}
+
+				if ($date == $eventEnd) {
+					break;
+				}
+			}
+
+			foreach ($chunks as $chunk) {
+				$item = clone $event;
+				$item->setStart($chunk['start'] ?? $eventStart);
+				$item->setEnd($chunk['end'] ?? $eventEnd);
+				$item->groupId = $event->getId();
+				$item->allDay = false;
+
+				$result[] = $item;
+			}
+		}
+
+		return $result;
 	}
 }

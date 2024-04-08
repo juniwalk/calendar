@@ -14,6 +14,7 @@ interface Config extends JsonSerializable
 {
 	public function checkOutOfBounds(Event $event, bool $strict = true): void;
 	public function isVisible(Event $event): bool;
+	public function isShowAllDayEvents(): bool;
 
 	public function isAutoRefresh(): bool;
 	public function isEditable(): bool;
