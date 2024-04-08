@@ -13,6 +13,7 @@ use JsonSerializable;
 interface Event extends JsonSerializable
 {
 	public function getId(): mixed;
+	public function setGroupId(mixed $groupId): void;
 	public function setSource(string $source): void;
 	public function setStart(DateTime $start): void;
 	public function getStart(): DateTime;

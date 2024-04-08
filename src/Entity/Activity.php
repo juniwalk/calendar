@@ -61,6 +61,12 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
+	public function setGroupId(mixed $groupId): void
+	{
+		$this->groupId = $groupId;
+	}
+
+
 	public function setSource(string $source): void
 	{
 		$this->source = $source;
