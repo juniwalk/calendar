@@ -35,9 +35,10 @@ class EventValidator
 		$this->schema[$event::class] ??= $this->createSchema($event);
 
 		try {
-			// TODO: Use setters and getters as properties may not exist
-			if (isset($event->end) && $event->allDay && $event->end->format('H:i') <> '00:00') {
-				$event->end->modify('midnight next day');
+			$end = $event->getEnd();
+
+			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00') {
+				$event->setEnd($end->modify('midnight next day'));
 			}
 
 			$event = $this->processor->process(
