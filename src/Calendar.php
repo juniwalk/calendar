@@ -245,9 +245,10 @@ class Calendar extends Control implements LinkProvider
 	private function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
 	{
 		$validator = new EventValidator;
+		$sources = $this->getSources();
 		$events = [];
 
-		foreach ($this->getSources() as $type => $source) {
+		foreach ($sources as $type => $source) {
 			$this->trigger('fetch', $this, $source);
 
 			foreach ($source->fetchEvents($start, $end, $timeZone) as $event) {
@@ -270,26 +271,32 @@ class Calendar extends Control implements LinkProvider
 					$event->setAllDay(true);
 				}
 
-				try {
-					$event = $validator->validate($event, $source);
-					$events[$type.$event->id] = $event;
-
-				} catch (Throwable $e) {
-					Debugger::log($e);
-					continue;
-				}
+				$events[] = $event;
 			}
 		}
 
 		if (!$this->config->isShowAllDayEvents()) {
-			$events = $this->createAlldayEventsInTimeGrid($events);
+			$events = $this->createAllDayEventsChunked($events);
+		}
+
+		foreach ($events as $event) {
+			$source = $sources[$event->source];
+
+			try {
+				$event = $validator->validate($event, $source);
+				$events[$type.$event->id] = $event;
+
+			} catch (Throwable $e) {
+				Debugger::log($e);
+				continue;
+			}
 		}
 
 		return array_values($events);
 	}
 
 
-	private function createAlldayEventsInTimeGrid(array $events): array
+	private function createAllDayEventsChunked(array $events): array
 	{
 		$hours = $this->config->getBusinessHours();
 		$interval = new DateInterval('PT30M');
@@ -346,8 +353,10 @@ class Calendar extends Control implements LinkProvider
 				$item = clone $event;
 				$item->setStart($chunk['start'] ?? $eventStart);
 				$item->setEnd($chunk['end'] ?? $eventEnd);
+				$item->setAllDay(false);
+
+				// TODO: Add setGroupId to Event interface
 				$item->groupId = $event->getId();
-				$item->allDay = false;
 
 				$result[] = $item;
 			}
