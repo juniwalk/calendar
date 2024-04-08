@@ -62,10 +62,6 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 			$this->$key = $value;
 		}
-
-		if (isset($this->end) && $this->allDay && $this->end->format('H:i') <> '00:00') {
-			$this->end->modify('midnight next day');
-		}
 	}
 
 
