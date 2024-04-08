@@ -291,7 +291,7 @@ class Calendar extends Control implements LinkProvider
 
 	private function createAlldayEventsInTimeGrid(array $events): array
 	{
-		$hours = $this->config->businessHours();
+		$hours = $this->config->getBusinessHours();
 		$interval = new DateInterval('PT30M');
 		$result = [];
 

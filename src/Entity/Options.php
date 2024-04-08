@@ -195,7 +195,7 @@ class Options implements Config
 
 	public function findMinTime(?int $dow, bool $padding = false): ?string
 	{
-		$times = $this->businessHours();
+		$times = $this->getBusinessHours();
 		$times = array_filter(match ($dow) {
 			null => array_filter(array_column($times, 'start')),
 			default => [$times[$dow]['start'] ?? null],
@@ -217,7 +217,7 @@ class Options implements Config
 
 	public function findMaxTime(?int $dow, bool $padding = false): ?string
 	{
-		$times = $this->businessHours();
+		$times = $this->getBusinessHours();
 		$times = array_filter(match ($dow) {
 			null => array_filter(array_column($times, 'end')),
 			default => [$times[$dow]['end'] ?? null],
@@ -238,6 +238,33 @@ class Options implements Config
 		}
 
 		return $date->format('H:i');
+	}
+
+
+	protected function getBusinessHours(): array
+	{
+		$times = Day::getBusinessHours();
+
+		if (is_bool($this->businessHours)) {
+			return $times;
+		}
+
+		$businessHours = $this->businessHours;
+
+		if (isset($businessHours['daysOfWeek'])) {
+			$businessHours = [$businessHours];
+		}
+
+		foreach ($businessHours as $businessHour) {
+			foreach ($businessHour['daysOfWeek'] as $day) {
+				$times[$day] = [
+					'start' => $businessHour['startTime'],
+					'end' => $businessHour['endTime'],
+				];
+			}
+		}
+
+		return $times;
 	}
 
 
@@ -325,33 +352,6 @@ class Options implements Config
 				'end'		=> Expect::string(),
 			])),
 		]);
-	}
-
-
-	protected function businessHours(): array
-	{
-		$times = Day::getBusinessHours();
-
-		if (is_bool($this->businessHours)) {
-			return $times;
-		}
-
-		$businessHours = $this->businessHours;
-
-		if (isset($businessHours['daysOfWeek'])) {
-			$businessHours = [$businessHours];
-		}
-
-		foreach ($businessHours as $businessHour) {
-			foreach ($businessHour['daysOfWeek'] as $day) {
-				$times[$day] = [
-					'start' => $businessHour['startTime'],
-					'end' => $businessHour['endTime'],
-				];
-			}
-		}
-
-		return $times;
 	}
 
 
