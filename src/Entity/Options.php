@@ -47,6 +47,7 @@ class Options implements Config
 	public ?bool $expandRows = true;
 	public ?bool $nowIndicator = true;
 	public ?bool $weekends = true;
+	public bool $forceStrictBounds = false;
 	public bool $showAllDayEvents = false;
 	public bool $autoRefresh = true;
 	public ?bool $editable = null;
@@ -62,7 +63,7 @@ class Options implements Config
 	 * @throws EventStartsTooSoonException
 	 * @throws EventUnableToDisplayException
 	 */
-	public function checkOutOfBounds(Event $event, bool $strict = true): void
+	public function checkOutOfBounds(Event $event, bool $strict = false): void
 	{
 		$start = $event->getStart();
 		$end = $event->getEnd();
@@ -71,7 +72,7 @@ class Options implements Config
 			throw EventEndsBeforeStartException::withEvent($event);
 		}
 
-		if ($strict === false) {
+		if (!$strict && !$this->forceStrictBounds) {
 			return;
 		}
 

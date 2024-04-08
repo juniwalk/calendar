@@ -12,7 +12,7 @@ use Nette\Http\IRequest as HttpRequest;
 
 interface Config extends JsonSerializable
 {
-	public function checkOutOfBounds(Event $event, bool $strict = true): void;
+	public function checkOutOfBounds(Event $event, bool $strict = false): void;
 	public function isVisible(Event $event): bool;
 	public function isShowAllDayEvents(): bool;
 
