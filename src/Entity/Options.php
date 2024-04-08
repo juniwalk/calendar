@@ -241,7 +241,7 @@ class Options implements Config
 	}
 
 
-	protected function getBusinessHours(): array
+	public function getBusinessHours(): array
 	{
 		$times = Day::getBusinessHours();
 
