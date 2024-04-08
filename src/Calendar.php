@@ -283,10 +283,7 @@ class Calendar extends Control implements LinkProvider
 			$source = $sources[$event->source];
 
 			try {
-				unset($events[$key]);
-
-				$event = $validator->validate($event, $source);
-				$events[$type.$event->id] = $event;
+				$events[$key] = $validator->validate($event, $source);
 
 			} catch (Throwable $e) {
 				Debugger::log($e);
@@ -351,13 +348,8 @@ class Calendar extends Control implements LinkProvider
 				$item = clone $event;
 				$item->setStart($chunk['start'] ?? $eventStart);
 				$item->setEnd($chunk['end'] ?? $eventEnd);
+				$item->setGroupId($event->getId());
 				$item->setAllDay(false);
-
-				// TODO: Add setGroupId to Event interface
-				$item->groupId = $event->getId();
-
-				// TODO: Add chunk number to id so it does not get deduplicated
-				$item->id .= '-'.$num;
 
 				$result[] = $item;
 			}
