@@ -256,11 +256,11 @@ class Calendar extends Control implements LinkProvider
 					$event = $event->createEvent($this->translator);
 				}
 
-				$event->setSource($type);
-
 				if (!$event instanceof Event) {
 					throw EventInvalidException::fromValue($event);
 				}
+
+				$event->setSource($type);
 
 				if ($event instanceof EventLinkable &&
 					$source instanceof SourceLinkable) {
