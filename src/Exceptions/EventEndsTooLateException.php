@@ -23,7 +23,7 @@ final class EventEndsTooLateException extends EventInvalidException
 			null => $end,
 		});
 
-		$self = new static(Format::className($event).'#'.$event->getId().' ends after the maximum allowed time of '.$time.'.');
+		$self = new static(Format::className($event).'#'.($event->id ?? 'unknown').' ends after the maximum allowed time of '.$time.'.');
 		$self->event = $event;
 		$self->time = $time;
 

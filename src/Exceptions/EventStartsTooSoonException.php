@@ -21,7 +21,7 @@ final class EventStartsTooSoonException extends EventInvalidException
 		$dow = $event->getStart()->format('N');
 		$time = $config->findMinTime((int) $dow);
 
-		$self = new static(Format::className($event).'#'.$event->getId().' starts before the minimum allowed time of '.$time.'.');
+		$self = new static(Format::className($event).'#'.($event->id ?? 'unknown').' starts before the minimum allowed time of '.$time.'.');
 		$self->event = $event;
 		$self->time = $time;
 
