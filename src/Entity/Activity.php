@@ -113,7 +113,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 		$this->end = match ($end) {
 			default => clone $end,
 			null => $end,
-		}
+		};
 	}
 
 
