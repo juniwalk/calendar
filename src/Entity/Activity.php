@@ -51,33 +51,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 		private readonly ?EventProvider $provider = null,
 		array $params = [],
 	) {
-		foreach ($params as $key => $value) {
-			if (!property_exists($this, $key)) {
-				continue;
-			}
-
-			if ($value instanceof DateTime) {
-				$value = clone $value;
-			}
-
-			$this->$key = $value;
-		}
-	}
-
-
-	public function jsonSerialize(): array
-	{
-		$params = get_object_vars($this);
-		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
-
-		foreach ($params as $key => $value) {
-			$params[$key] = match (true) {
-				$value instanceof EventProvider => null,
-				default => Format::scalarize($value) ?? $value,
-			};
-		}
-
-		return array_filter($params);
+		$this->setParams($params);
 	}
 
 
@@ -149,5 +123,37 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 		}
 
 		return Html::el('small', $time);
+	}
+
+
+	public function jsonSerialize(): array
+	{
+		$params = get_object_vars($this);
+		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
+
+		foreach ($params as $key => $value) {
+			$params[$key] = match (true) {
+				$value instanceof EventProvider => null,
+				default => Format::scalarize($value) ?? $value,
+			};
+		}
+
+		return array_filter($params);
+	}
+
+
+	public function setParams(array $params): void
+	{
+		foreach ($params as $key => $value) {
+			if (!property_exists($this, $key)) {
+				continue;
+			}
+
+			if ($value instanceof DateTime) {
+				$value = clone $value;
+			}
+
+			$this->$key = $value;
+		}
 	}
 }
