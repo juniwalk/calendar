@@ -19,7 +19,7 @@ final class EventStartsTooSoonException extends EventInvalidException
 	public static function withEvent(Event $event, Config $config): static
 	{
 		$dow = $event->getStart()->format('N');
-		$time = $config->findMinTime($dow);
+		$time = $config->findMinTime((int) $dow);
 
 		$self = new static(Format::className($event).'#'.$event->getId().' starts before the minimum allowed time of '.$time.'.');
 		$self->event = $event;
