@@ -13,7 +13,9 @@ use JsonSerializable;
 interface Event extends JsonSerializable
 {
 	public function setSource(string $source): void;
+	public function setStart(DateTime $start): void;
 	public function getStart(): DateTime;
+	public function setEnd(?DateTime $end): void;
 	public function getEnd(): ?DateTime;
 	public function setAllDay(bool $allDay): void;
 	public function isAllDay(): bool;
