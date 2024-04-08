@@ -354,8 +354,7 @@ class Calendar extends Control implements LinkProvider
 				$item->setAllDay(false);
 
 				// TODO: Add setGroupId to Event interface
-				// $item->groupId = $event->getId();
-				$item->groupId = $event->id;
+				$item->groupId = $event->getId();
 
 				// TODO: Add chunk number to id so it does not get deduplicated
 				$item->id .= '-'.$num;

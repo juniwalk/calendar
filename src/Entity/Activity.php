@@ -55,9 +55,9 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function getProvider(): ?EventProvider
+	public function getId(): mixed
 	{
-		return $this->provider;
+		return $this->id;
 	}
 
 
@@ -126,19 +126,9 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function jsonSerialize(): array
+	public function getProvider(): ?EventProvider
 	{
-		$params = get_object_vars($this);
-		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
-
-		foreach ($params as $key => $value) {
-			$params[$key] = match (true) {
-				$value instanceof EventProvider => null,
-				default => Format::scalarize($value) ?? $value,
-			};
-		}
-
-		return array_filter($params);
+		return $this->provider;
 	}
 
 
@@ -155,5 +145,21 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 			$this->$key = $value;
 		}
+	}
+
+
+	public function jsonSerialize(): array
+	{
+		$params = get_object_vars($this);
+		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
+
+		foreach ($params as $key => $value) {
+			$params[$key] = match (true) {
+				$value instanceof EventProvider => null,
+				default => Format::scalarize($value) ?? $value,
+			};
+		}
+
+		return array_filter($params);
 	}
 }
