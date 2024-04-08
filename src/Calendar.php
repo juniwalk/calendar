@@ -267,10 +267,7 @@ class Calendar extends Control implements LinkProvider
 					$event->setUrl($source->eventLink($event, $this));
 				}
 
-				try {
-					$this->config->checkOutOfBounds($event, true);
-	
-				} catch (EventInvalidException) {
+				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
 
@@ -308,7 +305,14 @@ class Calendar extends Control implements LinkProvider
 		$result = [];
 
 		foreach ($events as $event) {
-			if (!$event->isAllday()) {
+			try {
+				$this->config->checkOutOfBounds($event, true);
+
+				if (!$event->isAllday()) {
+					throw new EventInvalidException;
+				}
+
+			} catch (EventInvalidException) {
 				$result[] = $event;
 				continue;
 			}
