@@ -267,7 +267,10 @@ class Calendar extends Control implements LinkProvider
 					$event->setUrl($source->eventLink($event, $this));
 				}
 
-				if (!$this->config->isVisible($event)) {
+				try {
+					$this->config->checkOutOfBounds($event, true);
+	
+				} catch (EventInvalidException) {
 					$event->setAllDay(true);
 				}
 
@@ -279,10 +282,12 @@ class Calendar extends Control implements LinkProvider
 			$events = $this->createAllDayEventsChunked($events);
 		}
 
-		foreach ($events as $event) {
+		foreach ($events as $key => $event) {
 			$source = $sources[$event->source];
 
 			try {
+				unset($events[$key]);
+
 				$event = $validator->validate($event, $source);
 				$events[$type.$event->id] = $event;
 
@@ -303,6 +308,11 @@ class Calendar extends Control implements LinkProvider
 		$result = [];
 
 		foreach ($events as $event) {
+			if (!$event->isAllday()) {
+				$result[] = $event;
+				continue;
+			}
+
 			$eventStart = $event->getStart();
 
 			if (!$eventEnd = $event->getEnd()) {
@@ -311,18 +321,6 @@ class Calendar extends Control implements LinkProvider
 
 			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
 			$chunks = [];
-
-			try {
-				$this->config->checkOutOfBounds($event, true);
-
-				if (!$event->isAllday()) {
-					throw new EventInvalidException;
-				}
-
-			} catch (EventInvalidException) {
-				$result[] = $event;
-				continue;
-			}
 
 			foreach ($dateRange as $date) {
 				$dow = (int) $date->format('N');
@@ -349,14 +347,18 @@ class Calendar extends Control implements LinkProvider
 				}
 			}
 
-			foreach ($chunks as $chunk) {
+			foreach ($chunks as $num => $chunk) {
 				$item = clone $event;
 				$item->setStart($chunk['start'] ?? $eventStart);
 				$item->setEnd($chunk['end'] ?? $eventEnd);
 				$item->setAllDay(false);
 
 				// TODO: Add setGroupId to Event interface
-				$item->groupId = $event->getId();
+				// $item->groupId = $event->getId();
+				$item->groupId = $event->id;
+
+				// TODO: Add chunk number to id so it does not get deduplicated
+				$item->id .= '-'.$num;
 
 				$result[] = $item;
 			}
