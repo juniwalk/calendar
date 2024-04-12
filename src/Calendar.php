@@ -13,6 +13,7 @@ use DateTime;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Options;
+use JuniWalk\Calendar\Enums\View;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use JuniWalk\Calendar\Exceptions\SourceAttachedException;
@@ -226,6 +227,7 @@ class Calendar extends Control implements LinkProvider
 			'actions' => $this->getActions(),
 			'sources' => $this->getSources(),
 			'legend' => Legend::class,
+			'views' => View::cases(),
 			'config' => $config,
 
 			'options' => [

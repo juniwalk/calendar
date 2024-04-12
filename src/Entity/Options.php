@@ -13,6 +13,7 @@ use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Enums\Theme;
+use JuniWalk\Calendar\Enums\View;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidException;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventEndsBeforeStartException;
@@ -28,11 +29,11 @@ use Throwable;
 
 class Options implements Config
 {
-	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showAllDayEvents', 'showDetails', 'responsive'];
+	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showAllDayEvents', 'viewsCollapsed', 'showDetails', 'responsive'];
 
 	public Theme|string|null $themeSystem = Theme::Bootstrap4;
 	public array|false|null $headerToolbar = false;
-	public ?string $initialView = 'timeGridWeek';
+	public View|string|null $initialView = View::Week;
 	public ?string $initialDate = null;
 	public ?string $timeZone = 'Europe/Prague';
 	public ?string $locale = null;
@@ -49,6 +50,7 @@ class Options implements Config
 	public ?bool $weekends = true;
 	public bool $forceStrictBounds = false;
 	public bool $showAllDayEvents = false;
+	public bool $viewsCollapsed = false;
 	public bool $autoRefresh = true;
 	public ?bool $editable = null;
 	public bool $showDetails = true;
@@ -114,6 +116,12 @@ class Options implements Config
 	public function isShowAllDayEvents(): bool
 	{
 		return $this->showAllDayEvents;
+	}
+
+
+	public function isViewsCollapsed(): bool
+	{
+		return $this->viewsCollapsed;
 	}
 
 
