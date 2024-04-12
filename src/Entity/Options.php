@@ -350,6 +350,11 @@ class Options implements Config
 				Expect::string(),
 				Expect::null(),
 			),
+			'initialView'	=> Expect::anyOf(
+				Expect::type(View::class)->transform(fn($i) => $i->value),
+				Expect::string(),
+				Expect::null(),
+			),
 			'firstDay'		=> (clone $day)->nullable(),
 			'hiddenDays'	=> Expect::listOf($day),
 			'slotMinTime'	=> (clone $time)->nullable(),
