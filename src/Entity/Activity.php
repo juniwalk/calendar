@@ -166,6 +166,6 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 			};
 		}
 
-		return array_filter($params);
+		return array_filter($params, fn($v) => !is_null($v));
 	}
 }
