@@ -90,6 +90,8 @@
 <script type="text/javascript" defer="defer">
 document.addEventListener('DOMContentLoaded', function() {
 
+	Cookies.defaults = { path: '/', secure: true, sameSite: 'lax' };
+
 	const prefix = (key) => {$controlName}+"-"+key;
 	const prefixObj = (obj) => Object.fromEntries(
 		Object.entries(obj).map(([k, v]) => [prefix(k), v])
