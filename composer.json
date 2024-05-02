@@ -35,6 +35,7 @@
 	},
 
 	"require-dev": {
+		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.0",
 		"phpstan/phpstan": "^1.0",
 		"phpstan/phpstan-nette": "^1.0",
