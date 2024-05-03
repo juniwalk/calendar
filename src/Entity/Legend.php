@@ -23,7 +23,7 @@ readonly class Legend
 
 	public static function fromEnum(LabeledEnum $enum): self
 	{
-		return new self($enum->label(), $enum->icon(), $enum->color() ?? Color::Secondary);
+		return new self($enum->label(), $enum->icon(), $enum->color() ?? Color::Secondary);	// @phpstan-ignore-line
 	}
 
 

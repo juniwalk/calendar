@@ -27,7 +27,8 @@
 	"require": {
 		"php": ">=8.1",
 		"contributte/translation": "^2.0",
-		"juniwalk/utils": ">=3.1.3 <4.0",
+		"juniwalk/components": "^0.1",
+		"juniwalk/utils": ">=3.1.3|^4.0",
 		"nette/application": "^3.0",
 		"nette/di": "^3.0",
 		"nette/http": "^3.0",

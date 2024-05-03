@@ -188,7 +188,7 @@ class Options implements Config
 	 */
 	public function setParams(self|array $params): void
 	{
-		Arrays::map((array) $params, fn($v, $k) => $this->setParam($k, $v), false);
+		Arrays::map((array) $params, fn($v, $k) => $this->setParam($k, $v), false);	// @phpstan-ignore-line
 	}
 
 
