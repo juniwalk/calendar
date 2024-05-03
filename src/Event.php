@@ -9,7 +9,11 @@ namespace JuniWalk\Calendar;
 
 use DateTimeInterface as DateTime;
 use JsonSerializable;
+use JuniWalk\Calendar\Entity\Activity;
 
+/**
+ * @phpstan-require-extends Activity
+ */
 interface Event extends JsonSerializable
 {
 	public function getId(): mixed;

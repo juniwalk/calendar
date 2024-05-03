@@ -18,12 +18,12 @@ use Throwable;
 
 class EventValidator
 {
-	private readonly Processor $processor;
+	/** @var Schema[] */
 	private array $schema = [];
 
-	public function __construct()
-	{
-		$this->processor = new Processor;
+	public function __construct(
+		private readonly Processor $processor = new Processor,
+	) {
 	}
 
 
@@ -37,10 +37,11 @@ class EventValidator
 		try {
 			$end = $event->getEnd();
 
-			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00') {
+			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00' && $end instanceof DateTime) {
 				$event->setEnd($end->modify('midnight next day'));
 			}
 
+			/** @var Event */
 			$event = $this->processor->process(
 				$this->schema[$event::class],
 				$event->jsonSerialize(),
@@ -62,7 +63,10 @@ class EventValidator
 	}
 
 
-	// TODO: Use Activity as Schema source as in Parameters & Config?
+	/**
+	 * TODO: Use Activity as Schema source as in Parameters & Config?
+	 * @return Schema
+	 */
 	private function createSchema(Event $event): Schema
 	{
 		$day = Expect::anyOf(

@@ -23,12 +23,13 @@ readonly class Legend
 
 	public static function fromEnum(LabeledEnum $enum): self
 	{
-		return new self($enum->label(), $enum->icon(), $enum->color());
+		return new self($enum->label(), $enum->icon(), $enum->color() ?? Color::Secondary);
 	}
 
 
 	public function createBadge(): Html
 	{
+		/** @var Html */
 		return Html::badge($this->name, $this->color, $this->icon)
 			->addClass('mb-2 p-2');
 	}

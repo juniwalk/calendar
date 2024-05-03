@@ -8,6 +8,7 @@
 namespace JuniWalk\Calendar\Entity;
 
 use DateTime;
+use DateTimeInterface;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
@@ -27,20 +28,34 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Throwable;
 
+/**
+ * @phpstan-import-type DayNumber from Day
+ * @phpstan-type BusinessHour array{daysOfWeek: list<Day|DayNumber>, startTime: string, endTime: string}
+ */
 class Options implements Config
 {
 	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showAllDayEvents', 'viewsCollapsed', 'showDetails', 'responsive'];
 
 	public Theme|string|null $themeSystem = Theme::Bootstrap4;
+
+	/** @var array<string, string[]> */
 	public array|false|null $headerToolbar = false;
+
 	public View|string|null $initialView = View::Week;
 	public ?string $initialDate = null;
 	public ?string $timeZone = 'Europe/Prague';
 	public ?string $locale = null;
 	public ?string $height = 'auto';
+
+	/** @var DayNumber */
 	public Day|int|null $firstDay = Day::Monday;
+
+	/** @var BusinessHour|BusinessHour[]|bool */
 	public array|bool $businessHours = false;
+
+	/** @var Day[]|DayNumber[] */
 	public array $hiddenDays = [];
+
 	public ?string $slotMinTime = null;
 	public ?string $slotMaxTime = null;
 	public int $paddingStart = 1;
@@ -78,7 +93,7 @@ class Options implements Config
 			return;
 		}
 
-		if ($start && ($this->startsTooSoon($start) || $this->endsTooLate($start))) {
+		if ($this->startsTooSoon($start) || $this->endsTooLate($start)) {
 			throw EventStartsTooSoonException::withEvent($event, $this);
 		}
 
@@ -168,11 +183,12 @@ class Options implements Config
 
 
 	/**
+	 * @param array<string, mixed> $params
 	 * @throws ConfigInvalidParamException
 	 */
 	public function setParams(self|array $params): void
 	{
-		Arrays::map($params, fn($v, $k) => $this->setParam($k, $v), false);
+		Arrays::map((array) $params, fn($v, $k) => $this->setParam($k, $v), false);
 	}
 
 
@@ -250,26 +266,34 @@ class Options implements Config
 	}
 
 
+	/**
+	 * @return array<DayNumber, array{start: ?string, end: ?string}>
+	 */
 	public function getBusinessHours(): array
 	{
+		$businessHours = $this->businessHours;
 		$times = Day::getBusinessHours();
 
-		if (is_bool($this->businessHours)) {
+		if (is_bool($businessHours)) {
 			return $times;
 		}
-
-		$businessHours = $this->businessHours;
 
 		if (isset($businessHours['daysOfWeek'])) {
 			$businessHours = [$businessHours];
 		}
 
+		/** @var BusinessHour $businessHour */
 		foreach ($businessHours as $businessHour) {
+			$startTime = $businessHour['startTime'];
+			$endTime = $businessHour['endTime'];
+
 			foreach ($businessHour['daysOfWeek'] as $day) {
-				$times[$day] = [
-					'start' => $businessHour['startTime'],
-					'end' => $businessHour['endTime'],
-				];
+				if ($day instanceof Day) {
+					$day = $day->value;
+				}
+
+				$times[$day]['start'] = $startTime;
+				$times[$day]['end'] = $endTime;
 			}
 		}
 
@@ -279,39 +303,40 @@ class Options implements Config
 
 	public function loadState(Calendar $calendar, HttpRequest $request): void
 	{
-		$getCookie = function(string $name, mixed $default = null, string $type = 'bool') use ($calendar, $request) {
-			$value = $request->getCookie($calendar->getName().'-'.$name);
+		$getCookie = fn(string $name, mixed $default = null) => $request->getCookie($calendar->getName().'-'.$name) ?? $default;
 
-			if ($value === null) {
-				return $default;
-			}
+		if ($initialView = $getCookie('view')) {
+			/** @var scalar $initialView */
+			$this->initialView = (string) $initialView;
+		}
 
-			return match ($type) {
-				'bool' => (bool) $value,
-				default => $value,
-			};
-		};
+		if ($initialDate = $getCookie('date')) {
+			/** @var scalar $initialDate */
+			$this->initialDate = (string) $initialDate;
+		}
 
-		$this->initialView = $getCookie('view', type: 'string');
-		$this->initialDate = $getCookie('date', type: 'string');
-		$this->autoRefresh = $getCookie('autoRefresh', $this->autoRefresh);
-		$this->showDetails = $getCookie('showDetails', $this->showDetails);
-		$this->responsive = $getCookie('responsive', $this->responsive);
-		$this->editable = $getCookie('editable', $this->editable);
+		if ($editable = $getCookie('editable', $this->editable)) {
+			$this->editable = (bool) $editable;
+		}
 
+		$this->autoRefresh = (bool) $getCookie('autoRefresh', $this->autoRefresh);
+		$this->showDetails = (bool) $getCookie('showDetails', $this->showDetails);
+		$this->responsive = (bool) $getCookie('responsive', $this->responsive);
 		$this->slotMinTime ??= $this->findMinTime(null, true);
 		$this->slotMaxTime ??= $this->findMaxTime(null, true);
 	}
 
 
 	/**
+	 * @return array<string, mixed>
 	 * @throws ConfigInvalidException
 	 */
 	public function jsonSerialize(): array
 	{
 		try {
+			/** @var array<string, mixed> */
 			$params = (new Processor)->process(
-				self::createSchema()->castTo('array'),
+				self::createSchema()->castTo('array'),	// @phpstan-ignore-line
 				get_object_vars($this),
 			);
 
@@ -319,14 +344,12 @@ class Options implements Config
 			throw ConfigInvalidException::fromException($e);
 		}
 
-		return array_filter(
-			array: $params,
-			mode: ARRAY_FILTER_USE_BOTH,
-			callback: fn($v, $k) => match (true) {
-				in_array($k, self::Ignore) => false,
-				default => !is_null($v),
-			},
-		);
+		$skipIgnored = fn($v, $k) => match (true) {
+			in_array($k, self::Ignore) => false,
+			default => !is_null($v),
+		};
+
+		return array_filter($params, $skipIgnored, ARRAY_FILTER_USE_BOTH);
 	}
 
 
@@ -369,28 +392,28 @@ class Options implements Config
 	}
 
 
-	protected function startsTooSoon(DateTime $start): bool
+	protected function startsTooSoon(DateTimeInterface $date): bool
 	{
-		$dow = (int) $start->format('N');
+		$dow = (int) $date->format('N');
 
-		if (!$time = $this->findMinTime($dow)) {
+		if (!$date instanceof DateTime ||
+			!$time = $this->findMinTime($dow)) {
 			return true;
 		}
 
-		$date = (clone $start)->modify($time);
-		return $start < $date;
+		return $date < (clone $date)->modify($time);
 	}
 
 
-	protected function endsTooLate(DateTime $end): bool
+	protected function endsTooLate(DateTimeInterface $date): bool
 	{
-		$dow = (int) $end->format('N');
+		$dow = (int) $date->format('N');
 
-		if (!$time = $this->findMaxTime($dow)) {
+		if (!$date instanceof DateTime ||
+			!$time = $this->findMaxTime($dow)) {
 			return false;
 		}
 
-		$date = (clone $end)->modify($time);
-		return $end > $date;
+		return $date > (clone $date)->modify($time);
 	}
 }

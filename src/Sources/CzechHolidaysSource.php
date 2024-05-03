@@ -13,18 +13,27 @@ use DateTimeZone;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Entity\Activity;
+use JuniWalk\Calendar\Entity\Legend;
+use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Source;
 use Nette\Application\UI\Component;
 
 final class CzechHolidaysSource extends Component implements Source
 {
-	public function setConfig(Config $config): void { }
+	public function setConfig(Config $config): void {}
+
+	/**
+	 * @return Legend[]
+	 */
 	public function getLegend(): array
 	{
 		return [];
 	}
 
 
+	/**
+	 * @return Event[]
+	 */
 	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone): array
 	{
 		$start = new DateTime($start->format(DateTime::ATOM));
@@ -51,10 +60,13 @@ final class CzechHolidaysSource extends Component implements Source
 	}
 
 
-	public function attachControls(Calendar $calendar): void { }
-	public function detachControls(Calendar $calendar): void { }
+	public function attachControls(Calendar $calendar): void {}
+	public function detachControls(Calendar $calendar): void {}
 
 
+	/**
+	 * @return array<string, string>
+	 */
 	private function getHolidays(DateTime $start): array
 	{
 		$year = (int) $start->format('Y');

@@ -18,9 +18,10 @@ final class EventEndsTooLateException extends EventInvalidException
 
 	public static function withEvent(Event $event, Config $config): static
 	{
-		$time = $config->findMaxTime(match ($end = $event->getEnd()) {
-			default => (int) $end->format('N'),
-			null => $end,
+		$dow = $event->getEnd()?->format('N');
+		$time = $config->findMaxTime(match (true) {
+			isset($dow) => (int) $dow,
+			default => null,
 		});
 
 		$self = new static(Format::className($event).'#'.($event->id ?? 'unknown').' ends after the maximum allowed time of '.$time.'.');

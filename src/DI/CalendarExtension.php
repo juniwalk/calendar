@@ -12,11 +12,15 @@ use Contributte\Translation\Translator;
 use JuniWalk\Calendar\CalendarFactory;
 use JuniWalk\Calendar\Entity\Options;
 use Nette\DI\CompilerExtension;
+use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Throwable;
 
+/**
+ * @phpstan-type Config object{options: Options, sources: Statement[]}
+ */
 final class CalendarExtension extends CompilerExtension implements TranslationProvider
 {
 	public function getConfigSchema(): Schema
@@ -41,8 +45,9 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 
 	public function loadConfiguration()
 	{
-		$builder = $this->getContainerBuilder();
+		/** @var Config $config */
 		$config = $this->getConfig();
+		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition($this->prefix('config'))
 			->addSetup('setParams', [$config->options->jsonSerialize()])
@@ -62,11 +67,13 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 		$builder = $this->getContainerBuilder();
 
 		try {
+			/** @var ServiceDefinition */
+			$config = $builder->getDefinition($this->prefix('config'));
 			$translator = $builder->getByType(Translator::class, true);
-			$locale = new Statement(['@'.$translator, 'getLocale']);
 
-			$builder->getDefinition($this->prefix('config'))
-				->addSetup('setLocale', [$locale]);
+			$config->addSetup('setLocale', [
+				new Statement(['@'.$translator, 'getLocale'])
+			]);
 
 		} catch (Throwable) {
 			// Contributte/Translation not registered, ignore

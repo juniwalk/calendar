@@ -12,9 +12,13 @@ use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
 use Nette\Application\UI\SignalReceiver;
 use Nette\Application\UI\StatePersistent;
-use Nette\ComponentModel\IComponent as Component;
+use Nette\Application\UI\Component;
+use Nette\ComponentModel\IComponent as ComponentInterface;
 
-interface Source extends Component, SignalReceiver, StatePersistent
+/**
+ * @phpstan-require-extends Component
+ */
+interface Source extends ComponentInterface, SignalReceiver, StatePersistent
 {
 	public function setConfig(Config $config): void;
 
@@ -30,12 +34,4 @@ interface Source extends Component, SignalReceiver, StatePersistent
 
 	public function attachControls(Calendar $calendar): void;
 	public function detachControls(Calendar $calendar): void;
-
-	/**
-	 * ComponentModel methods
-	 */
-	public function lookup(?string $type, bool $throw = true): ?Component;
-	public function lookupPath(?string $type = null, bool $throw = true): ?string;
-	public function monitor(string $type, ?callable $attached = null, ?callable $detached = null): void;
-	public function unmonitor(string $type): void;
 }

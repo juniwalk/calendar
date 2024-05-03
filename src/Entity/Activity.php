@@ -7,8 +7,8 @@
 
 namespace JuniWalk\Calendar\Entity;
 
-use DateTime;
 use DateTimeInterface;
+use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventLinkable;
@@ -18,6 +18,9 @@ use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 
+/**
+ * @phpstan-import-type DayNumber from Day
+ */
 class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 {
 	// Event
@@ -25,10 +28,11 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public mixed $groupId;
 	public string $source;
 	public bool $allDay;
-	public DateTime $start;
-	public ?DateTime $end;
+	public DateTimeInterface $start;
+	public ?DateTimeInterface $end;
 	public string $title;
 	public Html $titleHtml;
+	/** @var string[] */
 	public array $classNames;
 	public bool $editable;
 	public string $display;
@@ -41,12 +45,16 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public Html $label;
 
 	// EventRecurring
+	/** @var DayNumber[] */
 	public array $daysOfWeek;
-	public ?DateTime $startRecur;
-	public ?DateTime $endRecur;
+	public ?DateTimeInterface $startRecur;
+	public ?DateTimeInterface $endRecur;
 	public string $startTime;
 	public string $endTime;
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function __construct(
 		private readonly ?EventProvider $provider = null,
 		array $params = [],
@@ -79,7 +87,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function getStart(): DateTime
+	public function getStart(): DateTimeInterface
 	{
 		return $this->start;
 	}
@@ -87,14 +95,15 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 	public function setEnd(?DateTimeInterface $end): void
 	{
-		$this->end = match ($end) {
-			default => clone $end,
-			null => $end,
-		};
+		if ($end instanceof DateTimeInterface) {
+			$end = clone $end;
+		}
+
+		$this->end = $end;
 	}
 
 
-	public function getEnd(): ?DateTime
+	public function getEnd(): ?DateTimeInterface
 	{
 		return $this->end ?? null;
 	}
@@ -138,6 +147,9 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
 	public function setParams(array $params): void
 	{
 		foreach ($params as $key => $value) {
@@ -145,7 +157,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 				continue;
 			}
 
-			if ($value instanceof DateTime) {
+			if ($value instanceof DateTimeInterface) {
 				$value = clone $value;
 			}
 
@@ -154,10 +166,13 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
+	/**
+	 * @return array<string, mixed>
+	 */
 	public function jsonSerialize(): array
 	{
 		$params = get_object_vars($this);
-		$params['title'] = Strings::replace($params['title'], '/\r?\n/i', ' ');
+		$params['title'] = Strings::replace($this->title, '/\r?\n/i', ' ');
 
 		foreach ($params as $key => $value) {
 			$params[$key] = match (true) {

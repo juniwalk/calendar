@@ -11,6 +11,9 @@ use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Enums\Traits\Labeled;
 
+/**
+ * @phpstan-type DayNumber int<0, 6>
+ */
 enum Day: int implements LabeledEnum
 {
 	use Labeled;
@@ -24,6 +27,9 @@ enum Day: int implements LabeledEnum
 	case Sunday = 0;
 
 
+	/**
+	 * @return array<DayNumber, array{start: ?string, end: ?string}>
+	 */
 	public static function getBusinessHours(): array
 	{
 		$range = ['start' => null, 'end' => null];
@@ -52,7 +58,7 @@ enum Day: int implements LabeledEnum
 	}
 
 
-	public function color(): ?Color
+	public function color(): Color
 	{
 		if (in_array($this->value, [0, 6])) {
 			return Color::Secondary;
@@ -62,7 +68,10 @@ enum Day: int implements LabeledEnum
 	}
 
 
-	public function format(array $businessHours, string $closed = null): ?string
+	/**
+	 * @param array<DayNumber, array{start: ?string, end: ?string}> $businessHours
+	 */
+	public function format(array $businessHours, ?string $closed = null): ?string
 	{
 		$start = $businessHours[$this->value]['start'] ?? null;
 		$end = $businessHours[$this->value]['end'] ?? null;

@@ -11,11 +11,13 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use DateTimeZone;
+use Iterator;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Options;
 use JuniWalk\Calendar\Enums\View;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
+use JuniWalk\Calendar\Exceptions\EventNotFoundException;
 use JuniWalk\Calendar\Exceptions\SourceAttachedException;
 use JuniWalk\Calendar\Exceptions\SourceNotEditableException;
 use JuniWalk\Utils\Enums\Casing;
@@ -26,6 +28,7 @@ use JuniWalk\Utils\UI\Actions\Traits\Actions;
 use JuniWalk\Utils\UI\Actions\Traits\Links;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 use Nette\InvalidArgumentException;
 use Nette\Http\IRequest as HttpRequest;
 use Nette\Localization\Translator;
@@ -36,18 +39,20 @@ class Calendar extends Control implements LinkProvider
 {
 	use Actions, Links, Events;
 
+	private readonly Translator $translator;
+	private Config $config;
+
 	public function __construct(
 		Options $options,
 		HttpRequest $httpRequest,
-		private readonly Translator $translator,
-		private ?Config $config = null,
+		Translator $translator,
+		?Config $config = null,
 	) {
-		$config = $this->config ??= $options;
+		$this->config = $config ?? $options;
+		$this->translator = $translator;
 
-		$this->watch('render');
-		$this->watch('fetch');
-
-		$this->monitor(Presenter::class, fn() => $config->loadState($this, $httpRequest));
+		$this->monitor(Presenter::class, fn() => $this->config->loadState($this, $httpRequest));
+		$this->watch('render')->watch('fetch');
 	}
 
 
@@ -105,15 +110,27 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
-	public function getSources(): iterable
+	/**
+	 * @return array<string, Source>
+	 */
+	public function getSources(): array
 	{
-		return $this->getComponents(false, Source::class);
+		/** @var Iterator<string, Source> */
+		$sources = $this->getComponents(false, Source::class);
+		return iterator_to_array($sources);
 	}
 
 
+	/**
+	 * @param null|callable(self, DateTime): void $callback
+	 */
 	public function setClickHandle(?callable $callback): void
 	{
-		$this->watch('click', true)->when('click', $callback);
+		$this->watch('click', true);
+
+		if (is_callable($callback)) {
+			$this->when('click', $callback);
+		}
 	}
 
 
@@ -125,20 +142,20 @@ class Calendar extends Control implements LinkProvider
 
 	public function handleClick(?string $start): void
 	{
-		$start = new DateTime($start);
-		$dow = (int) $start->format('N');
-
-		if (!$this->isClickHandled()) {
+		if (!$start || !$this->isClickHandled()) {
 			return;
 		}
 
-		$time = $this->config->findMinTime($dow);
+		$date = new DateTime($start);
+		$time = $this->config->findMinTime(
+			(int) $date->format('N')
+		);
 
-		if ($time && $start->format('H:i') === '00:00') {
-			$start->modify($time);
+		if ($time && $date->format('H:i') === '00:00') {
+			$date->modify($time);
 		}
 
-		$this->trigger('click', $this, $start);
+		$this->trigger('click', $this, $date);
 	}
 
 
@@ -147,6 +164,10 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
+			if (!$type || !$id || !$start || !$allDay) {
+				throw new EventNotFoundException;
+			}
+
 			$source = $this->getSource($type);
 
 			if (!$source instanceof SourceEditable) {
@@ -163,8 +184,13 @@ class Calendar extends Control implements LinkProvider
 			Debugger::log($e);
 		}
 
-		$presenter->redirectAjax('this');
-		$presenter->sendPayload();
+		/** @deprecated Do backwards compatibility only */
+		if (method_exists($presenter, 'redirectAjax')) {
+			$presenter->redirectAjax('this');
+			$presenter->sendPayload();
+		}
+
+		$presenter->redirect('this');
 	}
 
 
@@ -173,6 +199,10 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
+			if (!$type || !$id || !$end || !$allDay) {
+				throw new EventNotFoundException;
+			}
+
 			$source = $this->getSource($type);
 
 			if (!$source instanceof SourceEditable) {
@@ -189,14 +219,23 @@ class Calendar extends Control implements LinkProvider
 			Debugger::log($e);
 		}
 
-		$presenter->redirectAjax('this');
-		$presenter->sendPayload();
+		/** @deprecated Do backwards compatibility only */
+		if (method_exists($presenter, 'redirectAjax')) {
+			$presenter->redirectAjax('this');
+			$presenter->sendPayload();
+		}
+
+		$presenter->redirect('this');
 	}
 
 
 	public function handleFetch(?string $start, ?string $end, ?string $timeZone): void
 	{
 		try {
+			if (!$start || !$end || !$timeZone) {
+				throw new EventNotFoundException;
+			}
+
 			$events = $this->fetchEvents(
 				new DateTime($start),
 				new DateTime($end),
@@ -216,6 +255,7 @@ class Calendar extends Control implements LinkProvider
 	{
 		$config = $this->getConfig();
 
+		/** @var DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/'.$config->getTheme()->value.'.latte');
 		$template->setTranslator($this->translator);
@@ -242,6 +282,7 @@ class Calendar extends Control implements LinkProvider
 
 
 	/**
+	 * @return object[]
 	 * @throws EventInvalidException
 	 */
 	private function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
@@ -297,6 +338,10 @@ class Calendar extends Control implements LinkProvider
 	}
 
 
+	/**
+	 * @param  Event[] $events
+	 * @return Event[]
+	 */
 	private function createAllDayEventsChunked(array $events): array
 	{
 		$hours = $this->config->getBusinessHours();
@@ -316,11 +361,13 @@ class Calendar extends Control implements LinkProvider
 				continue;
 			}
 
+			/** @var DateTime $eventStart */
 			$eventStart = $event->getStart();
 			$eventEnd = $event->getEnd() ?? (clone $eventStart)->modify('+1 hour');
 			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
 			$chunks = [];
 
+			/** @var DateTime $date */
 			foreach ($dateRange as $date) {
 				$dow = (int) $date->format('N');
 				$dateStart = $hours[$dow]['start'] ?? null;
@@ -346,9 +393,9 @@ class Calendar extends Control implements LinkProvider
 				}
 			}
 
-			foreach ($chunks as $num => $chunk) {
+			foreach ($chunks as $chunk) {
 				$item = clone $event;
-				$item->setStart($chunk['start'] ?? $eventStart);
+				$item->setStart($chunk['start']);	// ?? $eventStart
 				$item->setEnd($chunk['end'] ?? $eventEnd);
 				$item->setGroupId($event->getId());
 				$item->setAllDay(false);
