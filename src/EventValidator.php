@@ -8,6 +8,7 @@
 namespace JuniWalk\Calendar;
 
 use DateTime;
+use JuniWalk\Calendar\Entity\Activity;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
 use Nette\Schema\Expect;
@@ -41,11 +42,15 @@ class EventValidator
 				$event->setEnd($end->modify('midnight next day'));
 			}
 
-			/** @var Event */
+			/** @var Activity */
 			$event = $this->processor->process(
 				$this->schema[$event::class],
 				$event->jsonSerialize(),
 			);
+
+			if (isset($event->groupId)) {
+				$event->classNames[] = 'fc-group-'.$event->groupId;
+			}
 
 			if ($event->getSource() <> $source->getName()) {
 				throw new EventInvalidException('Event\'s source property has to match its source name.');
