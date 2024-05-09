@@ -12,6 +12,7 @@ use DatePeriod;
 use DateTime;
 use DateTimeZone;
 use Iterator;
+use JuniWalk\Calendar\Entity\Activity;
 use JuniWalk\Calendar\Entity\Legend;
 use JuniWalk\Calendar\Entity\Options;
 use JuniWalk\Calendar\Enums\View;
@@ -323,10 +324,17 @@ class Calendar extends Control implements LinkProvider
 		}
 
 		foreach ($events as $key => $event) {
-			$source = $sources[$event->source];
+			$source = $sources[$event->getSource()];
 
 			try {
-				$events[$key] = $validator->validate($event, $source);
+				/** @var Activity */
+				$event = $validator->validate($event, $source);
+
+				if (isset($event->groupId)) {
+					$event->classNames[] = 'fc-group-'.$event->groupId;
+				}
+
+				$events[$key] = $event;
 
 			} catch (Throwable $e) {
 				Debugger::log($e);

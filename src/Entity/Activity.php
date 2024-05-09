@@ -81,6 +81,12 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
+	public function getSource(): string
+	{
+		return $this->source;
+	}
+
+
 	public function setStart(DateTimeInterface $start): void
 	{
 		$this->start = clone $start;
