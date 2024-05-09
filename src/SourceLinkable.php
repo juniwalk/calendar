@@ -9,5 +9,5 @@ namespace JuniWalk\Calendar;
 
 interface SourceLinkable
 {
-	public function eventLink(EventLinkable $event, Calendar $calendar): string;
+	public function eventLink(Event & EventLinkable $event, Calendar $calendar): string;
 }
