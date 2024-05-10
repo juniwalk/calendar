@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
-use DateTimeInterface as DateTime;
+use DateTime;
 
 interface SourceEditable
 {

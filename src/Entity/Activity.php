@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar\Entity;
 
-use DateTimeInterface;
+use DateTime;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
@@ -28,8 +28,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public mixed $groupId;
 	public string $source;
 	public bool $allDay;
-	public DateTimeInterface $start;
-	public ?DateTimeInterface $end;
+	public DateTime $start;
+	public ?DateTime $end;
 	public string $title;
 	public Html $titleHtml;
 	/** @var string[] */
@@ -47,8 +47,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	// EventRecurring
 	/** @var DayNumber[] */
 	public array $daysOfWeek;
-	public ?DateTimeInterface $startRecur;
-	public ?DateTimeInterface $endRecur;
+	public ?DateTime $startRecur;
+	public ?DateTime $endRecur;
 	public string $startTime;
 	public string $endTime;
 
@@ -87,21 +87,21 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function setStart(DateTimeInterface $start): void
+	public function setStart(DateTime $start): void
 	{
 		$this->start = clone $start;
 	}
 
 
-	public function getStart(): DateTimeInterface
+	public function getStart(): DateTime
 	{
 		return $this->start;
 	}
 
 
-	public function setEnd(?DateTimeInterface $end): void
+	public function setEnd(?DateTime $end): void
 	{
-		if ($end instanceof DateTimeInterface) {
+		if ($end instanceof DateTime) {
 			$end = clone $end;
 		}
 
@@ -109,7 +109,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function getEnd(): ?DateTimeInterface
+	public function getEnd(): ?DateTime
 	{
 		return $this->end ?? null;
 	}
@@ -163,7 +163,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 				continue;
 			}
 
-			if ($value instanceof DateTimeInterface) {
+			if ($value instanceof DateTime) {
 				$value = clone $value;
 			}
 

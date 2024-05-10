@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
-use DateTimeInterface as DateTime;
+use DateTime;
 use JsonSerializable;
 
 interface Event extends JsonSerializable

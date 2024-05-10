@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
-use DateTimeInterface as DateTime;
+use DateTime;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
 use Nette\Application\UI\SignalReceiver;

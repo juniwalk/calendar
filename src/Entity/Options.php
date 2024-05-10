@@ -8,7 +8,6 @@
 namespace JuniWalk\Calendar\Entity;
 
 use DateTime;
-use DateTimeInterface;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
@@ -392,7 +391,7 @@ class Options implements Config
 	}
 
 
-	protected function startsTooSoon(DateTimeInterface $date): bool
+	protected function startsTooSoon(DateTime $date): bool
 	{
 		$dow = (int) $date->format('N');
 
@@ -405,7 +404,7 @@ class Options implements Config
 	}
 
 
-	protected function endsTooLate(DateTimeInterface $date): bool
+	protected function endsTooLate(DateTime $date): bool
 	{
 		$dow = (int) $date->format('N');
 
