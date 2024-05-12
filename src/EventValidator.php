@@ -42,6 +42,10 @@ class EventValidator
 				$event->setEnd($end->modify('midnight next day'));
 			}
 
+			if ($event->getSource() <> $source->getName()) {
+				throw new EventInvalidException('Event\'s source property has to match its source name.');
+			}
+
 			/** @var Activity */
 			$activity = $this->processor->process(
 				$this->schema[$event::class],
@@ -50,10 +54,6 @@ class EventValidator
 
 			if (isset($activity->groupId)) {
 				$activity->classNames[] = 'fc-group-'.$activity->groupId;
-			}
-
-			if ($activity->getSource() <> $source->getName()) {
-				throw new EventInvalidException('Event\'s source property has to match its source name.');
 			}
 
 			return $activity;
