@@ -43,20 +43,20 @@ class EventValidator
 			}
 
 			/** @var Activity */
-			$event = $this->processor->process(
+			$activity = $this->processor->process(
 				$this->schema[$event::class],
 				$event->jsonSerialize(),
 			);
 
-			if (isset($event->groupId)) {
-				$event->classNames[] = 'fc-group-'.$event->groupId;
+			if (isset($activity->groupId)) {
+				$activity->classNames[] = 'fc-group-'.$activity->groupId;
 			}
 
-			if ($event->getSource() <> $source->getName()) {
+			if ($activity->getSource() <> $source->getName()) {
 				throw new EventInvalidException('Event\'s source property has to match its source name.');
 			}
 
-			return $event;
+			return $activity;
 
 		} catch (Throwable $e) {
 			throw EventInvalidException::fromEvent($event, $e);
