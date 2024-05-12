@@ -25,6 +25,7 @@ use JuniWalk\Components\Actions\Traits\Actions;
 use JuniWalk\Components\Actions\Traits\Links;
 use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
+use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
@@ -35,7 +36,7 @@ use Nette\Localization\Translator;
 use Throwable;
 use Tracy\Debugger;
 
-class Calendar extends Control implements LinkProvider
+class Calendar extends Control implements EventHandler, LinkProvider
 {
 	use Actions, Links, Events;
 
