@@ -164,7 +164,7 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
-			if (!$type || !$id || !$start || !$allDay) {
+			if (!isset($type) || !isset($id) || !isset($start) || !isset($allDay)) {
 				throw new EventNotFoundException;
 			}
 
@@ -199,7 +199,7 @@ class Calendar extends Control implements LinkProvider
 		$presenter = $this->getPresenter();
 
 		try {
-			if (!$type || !$id || !$end || !$allDay) {
+			if (!isset($type) || !isset($id) || !isset($end) || !isset($allDay)) {
 				throw new EventNotFoundException;
 			}
 
