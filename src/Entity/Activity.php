@@ -8,12 +8,13 @@
 namespace JuniWalk\Calendar\Entity;
 
 use DateTime;
-use JuniWalk\Calendar\Enums\Day;
+use JuniWalk\Calendar\Enums\Day;	// ! Used in @phpstan-type
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventLinkable;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Calendar\EventRecurring;
+use JuniWalk\Calendar\Utils\Date;
 use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
@@ -89,7 +90,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 	public function setStart(DateTime $start): void
 	{
-		$this->start = clone $start;
+		$this->start = Date::normalize($start);
 	}
 
 
@@ -101,11 +102,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 	public function setEnd(?DateTime $end): void
 	{
-		if ($end instanceof DateTime) {
-			$end = clone $end;
-		}
-
-		$this->end = $end;
+		$this->end = Date::normalize($end);
 	}
 
 
