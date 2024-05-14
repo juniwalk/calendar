@@ -362,13 +362,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 				continue;
 			}
 
-			/** @var DateTime $eventStart */
 			$eventStart = $event->getStart();
 			$eventEnd = $event->getEnd() ?? (clone $eventStart)->modify('+1 hour');
 			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
 			$chunks = [];
 
-			/** @var DateTime $date */
 			foreach ($dateRange as $date) {
 				$dow = (int) $date->format('N');
 				$dateStart = $hours[$dow]['start'] ?? null;
