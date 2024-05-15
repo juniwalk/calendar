@@ -14,9 +14,9 @@ class EventInvalidException extends CalendarException
 {
 	private mixed $event = null;
 
-	public static function fromEvent(Event $event, ?Throwable $previous = null): self
+	public static function fromEvent(Event $event, ?Throwable $previous = null, ?string $message = null): self
 	{
-		$self = new self('Event "'.$event::class.'" failed schema validation.', 500, $previous);
+		$self = new self('Event "'.$event::class.'" failed schema validation. '.$message, 500, $previous);
 		$self->event = $event;
 
 		return $self;
