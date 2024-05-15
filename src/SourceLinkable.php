@@ -7,7 +7,9 @@
 
 namespace JuniWalk\Calendar;
 
+use Nette\Application\UI\Link;
+
 interface SourceLinkable
 {
-	public function eventLink(Event & EventLinkable $event, Calendar $calendar): string;
+	public function eventLink(Event & EventLinkable $event, Calendar $calendar): string|Link;
 }

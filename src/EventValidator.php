@@ -11,6 +11,7 @@ use DateTime;
 use JuniWalk\Calendar\Entity\Activity;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
+use Nette\Application\UI\Link;
 use Nette\Schema\Expect;
 use Nette\Schema\Processor;
 use Nette\Schema\Schema;
@@ -71,19 +72,24 @@ class EventValidator
 	private function createSchema(Event $event): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($d) => $d->value),
+			Expect::type(Day::class)->transform(fn($x) => $x->value),
 			Expect::int()->min(0)->max(6),
 		);
 
 		$date = Expect::anyOf(
-			Expect::type(DateTime::class)->transform(fn($d) => $d->format('c')),
+			Expect::type(DateTime::class)->transform(fn($x) => $x->format('c')),
 			Expect::string(),
 		);
 
 		$html = Expect::anyOf(
-			Expect::type(Html::class)->transform(fn($d) => $d->render()),
+			Expect::type(Html::class)->transform(fn($x) => $x->render()),
 			Expect::string(),
 			Expect::null(),
+		);
+
+		$url = Expect::anyOf(
+			Expect::type(Link::class)->transform(fn($x) => (string) $x),
+			Expect::string(),
 		);
 
 		$schema = [
@@ -109,7 +115,7 @@ class EventValidator
 
 		if ($event instanceof EventLinkable) {
 			$schema = array_merge($schema, [
-				'url'		=> Expect::string(),
+				'url'		=> $url,
 			]);
 		}
 

@@ -18,6 +18,7 @@ use JuniWalk\Calendar\Utils\Date;
 use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
+use Nette\Application\UI\Link;
 
 /**
  * @phpstan-import-type DayNumber from Day
@@ -39,7 +40,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public string $display;
 
 	// EventLinkable
-	public string $url;
+	public string|Link $url;
 
 	// EventDetail
 	public Html $content;
@@ -124,7 +125,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function setUrl(string $url): void
+	public function setUrl(string|Link $url): void
 	{
 		$this->url = $url;
 	}
