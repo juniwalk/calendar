@@ -29,7 +29,7 @@ use Throwable;
 
 /**
  * @phpstan-import-type DayNumber from Day
- * @phpstan-type BusinessHour array{daysOfWeek: list<Day|DayNumber>, startTime: string, endTime: string}
+ * @phpstan-type BusinessHour array{daysOfWeek: array<Day|DayNumber>, startTime: ?string, endTime: ?string}
  */
 class Options implements Config
 {
