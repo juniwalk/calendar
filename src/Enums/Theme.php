@@ -22,7 +22,7 @@ enum Theme: string implements LabeledEnum
 
 	public function label(): string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Bootstrap4 => 'Bootstrap 4',
 		};
 	}

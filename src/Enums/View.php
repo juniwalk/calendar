@@ -22,7 +22,7 @@ enum View: string implements LabeledEnum
 
 	public function label(): string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Month => 'calendar.toolbar.view.month',
 			self::Week => 'calendar.toolbar.view.week',
 			self::Day => 'calendar.toolbar.view.day',
@@ -38,7 +38,7 @@ enum View: string implements LabeledEnum
 
 	public function icon(): ?string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Month => 'fa-solid fa-calendar-days',
 			self::Week => 'fa-solid fa-calendar-week',
 			self::Day => 'fa-solid fa-calendar-day',

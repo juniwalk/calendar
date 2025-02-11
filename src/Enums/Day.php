@@ -46,7 +46,7 @@ enum Day: int implements LabeledEnum
 
 	public function label(): string
 	{
-		return match($this) {
+		return match ($this) {
 			self::Monday => 'calendar.day.monday',
 			self::Tuesday => 'calendar.day.tuesday',
 			self::Wednesday => 'calendar.day.wednesday',
