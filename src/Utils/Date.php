@@ -31,19 +31,12 @@ final class Date
 	/**
 	 * @return ($date is null ? null : DateTime)
 	 */
-	public static function normalize(?DateTimeInterface $date): ?DateTime
+	public static function normalize(?DateTimeInterface $date, Steps $steps = Steps::HalfHour): ?DateTime
 	{
 		if (!$date = static::clone($date)) {
 			return null;
 		}
 
-		$m = (int) $date->format('i');
-		$h = (int) $date->format('H');
-
-		return match (true) {
-			$m >= 45	=> $date->setTime($h+1,	00),
-			$m >= 15	=> $date->setTime($h,	30),
-			default		=> $date->setTime($h,	00),
-		};
+		return $steps->normalize($date);
 	}
 }
