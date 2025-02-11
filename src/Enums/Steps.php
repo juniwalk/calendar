@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Calendar\Enums;
 
+use DateTime;
 use DateTimeInterface;
 
 enum Steps
@@ -15,8 +16,9 @@ enum Steps
 	case HalfHour;
 
 
-	public function normalize(DateTimeInterface $date): DateTimeInterface
+	public function normalize(DateTimeInterface $date): DateTime
 	{
+		$date = DateTime::createFromInterface($date);
 		$h = (int) $date->format('H');
 		$m = (int) $date->format('i');
 

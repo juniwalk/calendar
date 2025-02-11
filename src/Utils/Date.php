@@ -9,6 +9,7 @@ namespace JuniWalk\Calendar\Utils;
 
 use DateTime;
 use DateTimeInterface;
+use JuniWalk\Calendar\Enums\Steps;
 use Nette\StaticClass;
 
 final class Date
