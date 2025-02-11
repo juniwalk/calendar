@@ -57,6 +57,7 @@ class Options implements Config
 
 	public ?string $slotMinTime = null;
 	public ?string $slotMaxTime = null;
+	public ?string $slotDuration = null;
 	public int $paddingStart = 1;
 	public int $paddingEnd = 1;
 	public ?bool $expandRows = true;
