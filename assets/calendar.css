@@ -45,7 +45,7 @@
 	font-size: 75%;
 	font-weight: 400;
 	border-radius: .25rem;
-	border: none !important;
+	border: none;
 	box-shadow: 0 0 1px rgba(0,0,0,.125),
 				0 1px 3px rgba(0,0,0,.2) !important;
 }
