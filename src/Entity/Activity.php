@@ -131,7 +131,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function createTime(bool $fullDate = null): Html
+	public function createTime(?bool $fullDate = null): Html
 	{
 		$fullDate ??= $this->allDay || isset($this->groupId);
 		$format = $fullDate ? 'j.n. G:i' : 'G:i';
