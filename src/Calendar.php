@@ -258,7 +258,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 
 		/** @var DefaultTemplate */
 		$template = $this->createTemplate();
-		$template->setFile(__DIR__.'/templates/'.$config->getTheme()->value.'.latte');
+		$template->setFile(__DIR__.'/templates/'.$config->getTheme()->file());
 		$template->setTranslator($this->translator);
 
 		$this->trigger('render', $this, $template);

@@ -1,0 +1,90 @@
+<div class="card card-primary card-outline" id="{$controlName}">
+<div n:snippet="calendar">
+
+	<div class="card-header border-0 pb-0" n:if="$config->isHeaderCustom()">
+
+		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
+
+			<div class="btn-group mr-2 mb-2" role="group">
+				<a role="button" class="btn btn-primary" data-today>{_calendar.toolbar.today|noescape}</a>
+			</div>
+
+			<div class="btn-group mr-2 mb-2" role="group">
+				<a role="button" class="btn btn-primary" data-prev>{_calendar.toolbar.prev|noescape}</a>
+				<a role="button" class="btn btn-primary" data-next>{_calendar.toolbar.next|noescape}</a>
+			</div>
+
+			<div class="flex-fill align-self-center mb-2 order-0">
+				<h1 class="text-capitalize card-title float-none ml-3" data-title></h1>
+			</div>
+
+			<div class="btn-group mb-2 ml-2" role="group" n:if="!$config->isViewsCollapsed()" n:inner-foreach="$views as $view">
+				<a role="button" n:class="btn, $view->color()->for('btn')" data-view="{$view->value}">{$view->label()|translate}</a>
+			</div>
+
+			<div class="btn-group mb-2 ml-2" role="group" n:if="$config->isViewsCollapsed()">
+				<a role="button" class="btn btn-primary dropdown-toggle" data-view-name data-toggle="dropdown" aria-expanded="false"></a>
+				<div class="dropdown-menu" n:inner-foreach="$views as $view">
+					<a role="button" n:class="dropdown-item" data-view="{$view->value}">{$view->label()|translate}</a>
+				</div>
+			</div>
+
+			<div n:snippet="actions">
+				<div n:ifcontent n:inner-foreach="$actions as $action">
+					{control $action}
+				</div>
+			</div>
+
+			<div class="btn-group mb-2 ml-2" role="group">
+				<a href="#" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" data-tooltip title="{_calendar.toolbar.settings}"><i class="fa fa-cog fa-fw"></i></a>
+				<div class="dropdown-menu dropdown-menu-right stateful">
+					<a href="#" class="dropdown-item py-2" data-set-show-details>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_calendar.settings.showDetails}</span>
+							<small class="text-muted">{_calendar.settings.showDetails-desc}</small>
+						</div>
+					</a>
+					<a href="#" class="dropdown-item py-2" data-set-auto-refresh>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_calendar.settings.autoRefresh}</span>
+							<small class="text-muted">{_calendar.settings.autoRefresh-desc}</small>
+						</div>
+					</a>
+					<a href="#" class="dropdown-item py-2" data-set-editable>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_calendar.settings.editable}</span>
+							<small class="text-muted">{_calendar.settings.editable-desc}</small>
+						</div>
+					</a>
+					<div class="dropdown-divider"></div>
+					<a href="#" class="dropdown-item py-2" data-set-responsive>
+						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
+						<div class="content">
+							<span class="h6 mb-0 d-block">{_calendar.settings.responsive}</span>
+							<small class="text-muted">{_calendar.settings.responsive-desc}</small>
+						</div>
+					</a>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="card-body p-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
+
+	<div class="card-footer pb-1" n:inner-foreach="$sources as $source" n:ifcontent>
+		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
+			{continueIf !$type instanceof $legend}
+			<small class="text-muted pr-2" n:ifchanged>{_calendar.footer.legend}:</small>
+			{$type->createBadge()}
+		</div>
+	</div>
+
+</div>
+</div>
+
+{include components/script.latte}
