@@ -80,7 +80,7 @@
 		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
 			{continueIf !$type instanceof $legend}
 			<small class="text-muted pr-2" n:ifchanged>{_calendar.footer.legend}:</small>
-			{$type->createBadge()}
+			{$type->createBadge()->addClass('mb-2 p-2')}
 		</div>
 	</div>
 

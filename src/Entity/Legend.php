@@ -30,7 +30,6 @@ readonly class Legend
 	public function createBadge(): Html
 	{
 		/** @var Html */
-		return Html::badge($this->name, $this->color, $this->icon)
-			->addClass('mb-2 p-2');
+		return Html::badge($this->name, $this->color, $this->icon);
 	}
 }

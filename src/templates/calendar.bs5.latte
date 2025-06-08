@@ -76,11 +76,11 @@
 
 	<div class="card-body p-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
 
-	<div class="card-footer p-2 px-3 pb-0" n:inner-foreach="$sources as $source" n:ifcontent>
-		<div n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
+	<div class="card-footer p-3" n:inner-foreach="$sources as $source" n:ifcontent>
+		<div class="d-flex flex-row flex-wrap gap-1 align-items-center" n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
 			{continueIf !$type instanceof $legend}
-			<small class="text-secondary pe-2" n:ifchanged>{_calendar.footer.legend}:</small>
-			{$type->createBadge()}
+			<small class="text-secondary me-2" n:ifchanged>{_calendar.footer.legend}:</small>
+			{$type->createBadge()->addClass('p-2')}
 		</div>
 	</div>
 
