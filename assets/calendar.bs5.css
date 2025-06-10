@@ -52,26 +52,6 @@
 
 
 /**
- * Navigations
- */
-.dropdown-menu.stateful { width: 26rem; }
-.dropdown-menu.stateful .dropdown-item,
-.list-group.stateful .list-group-item {
-	padding-left: 0px;
-	display: flex !important;
-	white-space: normal !important;
-}
-.dropdown-menu.stateful .dropdown-item .content { line-height: 1.15; width: 22rem; }
-.dropdown-menu.stateful .dropdown-item .icon,
-.list-group.stateful .list-group-item .icon {
-	width: 4rem;
-	text-align: center;
-	align-self: center !important;
-	line-height: 1.15;
-}
-
-
-/**
  * Dark Mode
  */
 [data-bs-theme=dark] { --fc-non-business-color: rgba(23, 26, 29,.3) !important; }

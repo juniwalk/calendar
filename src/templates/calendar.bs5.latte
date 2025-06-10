@@ -37,34 +37,34 @@
 
 			<div class="btn-group mb-2 ms-2" role="group">
 				<a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-tooltip title="{_calendar.toolbar.settings}"><i class="fa fa-cog fa-fw"></i></a>
-				<div class="dropdown-menu dropdown-menu-end stateful">
-					<a href="#" class="dropdown-item py-2" data-set-show-details>
-						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
+				<div class="dropdown-menu dropdown-menu-end with-state">
+					<a href="#" class="dropdown-item" data-set-show-details>
+						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_calendar.settings.showDetails}</span>
-							<small class="text-secondary">{_calendar.settings.showDetails-desc}</small>
+							<div class="fs-6">{_calendar.settings.showDetails}</div>
+							<div class="fs-8 text-secondary">{_calendar.settings.showDetails-desc}</div>
 						</div>
 					</a>
-					<a href="#" class="dropdown-item py-2" data-set-auto-refresh>
-						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
+					<a href="#" class="dropdown-item" data-set-auto-refresh>
+						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_calendar.settings.autoRefresh}</span>
-							<small class="text-secondary">{_calendar.settings.autoRefresh-desc}</small>
+							<div class="fs-6">{_calendar.settings.autoRefresh}</div>
+							<div class="fs-8 text-secondary">{_calendar.settings.autoRefresh-desc}</div>
 						</div>
 					</a>
-					<a href="#" class="dropdown-item py-2" data-set-editable>
-						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
+					<a href="#" class="dropdown-item" data-set-editable>
+						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_calendar.settings.editable}</span>
-							<small class="text-secondary">{_calendar.settings.editable-desc}</small>
+							<div class="fs-6">{_calendar.settings.editable}</div>
+							<div class="fs-8 text-secondary">{_calendar.settings.editable-desc}</div>
 						</div>
 					</a>
 					<div class="dropdown-divider"></div>
-					<a href="#" class="dropdown-item py-2" data-set-responsive>
-						<div class="icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
+					<a href="#" class="dropdown-item" data-set-responsive>
+						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
 						<div class="content">
-							<span class="h6 mb-0 d-block">{_calendar.settings.responsive}</span>
-							<small class="text-secondary">{_calendar.settings.responsive-desc}</small>
+							<div class="fs-6">{_calendar.settings.responsive}</div>
+							<div class="fs-8 text-secondary">{_calendar.settings.responsive-desc}</div>
 						</div>
 					</a>
 				</div>
