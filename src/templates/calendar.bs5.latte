@@ -1,72 +1,66 @@
 <div class="card card-primary card-outline mb-3" id="{$controlName}">
 <div n:snippet="calendar">
 
-	<div class="card-header border-0 pb-0" n:if="$config->isHeaderCustom()">
+	<div class="card-header border-0" n:if="$config->isHeaderCustom()">
 
-		<div class="btn-toolbar d-flex" role="toolbar" n:snippet="toolbar">
+		<div class="btn-toolbar align-items-center gap-2" role="toolbar" n:snippet="toolbar">
 
-			<div class="btn-group me-2 mb-2" role="group">
-				<a role="button" class="btn btn-primary" data-today>{_calendar.toolbar.today|noescape}</a>
+			<div class="btn-group" role="group">
+				<button role="button" class="btn btn-primary" data-today>{_calendar.toolbar.today|noescape}</button>
 			</div>
 
-			<div class="btn-group me-2 mb-2" role="group">
-				<a role="button" class="btn btn-primary" data-prev>{_calendar.toolbar.prev|noescape}</a>
-				<a role="button" class="btn btn-primary" data-next>{_calendar.toolbar.next|noescape}</a>
+			<div class="btn-group" role="group">
+				<button role="button" class="btn btn-primary" data-prev>{_calendar.toolbar.prev|noescape}</button>
+				<button role="button" class="btn btn-primary" data-next>{_calendar.toolbar.next|noescape}</button>
 			</div>
 
-			<div class="flex-fill align-self-center mb-2 order-0">
-				<h1 class="text-capitalize card-title float-none m-0 ms-3" data-title></h1>
+			<h1 class="card-title text-capitalize m-0 ps-3 flex-fill" data-title></h1>
+
+			<div class="btn-group" role="group" n:if="!$config->isViewsCollapsed()" n:inner-foreach="$views as $view">
+				<button role="button" n:class="btn, $view->color()->for('btn')" data-view="{$view->value}">{$view->label()|translate}</button>
 			</div>
 
-			<div class="btn-group mb-2 ms-2" role="group" n:if="!$config->isViewsCollapsed()" n:inner-foreach="$views as $view">
-				<a role="button" n:class="btn, $view->color()->for('btn')" data-view="{$view->value}">{$view->label()|translate}</a>
-			</div>
-
-			<div class="btn-group mb-2 ms-2" role="group" n:if="$config->isViewsCollapsed()">
-				<a role="button" class="btn btn-primary dropdown-toggle" data-view-name data-bs-toggle="dropdown" aria-expanded="false"></a>
+			<div class="btn-group " role="group" n:if="$config->isViewsCollapsed()">
+				<button role="button" class="btn btn-primary dropdown-toggle" data-view-name data-bs-toggle="dropdown" aria-expanded="false"></button>
 				<div class="dropdown-menu" n:inner-foreach="$views as $view">
-					<a role="button" n:class="dropdown-item" data-view="{$view->value}">{$view->label()|translate}</a>
+					<button role="button" n:class="dropdown-item" data-view="{$view->value}">{$view->label()|translate}</button>
 				</div>
 			</div>
 
-			<div n:snippet="actions">
-				<div n:ifcontent n:inner-foreach="$actions as $action">
-					{control $action}
-				</div>
-			</div>
+			{foreach $actions as $action}{control $action}{/foreach}
 
-			<div class="btn-group mb-2 ms-2" role="group">
-				<a href="#" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-tooltip title="{_calendar.toolbar.settings}"><i class="fa fa-cog fa-fw"></i></a>
+			<div class="btn-group" role="group">
+				<button role="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-cog fa-fw"></i></button>
 				<div class="dropdown-menu dropdown-menu-end with-state">
-					<a href="#" class="dropdown-item" data-set-show-details>
+					<button role="button" class="dropdown-item" data-set-show-details>
 						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isShowDetails() ? invisible"></i></div>
 						<div class="content">
 							<div class="fs-6">{_calendar.settings.showDetails}</div>
 							<div class="fs-8 text-secondary">{_calendar.settings.showDetails-desc}</div>
 						</div>
-					</a>
-					<a href="#" class="dropdown-item" data-set-auto-refresh>
+					</button>
+					<button role="button" class="dropdown-item" data-set-auto-refresh>
 						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isAutoRefresh() ? invisible"></i></div>
 						<div class="content">
 							<div class="fs-6">{_calendar.settings.autoRefresh}</div>
 							<div class="fs-8 text-secondary">{_calendar.settings.autoRefresh-desc}</div>
 						</div>
-					</a>
-					<a href="#" class="dropdown-item" data-set-editable>
+					</button>
+					<button role="button" class="dropdown-item" data-set-editable>
 						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isEditable() ? invisible"></i></div>
 						<div class="content">
 							<div class="fs-6">{_calendar.settings.editable}</div>
 							<div class="fs-8 text-secondary">{_calendar.settings.editable-desc}</div>
 						</div>
-					</a>
+					</button>
 					<div class="dropdown-divider"></div>
-					<a href="#" class="dropdown-item" data-set-responsive>
+					<button role="button" class="dropdown-item" data-set-responsive>
 						<div class="state icon"><i n:class="fa-solid, fa-check, fa-fw, !$config->isResponsive() ? invisible"></i></div>
 						<div class="content">
 							<div class="fs-6">{_calendar.settings.responsive}</div>
 							<div class="fs-8 text-secondary">{_calendar.settings.responsive-desc}</div>
 						</div>
-					</a>
+					</button>
 				</div>
 			</div>
 
