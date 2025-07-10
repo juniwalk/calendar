@@ -25,6 +25,9 @@ settings:
 	responsive: 'Přizpůsobit mobilním telefonům'
 	responsive-desc: 'Povolit automatické přepnutí kalendáře na zobrazení "Den", v případě užití malé obrazovky (mobilní telefon).'
 
+footer:
+	legend: 'Legenda'
+
 day:
 	monday: 'Po<span class="d-none d-xl-inline">ndělí</span>'
 	tuesday: 'Út<span class="d-none d-xl-inline">erý</span>'
@@ -34,5 +37,16 @@ day:
 	saturday: 'So<span class="d-none d-xl-inline">bota</span>'
 	sunday: 'Ne<span class="d-none d-xl-inline">děle</span>'
 
-footer:
-	legend: 'Legenda'
+month:
+	january: 'Leden'
+	february: 'Únor'
+	march: 'Březen'
+	april: 'Duben'
+	may: 'Květen'
+	june: 'Červen'
+	july: 'Červenec'
+	august: 'Srpen'
+	september: 'Září'
+	october: 'Říjen'
+	november: 'Listopad'
+	december: 'Prosinec'
