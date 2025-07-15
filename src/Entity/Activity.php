@@ -181,7 +181,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 		foreach ($params as $key => $value) {
 			$params[$key] = match (true) {
 				$value instanceof EventProvider => null,
-				default => Format::scalarize($value) ?? $value,
+				default => Format::serializable($value) ?? $value,
 			};
 		}
 
