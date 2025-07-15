@@ -4,5 +4,7 @@ parameters:
 		- src
 		- tests
 
+	treatPhpDocTypesAsCertain: false
+
 	todo_by:
 		referenceVersion: "nextMinor"
