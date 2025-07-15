@@ -93,8 +93,8 @@ class EventValidator
 		);
 
 		$schema = [
-			'id'			=> Expect::scalar(),
-			'groupId'		=> Expect::scalar(),
+			'id'			=> Expect::type('int|string'),
+			'groupId'		=> Expect::type('int|string'),
 			'source'		=> Expect::string()->required(),
 			'allDay'		=> Expect::bool(),
 			'start'			=> (clone $date)->required(),
