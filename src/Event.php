@@ -12,8 +12,8 @@ use JsonSerializable;
 
 interface Event extends JsonSerializable
 {
-	public function getId(): mixed;
-	public function setGroupId(mixed $groupId): void;
+	public function getId(): int|string;
+	public function setGroupId(int|string|null $groupId): void;
 	public function setSource(string $source): void;
 	public function getSource(): string;
 	public function setStart(DateTime $start): void;
