@@ -38,9 +38,9 @@
 	"require-dev": {
 		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.0",
-		"phpstan/phpstan": "^1.0",
-		"phpstan/phpstan-nette": "^1.0",
-		"staabm/phpstan-todo-by": "^0.1"
+		"phpstan/phpstan": "^2.0",
+		"phpstan/phpstan-nette": "^2.0",
+		"staabm/phpstan-todo-by": "^0.3"
 	},
 
 	"suggest": {
