@@ -36,7 +36,7 @@ enum View: string implements LabeledEnum
 	}
 
 
-	public function icon(): ?string
+	public function icon(): string
 	{
 		return match ($this) {
 			self::Month => 'fa-solid fa-calendar-days',
