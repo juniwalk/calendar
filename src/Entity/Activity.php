@@ -26,7 +26,7 @@ use Nette\Application\UI\Link;
 class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 {
 	// Event
-	public int|string $id;
+	public int|string|null $id;
 	public int|string|null $groupId;
 	public string $source;
 	public bool $allDay;
@@ -65,7 +65,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function getId(): int|string
+	public function getId(): int|string|null
 	{
 		return $this->id;
 	}
