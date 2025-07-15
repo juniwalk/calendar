@@ -396,8 +396,7 @@ class Options implements Config
 	{
 		$dow = (int) $date->format('N');
 
-		if (!$date instanceof DateTime ||
-			!$time = $this->findMinTime($dow)) {
+		if (!$time = $this->findMinTime($dow)) {
 			return true;
 		}
 
@@ -409,8 +408,7 @@ class Options implements Config
 	{
 		$dow = (int) $date->format('N');
 
-		if (!$date instanceof DateTime ||
-			!$time = $this->findMaxTime($dow)) {
+		if (!$time = $this->findMaxTime($dow)) {
 			return false;
 		}
 

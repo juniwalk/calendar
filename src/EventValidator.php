@@ -39,7 +39,7 @@ class EventValidator
 		try {
 			$end = $event->getEnd();
 
-			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00' && $end instanceof DateTime) {
+			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00') {
 				$event->setEnd($end->modify('midnight next day'));
 			}
 
