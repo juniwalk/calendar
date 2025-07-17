@@ -39,8 +39,8 @@
 .fc .fc-event:is(.fc-daygrid-event) .fc-event-time { align-self: center; overflow: visible; }
 .fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event) .fc-event-time { font-size: var(--fc-small-font-size); font-weight: 700; }
 .fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event) .fc-event-main { color: inherit !important; overflow: hidden; }
+.fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event):hover { opacity: 1 !important; transform: none !important; }
 .fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event).focus { border: 2px solid var(--bs-body-color); }
-.fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event):hover { opacity: 1 !important; }
 .fc .fc-event:is(.fc-daygrid-event, .fc-timegrid-event) {
 	min-height: 1.75rem;
 	padding: .315rem;
