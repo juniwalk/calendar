@@ -67,6 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		eventDidMount: function({ el, event }) {
 			let title = event.extendedProps.label;
 			let content = event.extendedProps.content;
+			let source = event.extendedProps.source;
+
+			// Set the HTML element's id to match the event's id
+			el.id = 'event-' + source + '-' + event.id;
 
 			$(el).on('mouseenter', () => $('.fc-group-'+event.groupId).addClass('hover'));
 			$(el).on('mouseleave', () => $('.fc-group-'+event.groupId).removeClass('hover'));
