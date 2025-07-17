@@ -72,6 +72,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Set the HTML element's id to match the event's id
 			el.id = 'event-' + source + '-' + event.id;
 
+			if (location.hash === '#'+el.id) {
+				el.classList.add('focus', 'scale-slow');
+			}
+
 			$(el).on('mouseenter', () => $('.fc-group-'+event.groupId).addClass('hover'));
 			$(el).on('mouseleave', () => $('.fc-group-'+event.groupId).removeClass('hover'));
 
