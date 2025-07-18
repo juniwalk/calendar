@@ -74,6 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			if (location.hash === '#'+el.id) {
 				el.classList.add('focus', 'scale-slow');
+
+				if (!config.isLoaded) {
+					el.scrollIntoView({ behavior: 'smooth' });
+					config.isLoaded = true;
+				}
 			}
 
 			$(el).on('mouseenter', () => $('.fc-group-'+event.groupId).addClass('hover'));
