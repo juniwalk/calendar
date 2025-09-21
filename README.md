@@ -9,4 +9,6 @@ Require Calendar component inside your composer.json or run this command in your
 composer require juniwalk/calendar
 ```
 
-Then check the [configuration](docs/config.md) in the docs.
+### configuration
+
+Check the [configuration](docs/config.md) in the docs.

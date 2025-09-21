@@ -2,7 +2,7 @@
 
 Configure your Calendar component in `config.neon` file.
 
-```yaml
+```neon
 extensions:
 	calendar: JuniWalk\Calendar\DI\CalendarExtension
 
