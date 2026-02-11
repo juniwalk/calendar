@@ -14,6 +14,7 @@ use JuniWalk\Calendar\Entity\Options;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\InvalidConfigurationException;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Throwable;
@@ -30,8 +31,9 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 			'sources' => Expect::listOf(
 				Expect::string()->dynamic()->transform(fn($stmt) => match (true) {
 					$stmt instanceof Statement => $stmt,
-					default => new Statement($stmt),
-				})
+					is_string($stmt) => new Statement($stmt),
+					default => new InvalidConfigurationException,
+				}),
 			),
 		]);
 	}
