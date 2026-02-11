@@ -72,23 +72,23 @@ class EventValidator
 	private function createSchema(Event $event): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($x) => $x->value),
+			Expect::type(Day::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will always be BackedEnum)
 			Expect::int()->min(0)->max(6),
 		);
 
 		$date = Expect::anyOf(
-			Expect::type(DateTime::class)->transform(fn($x) => $x->format('c')),
+			Expect::type(DateTime::class)->transform(fn($x) => $x->format('c')),	// @phpstan-ignore method.nonObject ($x will always be DateTime)
 			Expect::string(),
 		);
 
 		$html = Expect::anyOf(
-			Expect::type(Html::class)->transform(fn($x) => $x->render()),
+			Expect::type(Html::class)->transform(fn($x) => $x->render()),	// @phpstan-ignore method.nonObject ($x will always be Html)
 			Expect::string(),
 			Expect::null(),
 		);
 
 		$url = Expect::anyOf(
-			Expect::type(Link::class)->transform(fn($x) => (string) $x),
+			Expect::type(Link::class)->transform(fn($x) => (string) $x),	// @phpstan-ignore cast.string ($x will always be Link)
 			Expect::string(),
 		);
 

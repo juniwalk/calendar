@@ -356,7 +356,7 @@ class Options implements Config
 	public static function createSchema(): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($i) => $i->value),
+			Expect::type(Day::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 			Expect::int()->min(0)->max(6),
 		);
 
@@ -369,12 +369,12 @@ class Options implements Config
 
 		return Expect::from(new self, [
 			'themeSystem'	=> Expect::anyOf(
-				Expect::type(Theme::class)->transform(fn($i) => $i->value),
+				Expect::type(Theme::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 				Expect::string(),
 				Expect::null(),
 			),
 			'initialView'	=> Expect::anyOf(
-				Expect::type(View::class)->transform(fn($i) => $i->value),
+				Expect::type(View::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 				Expect::string(),
 				Expect::null(),
 			),
