@@ -35,7 +35,7 @@ class Options implements Config
 {
 	protected const Ignore = ['paddingStart', 'paddingEnd', 'autoRefresh', 'showAllDayEvents', 'viewsCollapsed', 'showDetails', 'responsive'];
 
-	public Theme|string|null $themeSystem = Theme::Bootstrap4;
+	public Theme|string|null $themeSystem = Theme::Bootstrap5;
 
 	/** @var array<string, string[]> */
 	public array|false|null $headerToolbar = false;
@@ -178,7 +178,7 @@ class Options implements Config
 
 	public function getTheme(): Theme
 	{
-		return Theme::make($this->themeSystem, false) ?? Theme::Bootstrap4;
+		return Theme::make($this->themeSystem, false) ?? Theme::Bootstrap5;
 	}
 
 
