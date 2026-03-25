@@ -45,8 +45,8 @@ class CalendarExtension
 			endParam: this.#prefix('end'),
 
 			// Base events
-			windowResize: (event) => this.#handleResize(event.view, element),
-			datesSet: (event) => this.#handleDatesSet(event.view),
+			windowResize: (info) => this.#handleResize(info.view, element),
+			datesSet: (info) => this.#handleDatesSet(info),
 
 			// Event events
 			eventsSet: () => { naja.uiHandler.bindUI(element) },
@@ -237,7 +237,11 @@ class CalendarExtension
 		});
 	}
 
-	#handleDatesSet(view) {
+	#handleDatesSet({view, start, end}) {
+		const today = new Date;
+		const isToday = today >= start && today < end;
+
+		this.#control.querySelector('[data-today]').classList.toggle('disabled', isToday);
 		this.#control.querySelectorAll('[data-view]').forEach((element) => {
 			element.classList.remove('active');
 		});
@@ -250,9 +254,6 @@ class CalendarExtension
 			element.innerHTML = activeView.innerHTML;
 		});
 
-		let start = view.activeStart.toISOString();
-		let end = view.activeEnd.toISOString();
-
 		this.#control.querySelectorAll('[data-signal-date]').forEach((target) => {
 			let url = new URL(target.href);
 			let prefix = '';
@@ -262,8 +263,8 @@ class CalendarExtension
 				prefix = prefix.substring(0, prefix.lastIndexOf('-') +1);
 			}
 
-			url.searchParams.set(prefix+'start', start);
-			url.searchParams.set(prefix+'end', end);
+			url.searchParams.set(prefix+'start', start.toISOString());
+			url.searchParams.set(prefix+'end', end.toISOString());
 
 			target.href = url;
 		});
