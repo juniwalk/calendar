@@ -383,6 +383,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			}
 
 			foreach ($chunks as $chunk) {
+				// ? Missing start, not valid
+				if (!isset($chunk['start'])) {
+					continue;
+				}
+
 				$item = clone $event;
 				$item->setStart($chunk['start']);	// ?? $eventStart
 				$item->setEnd($chunk['end'] ?? $eventEnd);
