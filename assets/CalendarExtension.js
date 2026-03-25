@@ -118,10 +118,9 @@ class CalendarExtension
 	}
 
 	#switchView(view) {
-		this.#calendar.changeView(element.dataset.view);
-
-		this.#httpCookie('view', element.dataset.view, {expires: 365});
 		this.#control.dataset.view = null;
+		this.#calendar.changeView(view);
+		this.#httpCookie('view', view, {expires: 365});
 	}
 
 
