@@ -186,7 +186,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 		}
 
 		$presenter->redirect('this');
-		$presenter->sendPayload();
+		$presenter->sendPayload();		// @phpstan-ignore deadCode.unreachable (Ajax redirect is somewhat weird still)
 	}
 
 
@@ -216,7 +216,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 		}
 
 		$presenter->redirect('this');
-		$presenter->sendPayload();
+		$presenter->sendPayload();		// @phpstan-ignore deadCode.unreachable (Ajax redirect is somewhat weird still)
 	}
 
 
