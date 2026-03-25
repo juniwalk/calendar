@@ -185,13 +185,8 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			Debugger::log($e);
 		}
 
-		/** @deprecated Do backwards compatibility only */
-		if (method_exists($presenter, 'redirectAjax')) {
-			$presenter->redirectAjax('this');
-			$presenter->sendPayload();
-		}
-
 		$presenter->redirect('this');
+		$presenter->sendPayload();
 	}
 
 
@@ -220,13 +215,8 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			Debugger::log($e);
 		}
 
-		/** @deprecated Do backwards compatibility only */
-		if (method_exists($presenter, 'redirectAjax')) {
-			$presenter->redirectAjax('this');
-			$presenter->sendPayload();
-		}
-
 		$presenter->redirect('this');
+		$presenter->sendPayload();
 	}
 
 
