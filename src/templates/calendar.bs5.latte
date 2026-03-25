@@ -81,4 +81,26 @@
 </div>
 </div>
 
-{include components/script.latte}
+<script type="text/javascript" defer="defer">
+document.addEventListener('DOMContentLoaded', () => {
+
+	const config = {$config};
+	const element = document.querySelector('#'+{$controlName});
+
+	const calendar = new CalendarExtension(element, config, {
+		autoRefresh: 5000,
+		sources: [{link fetch!}],
+
+		// Event links
+		dateClick: {link click!},
+		eventDrop: {link drop!},
+		eventResize: {link resize!},
+	});
+
+	// ? Auto register the extension in Naja.js
+	if (typeof naja !== 'undefined') {
+		naja?.registerExtension(calendar);
+	}
+
+});
+</script>
