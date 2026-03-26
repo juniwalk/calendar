@@ -10,6 +10,7 @@ namespace JuniWalk\Calendar\Entity;
 use DateTimeImmutable;
 use DateTimeInterface;
 use JuniWalk\Calendar\Enums\Day;	// ! Used in @phpstan-type
+use JuniWalk\Calendar\Enums\Time;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventLinkable;
@@ -92,7 +93,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 	public function setStart(DateTimeInterface $start): void
 	{
-		$this->start = Date::normalize($start);
+		$this->start = Time::HalfHour->normalize($start);
 	}
 
 
@@ -104,7 +105,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 	public function setEnd(?DateTimeInterface $end): void
 	{
-		$this->end = Date::normalize($end);
+		$this->end = Time::HalfHour->normalize($end);
 	}
 
 

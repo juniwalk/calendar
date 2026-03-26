@@ -10,15 +10,21 @@ namespace JuniWalk\Calendar\Enums;
 use DateTimeImmutable;
 use DateTimeInterface;
 
-// todo: rewrite to be used as Date utility as the clone is no longer needed?
-enum Steps
+enum Time
 {
 	case FiveMin;
 	case HalfHour;
 
 
-	public function normalize(DateTimeInterface $date): DateTimeImmutable
+	/**
+	 * @return ($date is null ? null : DateTimeImmutable)
+	 */
+	public function normalize(?DateTimeInterface $date): ?DateTimeImmutable
 	{
+		if (empty($date)) {
+			return null;
+		}
+
 		$date = DateTimeImmutable::createFromInterface($date);
 		$h = (int) $date->format('H');
 		$m = (int) $date->format('i');
