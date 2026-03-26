@@ -7,7 +7,8 @@
 
 namespace JuniWalk\Calendar\Sources;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use DateTimeZone;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
@@ -33,13 +34,13 @@ final class CzechHolidaysSource extends Component implements Source
 	/**
 	 * @return Event[]
 	 */
-	public function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
+	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone): array
 	{
-		$start = new DateTime($start->format(DateTime::ATOM));
+		$start = DateTimeImmutable::createFromInterface($start);
 		$events = [];
 
 		foreach ($this->getHolidays($start) as $date => $name) {
-			$date = (clone $start)->modify($date);
+			$date = $start->modify($date);
 
 			if ($date < $start || $date >= $end) {
 				continue;
@@ -66,12 +67,12 @@ final class CzechHolidaysSource extends Component implements Source
 	/**
 	 * @return array<string, string>
 	 */
-	private function getHolidays(DateTime $start): array
+	private function getHolidays(DateTimeImmutable $start): array
 	{
 		$year = (int) $start->format('Y');
-		$easter = (clone $start)->modify($year.'-03-21')->modify(easter_days($year).' days');
-		$goodFriday = (clone $easter)->modify('-2 day')->format('Y-m-d');
-		$easterMonday = (clone $easter)->modify('+1 day')->format('Y-m-d');
+		$easter = $start->modify($year.'-03-21')->modify(easter_days($year).' days');
+		$goodFriday = $easter->modify('-2 day')->format('Y-m-d');
+		$easterMonday = $easter->modify('+1 day')->format('Y-m-d');
 
 		return [
 			$year.'-01-01'	=> 'Nový rok',

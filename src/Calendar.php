@@ -9,7 +9,7 @@ namespace JuniWalk\Calendar;
 
 use DateInterval;
 use DatePeriod;
-use DateTime;
+use DateTimeInterface;
 use DateTimeImmutable;
 use DateTimeZone;
 use Iterator;
@@ -117,7 +117,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 
 
 	/**
-	 * @param null|callable(self, DateTime): void $callback
+	 * @param null|callable(self, DateTimeInterface): void $callback
 	 */
 	public function setClickHandle(?callable $callback): void
 	{
@@ -141,13 +141,13 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			return;
 		}
 
-		$date = new DateTime($start);
+		$date = new DateTimeImmutable($start);
 		$time = $this->config->findMinTime(
 			(int) $date->format('N')
 		);
 
 		if ($time && $date->format('H:i') === '00:00') {
-			$date->modify($time);
+			$date = $date->modify($time);
 		}
 
 		$this->trigger('click', $this, $date);
@@ -169,7 +169,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 				throw SourceNotEditableException::fromSource($source);
 			}
 
-			$source->eventDrop($id, new DateTime($start), $allDay);
+			$source->eventDrop($id, new DateTimeImmutable($start), $allDay);
 
 		} catch (EventInvalidException $e) {
 			$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
@@ -199,7 +199,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 				throw SourceNotEditableException::fromSource($source);
 			}
 
-			$source->eventResize($id, new DateTime($end), $allDay);
+			$source->eventResize($id, new DateTimeImmutable($end), $allDay);
 
 		} catch (EventInvalidException $e) {
 			$presenter->flashMessage('web.message.'.Format::className($e), 'warning');
@@ -222,8 +222,8 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			}
 
 			$events = $this->fetchEvents(
-				new DateTime($start),
-				new DateTime($end),
+				new DateTimeImmutable($start),
+				new DateTimeImmutable($end),
 				new DateTimeZone($timeZone),
 			);
 
@@ -270,7 +270,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 	 * @return object[]
 	 * @throws EventInvalidException
 	 */
-	private function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array
+	private function fetchEvents(DateTimeImmutable $start, DateTimeImmutable $end, DateTimeZone $timeZone): array
 	{
 		$validator = new EventValidator;
 		$sources = $this->getSources();

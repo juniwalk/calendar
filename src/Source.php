@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar;
 
-use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use JuniWalk\Calendar\Entity\Legend;
 use Nette\Application\UI\SignalReceiver;
@@ -30,7 +30,7 @@ interface Source extends ComponentInterface, SignalReceiver, StatePersistent
 	/**
 	 * @return Event[]|EventProvider[]
 	 */
-	public function fetchEvents(DateTime $start, DateTime $end, DateTimeZone $timeZone): array;
+	public function fetchEvents(DateTimeInterface $start, DateTimeInterface $end, DateTimeZone $timeZone): array;
 
 	public function attachControls(Calendar $calendar): void;
 	public function detachControls(Calendar $calendar): void;
