@@ -16,7 +16,6 @@ use JuniWalk\Calendar\EventDetail;
 use JuniWalk\Calendar\EventLinkable;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Calendar\EventRecurring;
-use JuniWalk\Calendar\Utils\Date;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Link;

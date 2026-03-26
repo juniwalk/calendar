@@ -68,7 +68,7 @@ class EventValidator
 
 
 	/**
-	 * TODO: Use Activity as Schema source as in Parameters & Config?
+	 * TODO: Create schema directly from interfaces when new nette/schema (> 1.3) is available
 	 * @return Schema
 	 */
 	private function createSchema(Event $event): Schema
