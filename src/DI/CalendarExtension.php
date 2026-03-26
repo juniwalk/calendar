@@ -10,7 +10,7 @@ namespace JuniWalk\Calendar\DI;
 use Contributte\Translation\DI\TranslationProviderInterface as TranslationProvider;
 use Contributte\Translation\Translator;
 use JuniWalk\Calendar\CalendarFactory;
-use JuniWalk\Calendar\Entity\Options;
+use JuniWalk\Calendar\Config;
 use Nette\DI\CompilerExtension;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
@@ -20,14 +20,14 @@ use Nette\Schema\Schema;
 use Throwable;
 
 /**
- * @phpstan-type Config object{options: Options, sources: Statement[]}
+ * @phpstan-type Params object{options: Config, sources: Statement[]}
  */
 final class CalendarExtension extends CompilerExtension implements TranslationProvider
 {
 	public function getConfigSchema(): Schema
 	{
 		return Expect::structure([
-			'options' => Options::createSchema(),
+			'options' => Config::createSchema(),
 			'sources' => Expect::listOf(
 				Expect::string()->dynamic()->transform(fn($stmt) => match (true) {
 					$stmt instanceof Statement => $stmt,
@@ -47,13 +47,13 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 
 	public function loadConfiguration()
 	{
-		/** @var Config $config */
+		/** @var Params $config */
 		$config = $this->getConfig();
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition($this->prefix('config'))
 			->addSetup('setParams', [$config->options->jsonSerialize()])
-			->setClass(Options::class);
+			->setClass(Config::class);
 
 		$calendar = $builder->addFactoryDefinition($this->prefix('calendar'))
 			->setImplement(CalendarFactory::class);

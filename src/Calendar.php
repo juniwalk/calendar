@@ -14,7 +14,6 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Iterator;
 use JuniWalk\Calendar\Entity\Legend;
-use JuniWalk\Calendar\Entity\Options;
 use JuniWalk\Calendar\Enums\View;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
@@ -41,18 +40,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 {
 	use Actions, Links, Events;
 
-	private readonly Translator $translator;
-	private Config $config;
-
 	public function __construct(
-		Options $options,
 		HttpRequest $httpRequest,
-		Translator $translator,
-		?Config $config = null,
+		private readonly Config $config,
+		private readonly Translator $translator,
 	) {
-		$this->config = $config ?? $options;
-		$this->translator = $translator;
-
 		$this->monitor(Presenter::class, fn() => $this->config->loadState($this, $httpRequest));
 		$this->watch('render')->watch('fetch');
 	}
