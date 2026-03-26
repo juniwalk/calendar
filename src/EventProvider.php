@@ -7,9 +7,16 @@
 
 namespace JuniWalk\Calendar;
 
+use DateTimeImmutable;
 use Nette\Localization\Translator;
 
-interface EventProvider extends Event
+interface EventProvider
 {
+	public function getId(): int|string|null;
+	public function getSource(): string;
+	public function getStart(): DateTimeImmutable;
+	public function getEnd(): ?DateTimeImmutable;
+	public function isAllDay(): bool;
+
 	public function createEvent(Translator $translator): Event;
 }

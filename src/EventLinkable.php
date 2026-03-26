@@ -11,5 +11,8 @@ use Nette\Application\UI\Link;
 
 interface EventLinkable
 {
+	public string|Link $url { get; }
+
+
 	public function setUrl(string|Link $url): void;
 }

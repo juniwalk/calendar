@@ -9,14 +9,15 @@ namespace JuniWalk\Calendar\Exceptions;
 
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
+use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Utils\Format;
 
 final class EventEndsTooLateException extends EventInvalidException
 {
-	private ?Event $event = null;
-	private ?string $time = null;
+	private Event|EventProvider $event;
+	private string $time;
 
-	public static function withEvent(Event $event, Config $config): static
+	public static function withEvent(Event|EventProvider $event, Config $config): static
 	{
 		$dow = $event->getEnd()?->format('N');
 		$time = $config->findMaxTime(match (true) {
@@ -24,22 +25,25 @@ final class EventEndsTooLateException extends EventInvalidException
 			default => null,
 		});
 
-		$self = new static(Format::className($event).'#'.($event->id ?? 'unknown').' ends after the maximum allowed time of '.$time.'.');
+		$self = new static(Format::className($event).'#'.($event->getId() ?? 'unknown').' ends after the maximum allowed time of '.$time.'.');
 		$self->event = $event;
-		$self->time = $time;
+
+		if (is_string($time)) {
+			$self->time = $time;
+		}
 
 		return $self;
 	}
 
 
-	public function getEvent(): ?Event
+	public function getEvent(): Event|EventProvider|null
 	{
-		return $this->event;
+		return $this->event ?? null;
 	}
 
 
 	public function getTime(): ?string
 	{
-		return $this->time;
+		return $this->time ?? null;
 	}
 }

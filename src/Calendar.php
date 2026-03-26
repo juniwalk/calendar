@@ -10,6 +10,7 @@ namespace JuniWalk\Calendar;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeZone;
 use Iterator;
 use JuniWalk\Calendar\Entity\Legend;
@@ -107,6 +108,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 	 */
 	public function getSource(string $name): Source
 	{
+		/** @var Source */
 		return $this->getComponent($name);
 	}
 
@@ -353,7 +355,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			}
 
 			$eventStart = $event->getStart();
-			$eventEnd = $event->getEnd() ?? (clone $eventStart)->modify('+1 hour');
+			$eventEnd = $event->getEnd() ?? $eventStart->modify('+1 hour');
 			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
 			$chunks = [];
 
@@ -366,8 +368,8 @@ class Calendar extends Control implements EventHandler, LinkProvider
 					continue;
 				}
 
-				$dateStart = (clone $date)->modify($dateStart);
-				$dateEnd = (clone $date)->modify($dateEnd);
+				$dateStart = $date->modify($dateStart);
+				$dateEnd = $date->modify($dateEnd);
 
 				if (!isset($chunks[$dow]['start']) && ($date >= $dateStart || $date == $eventStart)) {
 					$chunks[$dow]['start'] = clone $date;

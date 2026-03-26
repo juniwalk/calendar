@@ -7,6 +7,10 @@
 
 namespace JuniWalk\Calendar;
 
+use Nette\Utils\Html;
+
 interface EventDetail
 {
+	public Html $content { get; }
+	public Html $label { get; }
 }

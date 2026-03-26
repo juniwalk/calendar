@@ -7,7 +7,8 @@
 
 namespace JuniWalk\Calendar\Entity;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use JuniWalk\Calendar\Enums\Day;	// ! Used in @phpstan-type
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventDetail;
@@ -15,10 +16,10 @@ use JuniWalk\Calendar\EventLinkable;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Calendar\EventRecurring;
 use JuniWalk\Calendar\Utils\Date;
-use JuniWalk\Utils\Html;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Link;
+use Nette\Utils\Html;
 
 /**
  * @phpstan-import-type DayNumber from Day
@@ -30,8 +31,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public int|string|null $groupId;
 	public string $source;
 	public bool $allDay;
-	public DateTime $start;
-	public ?DateTime $end;
+	public DateTimeImmutable $start;
+	public ?DateTimeImmutable $end;
 	public string $title;
 	public Html $titleHtml;
 	/** @var string[] */
@@ -49,8 +50,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	// EventRecurring
 	/** @var DayNumber[] */
 	public array $daysOfWeek;
-	public ?DateTime $startRecur;
-	public ?DateTime $endRecur;
+	public ?DateTimeImmutable $startRecur;
+	public ?DateTimeImmutable $endRecur;
 	public string $startTime;
 	public string $endTime;
 
@@ -89,25 +90,25 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	}
 
 
-	public function setStart(DateTime $start): void
+	public function setStart(DateTimeInterface $start): void
 	{
 		$this->start = Date::normalize($start);
 	}
 
 
-	public function getStart(): DateTime
+	public function getStart(): DateTimeImmutable
 	{
 		return $this->start;
 	}
 
 
-	public function setEnd(?DateTime $end): void
+	public function setEnd(?DateTimeInterface $end): void
 	{
 		$this->end = Date::normalize($end);
 	}
 
 
-	public function getEnd(): ?DateTime
+	public function getEnd(): ?DateTimeImmutable
 	{
 		return $this->end ?? null;
 	}
@@ -135,7 +136,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	{
 		$fullDate ??= $this->allDay || isset($this->groupId);
 		$format = $fullDate ? 'j.n. G:i' : 'G:i';
-		$time = $this->provider?->getStart()->format($format);
+		$time = $this->provider?->getStart()?->format($format);
 
 		if ($end = $this->provider?->getEnd()) {
 			$time .= ' - '.$end->format($format);
@@ -161,8 +162,8 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 				continue;
 			}
 
-			if ($value instanceof DateTime) {
-				$value = clone $value;
+			if ($value instanceof DateTimeInterface) {
+				$value = DateTimeImmutable::createFromInterface($value);
 			}
 
 			$this->$key = $value;
@@ -171,7 +172,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 
 
 	/**
-	 * @return array<string, mixed>
+	 * @return mixed[]
 	 */
 	public function jsonSerialize(): array
 	{

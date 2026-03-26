@@ -7,7 +7,8 @@
 
 namespace JuniWalk\Calendar;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface as DateTime;
 use JuniWalk\Calendar\Entity\Activity;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
@@ -40,6 +41,7 @@ class EventValidator
 			$end = $event->getEnd();
 
 			if ($end && $event->isAllDay() && $end->format('H:i') <> '00:00') {
+				$end = DateTimeImmutable::createFromInterface($end);
 				$event->setEnd($end->modify('midnight next day'));
 			}
 
@@ -77,7 +79,7 @@ class EventValidator
 		);
 
 		$date = Expect::anyOf(
-			Expect::type(DateTime::class)->transform(fn($x) => $x->format('c')),	// @phpstan-ignore method.nonObject ($x will always be DateTime)
+			Expect::type(DateTime::class)->transform(fn($x) => DateTimeImmutable::createFromInterface($x)->format('c')),	// @phpstan-ignore argument.type ($x will always be DateTime)
 			Expect::string(),
 		);
 

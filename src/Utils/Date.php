@@ -7,7 +7,7 @@
 
 namespace JuniWalk\Calendar\Utils;
 
-use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use JuniWalk\Calendar\Enums\Steps;
 use Nette\StaticClass;
@@ -17,22 +17,22 @@ final class Date
 	use StaticClass;
 
 	/**
-	 * @return ($date is null ? null : DateTime)
+	 * @return ($date is null ? null : DateTimeImmutable)
 	 */
-	public static function clone(?DateTimeInterface $date): ?DateTime
+	public static function clone(?DateTimeInterface $date): ?DateTimeImmutable
 	{
 		if (is_null($date)) {
 			return null;
 		}
 
-		return DateTime::createFromInterface($date);
+		return DateTimeImmutable::createFromInterface($date);
 	}
 
 
 	/**
-	 * @return ($date is null ? null : DateTime)
+	 * @return ($date is null ? null : DateTimeImmutable)
 	 */
-	public static function normalize(?DateTimeInterface $date, Steps $steps = Steps::HalfHour): ?DateTime
+	public static function normalize(?DateTimeInterface $date, Steps $steps = Steps::HalfHour): ?DateTimeImmutable
 	{
 		if (!$date = static::clone($date)) {
 			return null;

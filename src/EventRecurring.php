@@ -7,6 +7,18 @@
 
 namespace JuniWalk\Calendar;
 
+use DateTimeImmutable;
+use JuniWalk\Calendar\Enums\Day;	// ! Used in @phpstan-type
+
+/**
+ * @phpstan-import-type DayNumber from Day
+ */
 interface EventRecurring
 {
+	/** @var DayNumber[] */
+	public array $daysOfWeek { get; }
+	public ?DateTimeImmutable $startRecur { get; }
+	public ?DateTimeImmutable $endRecur { get; }
+	public string $startTime { get; }
+	public string $endTime { get; }
 }

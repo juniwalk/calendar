@@ -8,13 +8,14 @@
 namespace JuniWalk\Calendar\Exceptions;
 
 use JuniWalk\Calendar\Event;
+use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Utils\Format;
 
 final class EventUnableToDisplayException extends EventInvalidException
 {
-	private ?Event $event = null;
+	private Event|EventProvider $event;
 
-	public static function withEvent(Event $event): static
+	public static function withEvent(Event|EventProvider $event): static
 	{
 		$self = new static(Format::className($event).'#'.$event->getId().' is outside visible calendar range.');
 		$self->event = $event;
@@ -23,8 +24,8 @@ final class EventUnableToDisplayException extends EventInvalidException
 	}
 
 
-	public function getEvent(): ?Event
+	public function getEvent(): Event|EventProvider|null
 	{
-		return $this->event;
+		return $this->event ?? null;
 	}
 }

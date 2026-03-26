@@ -7,13 +7,15 @@
 
 namespace JuniWalk\Calendar\Entity;
 
-use DateTime;
+use DateTimeInterface;
+use DateTimeImmutable;
 use JuniWalk\Calendar\Calendar;
 use JuniWalk\Calendar\Config;
 use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Enums\Day;
 use JuniWalk\Calendar\Enums\Theme;
 use JuniWalk\Calendar\Enums\View;
+use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidException;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventEndsBeforeStartException;
@@ -80,7 +82,7 @@ class Options implements Config
 	 * @throws EventStartsTooSoonException
 	 * @throws EventUnableToDisplayException
 	 */
-	public function checkOutOfBounds(Event $event, bool $strict = false): void
+	public function checkOutOfBounds(Event|EventProvider $event, bool $strict = false): void
 	{
 		$start = $event->getStart();
 		$end = $event->getEnd();
@@ -107,7 +109,7 @@ class Options implements Config
 	}
 
 
-	public function isVisible(Event $event): bool
+	public function isVisible(Event|EventProvider $event): bool
 	{
 		$start = $event->getStart();
 		$end = $event->getEnd();
@@ -230,10 +232,10 @@ class Options implements Config
 			return null;
 		}
 
-		$date = new DateTime(min($times));
+		$date = new DateTimeImmutable(min($times));
 
 		if ($padding && ($date->format('G') - $this->paddingStart) >= 0) {
-			$date->modify("-{$this->paddingStart} hours");
+			$date = $date->modify("-{$this->paddingStart} hours");
 		}
 
 		return $date->format('H:i');
@@ -252,10 +254,10 @@ class Options implements Config
 			return null;
 		}
 
-		$date = new DateTime(max($times));
+		$date = new DateTimeImmutable(max($times));
 
 		if ($padding && ($date->format('G') + $this->paddingEnd) <= 24) {
-			$date->modify("+{$this->paddingEnd} hours");
+			$date = $date->modify("+{$this->paddingEnd} hours");
 		}
 
 		if ($date->format('H:i') === '00:00') {
@@ -392,26 +394,28 @@ class Options implements Config
 	}
 
 
-	protected function startsTooSoon(DateTime $date): bool
+	protected function startsTooSoon(DateTimeInterface $date): bool
 	{
+		$date = DateTimeImmutable::createFromInterface($date);
 		$dow = (int) $date->format('N');
 
 		if (!$time = $this->findMinTime($dow)) {
 			return true;
 		}
 
-		return $date < (clone $date)->modify($time);
+		return $date < $date->modify($time);
 	}
 
 
-	protected function endsTooLate(DateTime $date): bool
+	protected function endsTooLate(DateTimeInterface $date): bool
 	{
+		$date = DateTimeImmutable::createFromInterface($date);
 		$dow = (int) $date->format('N');
 
 		if (!$time = $this->findMaxTime($dow)) {
 			return false;
 		}
 
-		return $date > (clone $date)->modify($time);
+		return $date > $date->modify($time);
 	}
 }
