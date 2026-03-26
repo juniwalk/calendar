@@ -28,6 +28,7 @@ translation:
 Dont forget to include assets in html
 
 - `%vendorDir%/juniwalk/calendar/assets/calendar.bs5.css`
+- `%vendorDir%/juniwalk/calendar/assets/CalendarExtension.js`
 - `%moduleDir%/fullcalendar/index.global.min.js`
 
 
