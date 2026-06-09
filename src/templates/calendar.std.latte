@@ -1,5 +1,5 @@
-<div class="container-fluid p-0 h-100" id="{$controlName}">
-<div class="d-flex flex-column h-100" n:snippet="calendar">
+<div n:class="container-fluid, p-0, $config->isFullHeight() ? h-100" id="{$controlName}">
+<div n:class="d-flex, flex-column, $config->isFullHeight() ? h-100" n:snippet="calendar">
 
 	<div class="cal-header flex-shrink-0 border-0" n:if="$config->isHeaderCustom()">
 

@@ -157,6 +157,12 @@ class Config implements JsonSerializable
 	}
 
 
+	public function isFullHeight(): bool
+	{
+		return $this->height === '100%';
+	}
+
+
 	public function isEditable(): bool
 	{
 		return (bool) $this->editable;

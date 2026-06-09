@@ -1,5 +1,5 @@
-<div class="card card-primary card-outline mb-3" id="{$controlName}">
-<div n:snippet="calendar">
+<div n:class="card, card-primary, card-outline, mb-3, $config->isFullHeight() ? h-100" id="{$controlName}">
+<div n:class="$config->isFullHeight() ? h-100" n:snippet="calendar">
 
 	<div class="card-header border-0" n:if="$config->isHeaderCustom()">
 
