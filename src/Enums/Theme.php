@@ -14,12 +14,14 @@ enum Theme: string implements LabeledEnum
 {
 	use Labeled;
 
-	case Bootstrap5 = 'bootstrap5';
+	case Standard	= 'standard';
+	case Bootstrap5	= 'bootstrap5';
 
 
 	public function label(): string
 	{
 		return match ($this) {
+			self::Standard	 => 'Standard',
 			self::Bootstrap5 => 'Bootstrap 5',
 		};
 	}
@@ -28,6 +30,7 @@ enum Theme: string implements LabeledEnum
 	public function file(): string
 	{
 		return match ($this) {
+			self::Standard	 => 'calendar.std.latte',
 			self::Bootstrap5 => 'calendar.bs5.latte',
 		};
 	}
