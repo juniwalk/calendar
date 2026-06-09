@@ -87,18 +87,18 @@ class CalendarExtension
 
 
 		// Toolbar actions
-		this.#control.querySelector('[data-prev]').addEventListener('click', () => this.#switchPrev());
-		this.#control.querySelector('[data-next]').addEventListener('click', () => this.#switchNext());
-		this.#control.querySelector('[data-today]').addEventListener('click', () => this.#switchToday());
-		this.#control.querySelectorAll('[data-view]').forEach((element) => {
+		this.#control.querySelector('[data-prev]')?.addEventListener('click', () => this.#switchPrev());
+		this.#control.querySelector('[data-next]')?.addEventListener('click', () => this.#switchNext());
+		this.#control.querySelector('[data-today]')?.addEventListener('click', () => this.#switchToday());
+		this.#control.querySelectorAll('[data-view]')?.forEach((element) => {
 			element.addEventListener('click', (event) => this.#switchView(element.dataset.view));
 		});
 
 		// Settings dropdown
-		this.#control.querySelector('[data-set-show-details]').addEventListener('click',	(event) => this.#toggleDetails(event));
-		this.#control.querySelector('[data-set-auto-refresh]').addEventListener('click',	(event) => this.#toggleAutoRefresh(event));
-		this.#control.querySelector('[data-set-editable]').addEventListener('click', 		(event) => this.#toggleEditable(event));
-		this.#control.querySelector('[data-set-responsive]').addEventListener('click',		(event) => this.#toggleResponsive(event));
+		this.#control.querySelector('[data-set-show-details]')?.addEventListener('click',	(event) => this.#toggleDetails(event));
+		this.#control.querySelector('[data-set-auto-refresh]')?.addEventListener('click',	(event) => this.#toggleAutoRefresh(event));
+		this.#control.querySelector('[data-set-editable]')?.addEventListener('click', 		(event) => this.#toggleEditable(event));
+		this.#control.querySelector('[data-set-responsive]')?.addEventListener('click',		(event) => this.#toggleResponsive(event));
 	}
 
 
@@ -240,16 +240,20 @@ class CalendarExtension
 		const today = new Date;
 		const isToday = today >= start && today < end;
 
-		this.#control.querySelector('[data-today]').classList.toggle('disabled', isToday);
-		this.#control.querySelectorAll('[data-view]').forEach((element) => {
+		this.#control.querySelector('[data-today]')?.classList.toggle('disabled', isToday);
+		this.#control.querySelectorAll('[data-view]')?.forEach((element) => {
 			element.classList.remove('active');
 		});
 
-		this.#control.querySelector('[data-view='+ view.type +']').classList.add('active');
-		this.#control.querySelector('[data-title]').innerHTML = view.title;
+		this.#control.querySelector('[data-view='+ view.type +']')?.classList.add('active');
+
+		const titleElement = this.#control.querySelector('[data-title]');
+		if (titleElement) {
+			titleElement.innerHTML = view.title;
+		}
 
 		const activeView = this.#control.querySelector('[data-view].active');
-		this.#control.querySelectorAll('[data-view-name]').forEach((element) => {
+		this.#control.querySelectorAll('[data-view-name]')?.forEach((element) => {
 			element.innerHTML = activeView.innerHTML;
 		});
 

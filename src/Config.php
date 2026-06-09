@@ -40,7 +40,7 @@ class Config implements JsonSerializable
 	public Theme|string|null $themeSystem = Theme::Bootstrap5;
 
 	/** @var array<string, string[]> */
-	public array|false|null $headerToolbar = false;
+	public array|bool|null $headerToolbar = true;
 
 	public View|string|null $initialView = View::Week;
 	public ?string $initialDate = null;
@@ -152,7 +152,8 @@ class Config implements JsonSerializable
 
 	public function isHeaderCustom(): bool
 	{
-		return !($this->headerToolbar ?? true);
+		return $this->headerToolbar === true
+			|| is_array($this->headerToolbar);
 	}
 
 
@@ -387,7 +388,7 @@ class Config implements JsonSerializable
 			'slotMinTime'	=> (clone $time)->nullable(),
 			'slotMaxTime'	=> (clone $time)->nullable(),
 			'businessHours'	=> Expect::anyOf(Expect::bool(), $times, Expect::listOf($times))->default(false),
-			'headerToolbar'	=> Expect::anyOf(null, false, Expect::structure([
+			'headerToolbar'	=> Expect::anyOf(null, false, true, Expect::structure([
 				'start'		=> Expect::string(),
 				'center'	=> Expect::string(),
 				'end'		=> Expect::string(),
