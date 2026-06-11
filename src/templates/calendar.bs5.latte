@@ -1,7 +1,7 @@
 <div n:class="card, card-primary, card-outline, mb-3, $config->isFullHeight() ? h-100" id="{$controlName}">
-<div n:class="$config->isFullHeight() ? h-100" n:snippet="calendar">
+<div n:class="d-flex, flex-column, $config->isFullHeight() ? h-100" n:snippet="calendar">
 
-	<div class="card-header border-0" n:if="$config->isHeaderCustom()">
+	<div class="card-header border-0 flex-shrink-0" n:if="$config->isHeaderCustom()">
 
 		<div class="btn-toolbar align-items-center gap-2" role="toolbar" n:snippet="toolbar">
 
@@ -68,9 +68,9 @@
 
 	</div>
 
-	<div class="card-body p-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
+	<div class="card-body p-0 flex-grow-1 min-h-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
 
-	<div class="card-footer" n:inner-foreach="$sources as $source" n:ifcontent>
+	<div class="card-footer flex-shrink-0" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div class="d-flex flex-row flex-wrap gap-1 align-items-center" n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
 			{continueIf !$type instanceof $legend}
 			<small class="text-secondary me-2" n:ifchanged>{_calendar.footer.legend}:</small>
