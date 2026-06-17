@@ -355,7 +355,13 @@ class Config implements JsonSerializable
 			throw ConfigInvalidException::fromException($e);
 		}
 
-		$skipIgnored = fn($v, $k) => match (true) {
+		// ? True means custom header used, convert it to false
+		// ? so the default is not rendered empty with margin
+		if ($params['headerToolbar'] === true) {
+			$params['headerToolbar'] = false;
+		}
+
+		$skipIgnored = static fn($v, $k) => match (true) {
 			in_array($k, self::Ignore) => false,
 			default => !is_null($v),
 		};
