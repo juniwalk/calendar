@@ -1,4 +1,4 @@
-<div n:class="card, card-primary, card-outline, mb-3, $config->isFullHeight() ? h-100" id="{$controlName}">
+<div n:class="card, card-primary, card-outline, $config->isFullHeight() ? h-100" n:attr="style: $config->isFullHeight() ? 'min-height: 768px'" id="{$controlName}">
 <div n:class="d-flex, flex-column, $config->isFullHeight() ? h-100" n:snippet="calendar">
 
 	<div class="card-header border-0 flex-shrink-0" n:if="$config->isHeaderCustom()">
@@ -68,7 +68,7 @@
 
 	</div>
 
-	<div class="card-body p-0 flex-grow-1 min-h-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
+	<div class="card-body p-0 flex-grow-1" id="{$controlName}-timeGrid" n:attr="...$options"></div>
 
 	<div class="card-footer flex-shrink-0" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div class="d-flex flex-row flex-wrap gap-1 align-items-center" n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>

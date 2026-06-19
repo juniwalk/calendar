@@ -68,7 +68,7 @@
 
 	</div>
 
-	<div class="cal-element flex-grow-1 min-h-0" id="{$controlName}-timeGrid" n:attr="...$options"></div>
+	<div class="cal-element flex-grow-1" id="{$controlName}-timeGrid" n:attr="...$options"></div>
 
 	<div class="cal-legend flex-shrink-0 border-top p-3 bg-secondary-subtle" n:inner-foreach="$sources as $source" n:ifcontent>
 		<div class="d-flex flex-row flex-wrap gap-1 align-items-center" n:if="$types = $source->getLegend()" n:inner-foreach="$types as $type" n:ifcontent>
