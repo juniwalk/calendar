@@ -110,9 +110,15 @@ class Calendar extends Control implements EventHandler, LinkProvider
 	 */
 	public function getSources(): array
 	{
-		/** @var Iterator<string, Source> */
-		$sources = $this->getComponents(false, Source::class);
-		return iterator_to_array($sources);
+		$sources = [];
+
+		foreach ($this->getComponents() as $source) {
+			if ($source instanceof Source) {
+				$sources[$source->getName()] = $source;
+			}
+		}
+
+		return $sources;
 	}
 
 
