@@ -12,8 +12,8 @@ use DatePeriod;
 use DateTimeInterface;
 use DateTimeImmutable;
 use DateTimeZone;
-use Iterator;
 use JuniWalk\Calendar\Entity\Legend;
+use JuniWalk\Calendar\Enums\Capability;
 use JuniWalk\Calendar\Enums\View;
 use JuniWalk\Calendar\Exceptions\ConfigInvalidParamException;
 use JuniWalk\Calendar\Exceptions\EventInvalidException;
@@ -27,6 +27,7 @@ use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
+use Nette\Application\ForbiddenRequestException;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Bridges\ApplicationLatte\DefaultTemplate;
@@ -44,9 +45,16 @@ class Calendar extends Control implements EventHandler, LinkProvider
 		HttpRequest $httpRequest,
 		private readonly Config $config,
 		private readonly Translator $translator,
+		private readonly Capabilities $capabilities = new Capabilities,
 	) {
 		$this->monitor(Presenter::class, fn() => $this->config->loadState($this, $httpRequest));
 		$this->watch('render')->watch('fetch');
+	}
+
+
+	public function getCapabilities(): Capabilities
+	{
+		return $this->capabilities;
 	}
 
 
@@ -147,6 +155,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			return;
 		}
 
+		// ? Reject clicks if the capability is denied
+		if (!$this->capabilities->isAllowed(Capability::CalendarClick)) {
+			throw new ForbiddenRequestException;
+		}
+
 		$date = new DateTimeImmutable($start);
 		$time = $this->config->findMinTime(
 			(int) $date->format('N')
@@ -162,6 +175,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 
 	public function handleDrop(?string $type, ?int $id, ?string $start, ?bool $allDay): void
 	{
+		// ? Reject drop if the capability is denied
+		if (!$this->capabilities->isAllowed(Capability::EventDrop)) {
+			throw new ForbiddenRequestException;
+		}
+
 		$presenter = $this->getPresenter();
 
 		try {
@@ -192,6 +210,11 @@ class Calendar extends Control implements EventHandler, LinkProvider
 
 	public function handleResize(?string $type, ?int $id, ?string $end, ?bool $allDay): void
 	{
+		// ? Reject resize if the capability is denied
+		if (!$this->capabilities->isAllowed(Capability::EventResize)) {
+			throw new ForbiddenRequestException;
+		}
+
 		$presenter = $this->getPresenter();
 
 		try {
@@ -304,6 +327,8 @@ class Calendar extends Control implements EventHandler, LinkProvider
 				if (!$this->config->isVisible($event)) {
 					$event->setAllDay(true);
 				}
+
+				$this->capabilities->apply($event);
 
 				$events[] = $event;
 			}

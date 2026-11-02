@@ -11,6 +11,6 @@ use Nette\Utils\Html;
 
 interface EventDetail
 {
-	public Html $content { get; }
-	public Html $label { get; }
+	public ?Html $content { get; set; }
+	public ?Html $label { get; set; }
 }

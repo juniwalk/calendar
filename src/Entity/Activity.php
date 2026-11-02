@@ -41,11 +41,11 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public string $display;
 
 	// EventLinkable
-	public string|Link $url;
+	public string|Link|null $url = null;
 
 	// EventDetail
-	public Html $content;
-	public Html $label;
+	public ?Html $content = null;
+	public ?Html $label = null;
 
 	// EventRecurring
 	/** @var DayNumber[] */
