@@ -7,8 +7,6 @@
 
 namespace JuniWalk\Calendar;
 
-use DateInterval;
-use DatePeriod;
 use DateTimeInterface;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -338,7 +336,7 @@ class Calendar extends Control implements EventHandler, LinkProvider
 		}
 
 		if (!$this->config->isShowAllDayEvents()) {
-			$events = $this->createAllDayEventsChunked($events);
+			$events = (new EventChunker($this->config))->chunk($events);
 		}
 
 		foreach ($events as $key => $event) {
@@ -354,78 +352,5 @@ class Calendar extends Control implements EventHandler, LinkProvider
 		}
 
 		return array_values($events);
-	}
-
-
-	/**
-	 * @param  Event[] $events
-	 * @return Event[]
-	 */
-	private function createAllDayEventsChunked(array $events): array
-	{
-		$hours = $this->config->getBusinessHours();
-		$interval = new DateInterval('PT30M');
-		$result = [];
-
-		foreach ($events as $event) {
-			try {
-				$this->config->checkOutOfBounds($event, true);
-
-				if (!$event->isAllday()) {
-					throw new EventInvalidException;
-				}
-
-			} catch (EventInvalidException) {
-				$result[] = $event;
-				continue;
-			}
-
-			$eventStart = $event->getStart();
-			$eventEnd = $event->getEnd() ?? $eventStart->modify('+1 hour');
-			$dateRange = new DatePeriod($eventStart, $interval, $eventEnd);
-			$chunks = [];
-
-			foreach ($dateRange as $date) {
-				$dow = (int) $date->format('N');
-				$dateStart = $hours[$dow]['start'] ?? null;
-				$dateEnd = $hours[$dow]['end'] ?? null;
-
-				if (!$dateStart || !$dateEnd) {
-					continue;
-				}
-
-				$dateStart = $date->modify($dateStart);
-				$dateEnd = $date->modify($dateEnd);
-
-				if (!isset($chunks[$dow]['start']) && ($date >= $dateStart || $date == $eventStart)) {
-					$chunks[$dow]['start'] = clone $date;
-				}
-
-				if (!isset($chunks[$dow]['end']) && ($date >= $dateEnd || $date == $eventEnd)) {
-					$chunks[$dow]['end'] = clone $date;
-				}
-
-				if ($date == $eventEnd) {
-					break;
-				}
-			}
-
-			foreach ($chunks as $chunk) {
-				// ? Missing start, not valid
-				if (!isset($chunk['start'])) {
-					continue;
-				}
-
-				$item = clone $event;
-				$item->setStart($chunk['start']);	// ?? $eventStart
-				$item->setEnd($chunk['end'] ?? $eventEnd);
-				$item->setGroupId($event->getId());
-				$item->setAllDay(false);
-
-				$result[] = $item;
-			}
-		}
-
-		return $result;
 	}
 }
