@@ -88,9 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const element = document.querySelector('#'+{$controlName});
 
 	const calendar = new CalendarExtension(element, config, {
-		autoRefresh: 5000,
+		capabilities: {$capabilities->toArray()},
 		sources: [{link fetch!}],
-		capabilities: {$capabilities},
+		autoRefresh: 5000,
 
 		// Event links
 		dateClick: {link click!},

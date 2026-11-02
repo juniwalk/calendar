@@ -283,14 +283,12 @@ class Calendar extends Control implements EventHandler, LinkProvider
 
 		$template->setParameters([
 			'controlName' => $this->getName(),
+			'capabilities' => $this->capabilities,
 			'actions' => $this->getActions(),
 			'sources' => $this->getSources(),
 			'legend' => Legend::class,
 			'views' => View::cases(),
 			'config' => $config,
-
-			// ? Hand over capabilities to the frontend for JavaScript usage
-			'capabilities' => $this->capabilities->toArray(),
 
 			'options' => [
 				'data-responsive' => $config->isResponsive(),
