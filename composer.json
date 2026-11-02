@@ -11,10 +11,6 @@
 		"role": "Developer"
 	}],
 
-	"autoload": {
-		"psr-4": {"JuniWalk\\Calendar\\": "src/"}
-	},
-
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"config": {
@@ -22,6 +18,10 @@
 		"allow-plugins": {
 			"phpstan/extension-installer": true
 		}
+	},
+
+	"autoload": {
+		"psr-4": {"JuniWalk\\Calendar\\": "src/"}
 	},
 
 	"require": {
@@ -35,12 +35,21 @@
 		"tracy/tracy": "^2.0"
 	},
 
+    "autoload-dev": {
+        "psr-4": {"JuniWalk\\Tests\\": "tests/"}
+    },
+
 	"require-dev": {
 		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.0",
 		"phpstan/phpstan": "^2.0",
 		"phpstan/phpstan-nette": "^2.0",
 		"staabm/phpstan-todo-by": "^0.3"
+	},
+
+	"scripts": {
+		"lint": "phpstan analyze",
+		"test": "tester tests/ -C"
 	},
 
 	"suggest": {
