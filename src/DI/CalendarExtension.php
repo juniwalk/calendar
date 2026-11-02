@@ -31,7 +31,7 @@ final class CalendarExtension extends CompilerExtension implements TranslationPr
 		return Expect::structure([
 			'options' => Config::createSchema(),
 			'sources' => Expect::listOf(
-				Expect::string()->dynamic()->transform(fn($stmt) => match (true) {
+				Expect::string()->dynamic()->transform(static fn($stmt) => match (true) {
 					$stmt instanceof Statement => $stmt,
 					is_string($stmt) => new Statement($stmt),
 					default => new InvalidConfigurationException,

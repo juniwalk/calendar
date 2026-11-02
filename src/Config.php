@@ -326,7 +326,7 @@ class Config implements JsonSerializable
 
 	public function loadState(Calendar $calendar, HttpRequest $request): void
 	{
-		$getCookie = fn(string $name, mixed $default = null) => $request->getCookie($calendar->getName().'-'.$name) ?? $default;
+		$getCookie = static fn(string $name, mixed $default = null) => $request->getCookie($calendar->getName().'-'.$name) ?? $default;
 
 		if ($initialView = $getCookie('view')) {
 			/** @var scalar $initialView */
@@ -385,7 +385,7 @@ class Config implements JsonSerializable
 	public static function createSchema(): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
+			Expect::type(Day::class)->transform(static fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 			Expect::int()->min(0)->max(6),
 		);
 
@@ -398,12 +398,12 @@ class Config implements JsonSerializable
 
 		return Expect::from(new self, [
 			'themeSystem'	=> Expect::anyOf(
-				Expect::type(Theme::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
+				Expect::type(Theme::class)->transform(static fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 				Expect::string(),
 				Expect::null(),
 			),
 			'initialView'	=> Expect::anyOf(
-				Expect::type(View::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
+				Expect::type(View::class)->transform(static fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will be BackedEnum always)
 				Expect::string(),
 				Expect::null(),
 			),

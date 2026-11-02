@@ -76,23 +76,23 @@ class EventValidator
 	private function createSchema(Event $event): Schema
 	{
 		$day = Expect::anyOf(
-			Expect::type(Day::class)->transform(fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will always be BackedEnum)
+			Expect::type(Day::class)->transform(static fn($x) => $x->value),	// @phpstan-ignore property.nonObject ($x will always be BackedEnum)
 			Expect::int()->min(0)->max(6),
 		);
 
 		$date = Expect::anyOf(
-			Expect::type(DateTime::class)->transform(fn($x) => DateTimeImmutable::createFromInterface($x)->format('c')),	// @phpstan-ignore argument.type ($x will always be DateTime)
+			Expect::type(DateTime::class)->transform(static fn($x) => DateTimeImmutable::createFromInterface($x)->format('c')),	// @phpstan-ignore argument.type ($x will always be DateTime)
 			Expect::string(),
 		);
 
 		$html = Expect::anyOf(
-			Expect::type(Html::class)->transform(fn($x) => $x->render()),	// @phpstan-ignore method.nonObject ($x will always be Html)
+			Expect::type(Html::class)->transform(static fn($x) => $x->render()),	// @phpstan-ignore method.nonObject ($x will always be Html)
 			Expect::string(),
 			Expect::null(),
 		);
 
 		$url = Expect::anyOf(
-			Expect::type(Link::class)->transform(fn($x) => (string) $x),	// @phpstan-ignore cast.string ($x will always be Link)
+			Expect::type(Link::class)->transform(static fn($x) => (string) $x),	// @phpstan-ignore cast.string ($x will always be Link)
 			Expect::string(),
 		);
 
