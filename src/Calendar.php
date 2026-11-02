@@ -136,6 +136,10 @@ class Calendar extends Control implements EventHandler, LinkProvider
 	 */
 	public function setClickHandle(?callable $callback): void
 	{
+		if (!$this->capabilities->isAllowed(Capability::CalendarClick)) {
+			return;
+		}
+
 		$this->watch('click', true);
 
 		if (is_callable($callback)) {

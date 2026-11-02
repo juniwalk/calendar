@@ -25,10 +25,21 @@ use Tester\TestCase;
  */
 final class CalendarTest extends TestCase
 {
-	public function testClickDenied(): void
+	public function testClickHandlerIgnoredWhenDenied(): void
 	{
 		$calendar = $this->createCalendar(Capability::CalendarClick);
 		$calendar->setClickHandle(fn() => Assert::fail('Click handler must not be called.'));
+
+		Assert::false($calendar->isClickHandled());
+		$calendar->handleClick('2025-01-01');
+	}
+
+
+	public function testClickDeniedAfterHandlerSet(): void
+	{
+		$calendar = $this->createCalendar();
+		$calendar->setClickHandle(fn() => Assert::fail('Click handler must not be called.'));
+		$calendar->getCapabilities()->deny(Capability::CalendarClick);
 
 		Assert::exception(
 			fn() => $calendar->handleClick('2025-01-01'),
