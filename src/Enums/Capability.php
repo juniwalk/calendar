@@ -10,6 +10,7 @@ namespace JuniWalk\Calendar\Enums;
 enum Capability: string
 {
 	case CalendarClick = 'calendar.click';
+	case CalendarSettings = 'calendar.settings';
 	case EventDetail = 'event.detail';
 	case EventLink = 'event.link';
 	case EventDrop = 'event.drop';
