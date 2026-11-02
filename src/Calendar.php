@@ -289,6 +289,9 @@ class Calendar extends Control implements EventHandler, LinkProvider
 			'views' => View::cases(),
 			'config' => $config,
 
+			// ? Hand over capabilities to the frontend for JavaScript usage
+			'capabilities' => $this->capabilities->toArray(),
+
 			'options' => [
 				'data-responsive' => $config->isResponsive(),
 				'data-refresh' => $config->isAutoRefresh(),

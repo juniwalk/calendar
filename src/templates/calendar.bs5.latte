@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const calendar = new CalendarExtension(element, config, {
 		autoRefresh: 5000,
 		sources: [{link fetch!}],
+		capabilities: {$capabilities},
 
 		// Event links
 		dateClick: {link click!},

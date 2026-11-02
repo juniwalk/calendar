@@ -50,6 +50,21 @@ class Capabilities
 	}
 
 
+	/**
+	 * @return array<string, bool>
+	 */
+	public function toArray(): array
+	{
+		$list = [];
+
+		foreach (Capability::cases() as $capability) {
+			$list[$capability->value] = $this->isAllowed($capability);
+		}
+
+		return $list;
+	}
+
+
 	public function apply(Event $event): void
 	{
 		// ? Remove detail label and content if the capability is denied

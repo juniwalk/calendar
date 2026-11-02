@@ -66,6 +66,16 @@ final class CapabilitiesTest extends TestCase
 	}
 
 
+	public function testToArray(): void
+	{
+		$list = (new Capabilities(Capability::EventDrop))->toArray();
+
+		Assert::count(count(Capability::cases()), $list);
+		Assert::false($list['event.drop']);
+		Assert::true($list['event.resize']);
+	}
+
+
 	public function testApplyKeepsEverythingWhenAllowed(): void
 	{
 		$event = $this->createEvent();

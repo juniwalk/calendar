@@ -9,6 +9,7 @@ class CalendarExtension
 	#control = null;
 	#options = {};
 	#config = {};
+	#capabilities = {};
 	#view = null;
 
 	#calendar = null;
@@ -17,6 +18,9 @@ class CalendarExtension
 		this.#control = element;
 		this.#options = options;
 		this.#config = config;
+
+		// ? Initialize capabilities from options, default to empty object
+		this.#capabilities = options.capabilities ?? {};
 	}
 
 	initialize(naja) {
@@ -59,7 +63,7 @@ class CalendarExtension
 			eventResizeStop:	() => element.toggleAttribute('data-no-refresh'),
 
 			// Request events
-			dateClick: (event) => this.#httpRequest(this.#options.dateClick, {
+			dateClick: (event) => this.#isAllowed('calendar.click') && this.#httpRequest(this.#options.dateClick, {
 				allDay: Number(event.allDay),
 				start: event.dateStr,
 			}),
@@ -78,6 +82,15 @@ class CalendarExtension
 				id: event.id,
 			}),
 		}));
+
+		// ? Mirror of server-side Capabilities, explicit options win over the generic editable
+		if (!this.#isAllowed('event.drop')) {
+			this.#calendar.setOption('eventStartEditable', false);
+		}
+
+		if (!this.#isAllowed('event.resize')) {
+			this.#calendar.setOption('eventDurationEditable', false);
+		}
 
 		this.#calendar.render();
 
@@ -99,6 +112,11 @@ class CalendarExtension
 		this.#control.querySelector('[data-set-auto-refresh]')?.addEventListener('click',	(event) => this.#toggleAutoRefresh(event));
 		this.#control.querySelector('[data-set-editable]')?.addEventListener('click', 		(event) => this.#toggleEditable(event));
 		this.#control.querySelector('[data-set-responsive]')?.addEventListener('click',		(event) => this.#toggleResponsive(event));
+	}
+
+
+	#isAllowed(capability) {
+		return this.#capabilities[capability] ?? true;
 	}
 
 
