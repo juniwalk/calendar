@@ -26,26 +26,50 @@ class Capabilities
 	}
 
 
-	public function allow(Capability $capability): void
+	/**
+	 * @param value-of<Capability> $capability
+	 */
+	public function allow(Capability|string $capability): void
 	{
+		if (is_string($capability)) {
+			$capability = Capability::from($capability);
+		}
+
 		unset($this->denied[$capability->value]);
 	}
 
 
-	public function deny(Capability $capability): void
+	/**
+	 * @param value-of<Capability> $capability
+	 */
+	public function deny(Capability|string $capability): void
 	{
+		if (is_string($capability)) {
+			$capability = Capability::from($capability);
+		}
+
 		$this->denied[$capability->value] = true;
 	}
 
 
-	public function setAllowed(Capability $capability, bool $allowed): void
+	/**
+	 * @param value-of<Capability> $capability
+	 */
+	public function setAllowed(Capability|string $capability, bool $allowed): void
 	{
 		$allowed ? $this->allow($capability) : $this->deny($capability);
 	}
 
 
-	public function isAllowed(Capability $capability): bool
+	/**
+	 * @param value-of<Capability> $capability
+	 */
+	public function isAllowed(Capability|string $capability): bool
 	{
+		if (is_string($capability)) {
+			$capability = Capability::from($capability);
+		}
+
 		return !isset($this->denied[$capability->value]);
 	}
 
