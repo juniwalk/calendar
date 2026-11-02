@@ -37,6 +37,9 @@ use Nette\Localization\Translator;
 use Throwable;
 use Tracy\Debugger;
 
+use function array_values;
+use function is_callable;
+
 class Calendar extends Control implements EventHandler, LinkProvider
 {
 	use Actions, Links, Events;

@@ -29,6 +29,18 @@ use Nette\Schema\Processor;
 use Nette\Schema\Schema;
 use Throwable;
 
+use function array_column;
+use function array_filter;
+use function get_object_vars;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_null;
+use function max;
+use function min;
+use function property_exists;
+use function strtr;
+
 /**
  * @phpstan-import-type DayNumber from Day
  * @phpstan-type BusinessHour array{daysOfWeek: array<Day|DayNumber>, startTime: ?string, endTime: ?string}

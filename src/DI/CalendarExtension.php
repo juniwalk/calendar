@@ -19,6 +19,8 @@ use Nette\Schema\Expect;
 use Nette\Schema\Schema;
 use Throwable;
 
+use function is_string;
+
 /**
  * @phpstan-type Params object{options: Config, sources: Statement[]}
  */

@@ -21,6 +21,11 @@ use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Link;
 use Nette\Utils\Html;
 
+use function array_filter;
+use function get_object_vars;
+use function is_null;
+use function property_exists;
+
 /**
  * @phpstan-import-type DayNumber from Day
  */

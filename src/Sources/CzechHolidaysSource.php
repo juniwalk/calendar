@@ -18,6 +18,8 @@ use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\Source;
 use Nette\Application\UI\Component;
 
+use function easter_days;
+
 final class CzechHolidaysSource extends Component implements Source
 {
 	public function setConfig(Config $config): void {}

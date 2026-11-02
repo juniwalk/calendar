@@ -19,6 +19,8 @@ use Nette\Schema\Schema;
 use Nette\Utils\Html;
 use Throwable;
 
+use function array_merge;
+
 class EventValidator
 {
 	/** @var Schema[] */

@@ -12,6 +12,8 @@ use JuniWalk\Calendar\Event;
 use JuniWalk\Calendar\EventProvider;
 use JuniWalk\Utils\Format;
 
+use function is_string;
+
 final class EventEndsTooLateException extends EventInvalidException
 {
 	private Event|EventProvider $event;

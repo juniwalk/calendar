@@ -10,6 +10,9 @@ namespace JuniWalk\Calendar\Exceptions;
 use JuniWalk\Calendar\Event;
 use Throwable;
 
+use function gettype;
+use function is_object;
+
 class EventInvalidException extends CalendarException
 {
 	private mixed $event = null;

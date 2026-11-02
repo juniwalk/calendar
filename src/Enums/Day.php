@@ -11,6 +11,9 @@ use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Enums\Traits\Labeled;
 
+use function in_array;
+use function ksort;
+
 /**
  * @phpstan-type DayNumber int<0, 6>
  */
