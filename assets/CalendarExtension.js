@@ -114,7 +114,10 @@ class CalendarExtension
 		this.#control.querySelector('[data-set-responsive]')?.addEventListener('click',		(event) => this.#toggleResponsive(event));
 
 		this.#control.querySelector('.dropdown-menu.with-state')?.addEventListener('click', (event) => {
-			if (event.target.closest('.dropdown-item.disabled')) {
+			// Disabled items have pointer-events: none, so the click targets the menu itself
+			const item = event.target.closest('.dropdown-item');
+
+			if (!item || item.classList.contains('disabled')) {
 				event.preventDefault();
 				event.stopPropagation();
 			}
