@@ -112,6 +112,13 @@ class CalendarExtension
 		this.#control.querySelector('[data-set-auto-refresh]')?.addEventListener('click',	(event) => this.#toggleAutoRefresh(event));
 		this.#control.querySelector('[data-set-editable]')?.addEventListener('click', 		(event) => this.#toggleEditable(event));
 		this.#control.querySelector('[data-set-responsive]')?.addEventListener('click',		(event) => this.#toggleResponsive(event));
+
+		this.#control.querySelector('.dropdown-menu.with-state')?.addEventListener('click', (event) => {
+			if (event.target.closest('.dropdown-item.disabled')) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
+		});
 	}
 
 
