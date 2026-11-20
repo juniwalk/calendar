@@ -32,6 +32,44 @@ Dont forget to include assets in html
 - `%moduleDir%/fullcalendar/index.global.min.js`
 
 
+## Custom event HTML
+
+With FullCalendar v6, timed events in `timeGridWeek` and `timeGridDay` can display
+custom HTML through the existing `titleHtml` property:
+
+```php
+use JuniWalk\Calendar\Entity\Activity;
+use Nette\Utils\Html;
+
+$event = new Activity(params: [
+	'id' => 1,
+	'start' => new \DateTimeImmutable('2026-11-20 09:00'),
+	'end' => new \DateTimeImmutable('2026-11-20 10:00'),
+	'title' => 'Service visit',
+	'titleHtml' => Html::el('div')
+		->addHtml(Html::el('strong')->setText('Service visit'))
+		->addHtml(Html::el('div')->setText('Equipment inspection')),
+]);
+```
+
+Return the event from your source as usual. Keep `title` as the plain-text fallback.
+Events without `titleHtml`, all-day events, background events, and month view retain
+FullCalendar's default rendering. The `label` and `content` properties remain
+dedicated to popovers.
+
+The custom renderer places FullCalendar's current `timeText` above the HTML,
+including in drag and resize mirrors. FullCalendar still calculates the time using
+its own formatting, time zone, and rendered event dates; the renderer recreates
+the time markup rather than preserving the original DOM node. An empty `timeText`
+does not render a time row. Include `calendar.bs5.css` to keep the time above the
+body even for short events.
+
+`titleHtml` is inserted as HTML without sanitization. Use `setText()` for untrusted
+values, or sanitize any externally supplied markup before constructing the HTML.
+Avoid embedding times in `titleHtml`: server-generated text does not update during
+dragging or resizing.
+
+
 # Custom source
 
 To show your data in the calendar, create custom class implementing `JuniWalk\Calendar\Source` interface which you then register either globally or as a service and then add it manualy.

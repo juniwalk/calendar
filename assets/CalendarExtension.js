@@ -54,6 +54,7 @@ class CalendarExtension
 
 			// Event events
 			eventsSet: () => { naja.uiHandler.bindUI(element) },
+			eventContent: (info) => this.#handleEventContent(info),
 			eventDidMount: (info) => this.#handleEventMount(info),
 			eventWillUnmount: (info) => this.#handleEventUnmount(info),
 
@@ -214,6 +215,37 @@ class CalendarExtension
 		if (isAutoRefresh && !isNoRefresh) {
 			this.#refetch();
 		}
+	}
+
+	#handleEventContent(info) {
+		let {titleHtml} = info.event.extendedProps;
+
+		if (!titleHtml || info.event.allDay || !['timeGridWeek', 'timeGridDay'].includes(info.view.type) ||
+			['background', 'inverse-background'].includes(info.event.display)) {
+			return true;
+		}
+
+		let frame = document.createElement('div');
+		frame.className = 'fc-event-main-frame fc-event-html';
+
+		if (info.timeText) {
+			let time = document.createElement('div');
+			time.className = 'fc-event-time';
+			time.textContent = info.timeText;
+			frame.append(time);
+		}
+
+		let container = document.createElement('div');
+		container.className = 'fc-event-title-container';
+
+		let title = document.createElement('div');
+		title.className = 'fc-event-title fc-sticky';
+		title.innerHTML = titleHtml;
+
+		container.append(title);
+		frame.append(container);
+
+		return {domNodes: [frame]};
 	}
 
 	#handleEventUnmount(info) {
