@@ -218,7 +218,7 @@ class CalendarExtension
 	}
 
 	#handleEventContent(info) {
-		let {titleHtml} = info.event.extendedProps;
+		let {titleHtml, timeRightHtml} = info.event.extendedProps;
 
 		if (!titleHtml || info.event.allDay || !['timeGridWeek', 'timeGridDay'].includes(info.view.type) ||
 			['background', 'inverse-background'].includes(info.event.display)) {
@@ -232,7 +232,19 @@ class CalendarExtension
 			let time = document.createElement('div');
 			time.className = 'fc-event-time';
 			time.textContent = info.timeText;
-			frame.append(time);
+
+			if (timeRightHtml) {
+				let right = document.createElement('div');
+				right.className = 'fc-event-time-right';
+				right.innerHTML = timeRightHtml;
+
+				let row = document.createElement('div');
+				row.className = 'fc-event-time-row';
+				row.append(time, right);
+				frame.append(row);
+			} else {
+				frame.append(time);
+			}
 		}
 
 		let container = document.createElement('div');

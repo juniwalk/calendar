@@ -58,6 +58,19 @@
 
 .fc .fc-timegrid-event .fc-event-main-frame.fc-event-html { flex-direction: column; }
 .fc .fc-timegrid-event .fc-event-html .fc-event-time { flex-shrink: 0; }
+.fc .fc-timegrid-event .fc-event-time-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: .35em;
+	flex-shrink: 0;
+}
+.fc .fc-timegrid-event .fc-event-time-right {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .fc .fc-timegrid-event .fc-event-html .fc-event-title-container { min-height: 0; overflow: hidden; }
 .fc .fc-timegrid-event .fc-event-html .fc-event-title { display: block; }
 

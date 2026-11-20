@@ -49,6 +49,7 @@ $event = new Activity(params: [
 	'titleHtml' => Html::el('div')
 		->addHtml(Html::el('strong')->setText('Service visit'))
 		->addHtml(Html::el('div')->setText('Equipment inspection')),
+	'timeRightHtml' => Html::el('small')->setText('Confirmed'),
 ]);
 ```
 
@@ -62,9 +63,11 @@ including in drag and resize mirrors. FullCalendar still calculates the time usi
 its own formatting, time zone, and rendered event dates; the renderer recreates
 the time markup rather than preserving the original DOM node. An empty `timeText`
 does not render a time row. Include `calendar.bs5.css` to keep the time above the
-body even for short events.
+body even for short events. The optional `timeRightHtml` adds a short label or
+badge on the right of that row. It is only shown when `titleHtml` is active and
+FullCalendar supplies a time.
 
-`titleHtml` is inserted as HTML without sanitization. Use `setText()` for untrusted
+Both HTML fields are inserted without sanitization. Use `setText()` for untrusted
 values, or sanitize any externally supplied markup before constructing the HTML.
 Avoid embedding times in `titleHtml`: server-generated text does not update during
 dragging or resizing.

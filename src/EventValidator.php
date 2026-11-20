@@ -105,6 +105,7 @@ class EventValidator
 			'end'			=> (clone $date)->nullable(),
 			'title'			=> Expect::string()->required(),
 			'titleHtml'		=> $html,
+			'timeRightHtml'	=> $html,
 			'classNames'	=> Expect::listOf(Expect::string()),
 			'editable'		=> Expect::bool(),
 			'display'		=> Expect::string(),

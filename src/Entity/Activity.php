@@ -40,6 +40,7 @@ class Activity implements Event, EventDetail, EventLinkable, EventRecurring
 	public ?DateTimeImmutable $end;
 	public string $title;
 	public Html $titleHtml;
+	public ?Html $timeRightHtml = null;
 	/** @var string[] */
 	public array $classNames;
 	public bool $editable;
